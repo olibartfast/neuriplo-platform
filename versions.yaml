@@ -10,22 +10,32 @@ repositories:
   vision-core:
     owner: domain-task-layer
     visibility: public
-    version: null
-    ref: null
+    version: v0.3.2
+    ref: d11e2f9b7bc1df543e46ee96e792a50fda539dab
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
-    version: null
-    ref: null
+    version: v0.4.0
+    ref: b6bffd0e159a9a82f2deb2bdb92a7fd0c638d487
   vision-inference:
     owner: local-application-layer
     visibility: public
-    version: null
-    ref: null
+    version: v0.3.2
+    ref: d38900302e2755069c9d625168d018144a4cd07f
   neuriplo-kserve-runtime:
     owner: serving-runtime-layer
-    visibility: public-or-private
-    version: null
-    ref: null
+    visibility: public
+    version: wip
+    ref: bb17308470cd6ba2c4a850af6704c4bfa51a0558
 
-compatibility_sets: []
+compatibility_sets:
+  - name: initial-architecture-baseline
+    status: draft
+    notes:
+      - vision-core, neuriplo, and vision-inference use published tags.
+      - neuriplo-kserve-runtime is WIP and currently pinned by commit.
+    repositories:
+      vision-core: v0.3.2
+      neuriplo: v0.4.0
+      vision-inference: v0.3.2
+      neuriplo-kserve-runtime: bb17308470cd6ba2c4a850af6704c4bfa51a0558
