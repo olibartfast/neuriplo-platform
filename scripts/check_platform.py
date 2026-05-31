@@ -96,6 +96,16 @@ def validate_policies(errors: list[str]) -> None:
         fail(errors, "sibling_rules.direct_master_changes_allowed must be false")
 
 
+def validate_required_docs(errors: list[str]) -> None:
+    required_docs = [
+        ROOT / "docs" / "architecture" / "dependency-policy.md",
+        ROOT / "docs" / "architecture" / "doc-migration.md",
+    ]
+    for path in required_docs:
+        if not path.exists():
+            fail(errors, f"missing required platform doc: {path.relative_to(ROOT)}")
+
+
 def validate_repo_meta(errors: list[str]) -> None:
     cluster = load_yaml(ROOT / "ops" / "CLUSTER_MAP.yaml")
     policies = load_yaml(ROOT / "ops" / "policies.yaml")
@@ -133,6 +143,7 @@ def main() -> int:
     validate_versions(errors)
     validate_policies(errors)
     validate_repo_meta(errors)
+    validate_required_docs(errors)
 
     if errors:
         for error in errors:

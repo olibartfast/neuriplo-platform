@@ -58,3 +58,4 @@ vision-platform         = architecture control plane
 - [Version matrix](versions.yaml)
 - [Maintenance control plane](ops/README.md)
 - [Documentation migration plan](docs/architecture/doc-migration.md)
+- [Dependency policy](docs/architecture/dependency-policy.md)
