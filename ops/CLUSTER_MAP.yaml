@@ -44,7 +44,6 @@ repos:
     consumed_by:
       - vision-inference
       - neuriplo-kserve-runtime
-      - tritonic
     automation_scope:
       - ci-triage
       - api-migration-source
@@ -159,14 +158,6 @@ dependency_edges:
       - backend execution contract
       - capability reporting
       - runtime error normalization
-  - from: tritonic
-    to: vision-core
-    type: api
-    critical_contracts:
-      - task_factory model type strings
-      - result variant semantics
-      - tensor shape and dtype expectations
-
 validation_order:
   - repo_local
   - downstream_integration

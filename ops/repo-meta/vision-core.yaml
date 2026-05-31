@@ -53,7 +53,6 @@ owned_paths:
 consumers:
   - vision-inference
   - neuriplo-kserve-runtime
-  - tritonic
 
 automation_rules:
   allowed_change_classes:

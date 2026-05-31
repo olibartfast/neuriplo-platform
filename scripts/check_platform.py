@@ -106,6 +106,25 @@ def validate_required_docs(errors: list[str]) -> None:
             fail(errors, f"missing required platform doc: {path.relative_to(ROOT)}")
 
 
+def validate_cluster_map(errors: list[str]) -> None:
+    cluster = load_yaml(ROOT / "ops" / "CLUSTER_MAP.yaml")
+    cluster_repos = set(cluster.get("repos", {}))
+
+    for edge in cluster.get("dependency_edges", []):
+        source = edge.get("from")
+        target = edge.get("to")
+        if source not in cluster_repos:
+            fail(errors, f"CLUSTER_MAP dependency edge references unknown source repo: {source}")
+        if target not in cluster_repos:
+            fail(errors, f"CLUSTER_MAP dependency edge references unknown target repo: {target}")
+
+    for repo, meta in cluster.get("repos", {}).items():
+        for field in ("depends_on", "consumed_by"):
+            for related in meta.get(field, []):
+                if related not in cluster_repos:
+                    fail(errors, f"CLUSTER_MAP {repo}.{field} references unknown repo: {related}")
+
+
 def validate_repo_meta(errors: list[str]) -> None:
     cluster = load_yaml(ROOT / "ops" / "CLUSTER_MAP.yaml")
     policies = load_yaml(ROOT / "ops" / "policies.yaml")
@@ -185,6 +204,7 @@ def main() -> int:
     validate_ascii(errors)
     validate_versions(errors)
     validate_policies(errors)
+    validate_cluster_map(errors)
     validate_repo_meta(errors)
     validate_required_docs(errors)
     validate_examples(errors)
