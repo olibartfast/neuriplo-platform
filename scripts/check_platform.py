@@ -106,6 +106,21 @@ def validate_required_docs(errors: list[str]) -> None:
             fail(errors, f"missing required platform doc: {path.relative_to(ROOT)}")
 
 
+def validate_runbooks(errors: list[str]) -> None:
+    runbooks_root = ROOT / "ops" / "runbooks"
+    runbooks = sorted(runbooks_root.glob("*.md"))
+    if not runbooks:
+        fail(errors, "ops/runbooks must contain at least one runbook")
+        return
+
+    for path in runbooks:
+        text = path.read_text(encoding="ascii")
+        if not text.startswith("# "):
+            fail(errors, f"{path.relative_to(ROOT)} must start with a title")
+        if "## Procedure" not in text:
+            fail(errors, f"{path.relative_to(ROOT)} missing required section: ## Procedure")
+
+
 def validate_cluster_map(errors: list[str]) -> None:
     cluster = load_yaml(ROOT / "ops" / "CLUSTER_MAP.yaml")
     cluster_repos = set(cluster.get("repos", {}))
@@ -207,6 +222,7 @@ def main() -> int:
     validate_cluster_map(errors)
     validate_repo_meta(errors)
     validate_required_docs(errors)
+    validate_runbooks(errors)
     validate_examples(errors)
     validate_integration_tests(errors)
 
