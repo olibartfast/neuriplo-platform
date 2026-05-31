@@ -1,14 +1,30 @@
 # Examples
 
-End-to-end examples belong here when they demonstrate integration across
-repositories.
+End-to-end examples belong here when they describe integration across repository
+boundaries. Repo-local command syntax and implementation-specific runner scripts
+stay in the owning repository.
 
-Examples should prefer pinned versions from `versions.yaml` and should avoid
-duplicating implementation details from owning repositories.
+## Example Types
 
-Candidate examples:
+Platform examples should describe:
 
-- Local detection flow: `vision-core` + `neuriplo` + `vision-inference`
-- KServe detection flow: `vision-core` + `neuriplo` +
-  `neuriplo-kserve-runtime`
-- Backend comparison flow: one task across multiple `neuriplo` backends
+- repositories involved
+- compatibility set or version requirements
+- task/backend/runtime scenario
+- input and model artifact assumptions
+- expected contract-level output
+- validation status
+
+Repo-local examples should stay in implementation repos when they primarily show:
+
+- CLI flag syntax
+- local build commands
+- local setup scripts
+- backend-specific installation steps
+- single-repo test fixtures
+
+## Current Examples
+
+- [Local inference E2E](e2e-local-inference/README.md): cross-repo local
+  inference scenario using `vision-inference`, `vision-core`, `neuriplo`, and
+  optional `videocapture`.

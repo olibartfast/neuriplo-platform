@@ -137,6 +137,26 @@ def validate_repo_meta(errors: list[str]) -> None:
         fail(errors, f"repo metadata not present in cluster map: {', '.join(sorted(extra_meta))}")
 
 
+def validate_examples(errors: list[str]) -> None:
+    examples_root = ROOT / "examples"
+    for path in examples_root.iterdir():
+        if not path.is_dir():
+            continue
+        readme = path / "README.md"
+        if not readme.exists():
+            fail(errors, f"example missing README.md: {path.relative_to(ROOT)}")
+            continue
+        text = readme.read_text(encoding="ascii")
+        required_phrases = [
+            "Validation status:",
+            "Version set:",
+            "Repositories Involved",
+        ]
+        for phrase in required_phrases:
+            if phrase not in text:
+                fail(errors, f"{readme.relative_to(ROOT)} missing required phrase: {phrase}")
+
+
 def main() -> int:
     errors: list[str] = []
     validate_ascii(errors)
@@ -144,6 +164,7 @@ def main() -> int:
     validate_policies(errors)
     validate_repo_meta(errors)
     validate_required_docs(errors)
+    validate_examples(errors)
 
     if errors:
         for error in errors:
