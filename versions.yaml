@@ -1,0 +1,31 @@
+# Cross-repository compatibility matrix.
+#
+# Keep implementation-specific dependency pins in the owning repositories.
+# Use this file to record known-good ecosystem combinations.
+
+platform:
+  schema_version: 1
+
+repositories:
+  vision-core:
+    owner: domain-task-layer
+    visibility: public
+    version: null
+    ref: null
+  neuriplo:
+    owner: backend-abstraction-layer
+    visibility: public
+    version: null
+    ref: null
+  vision-inference:
+    owner: local-application-layer
+    visibility: public
+    version: null
+    ref: null
+  neuriplo-kserve-runtime:
+    owner: serving-runtime-layer
+    visibility: public-or-private
+    version: null
+    ref: null
+
+compatibility_sets: []
