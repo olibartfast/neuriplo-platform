@@ -3,8 +3,23 @@ branch_policy:
   release_branch: master
   normal_work_targets:
     - develop
+    - feat/*
+    - feature/*
   release_work_targets:
     - master
+  sibling_repositories:
+    - vision-core
+    - neuriplo
+    - vision-inference
+    - neuriplo-kserve-runtime
+    - videocapture
+  sibling_rules:
+    normal_changes_must_target:
+      - develop
+      - feat/*
+      - feature/*
+    master_is_release_only: true
+    direct_master_changes_allowed: false
   platform_default_branch: main
 
 automation_policy:

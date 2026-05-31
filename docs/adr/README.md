@@ -11,3 +11,4 @@ Use [0000-template.md](0000-template.md) for new records.
 ## Records
 
 - [0001 Use vision-platform as architecture control plane](0001-use-platform-as-architecture-control-plane.md)
+- [0002 Centralize cross-repo control plane](0002-centralize-cross-repo-control-plane.md)
