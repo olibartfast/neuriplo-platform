@@ -157,6 +157,29 @@ def validate_examples(errors: list[str]) -> None:
                 fail(errors, f"{readme.relative_to(ROOT)} missing required phrase: {phrase}")
 
 
+def validate_integration_tests(errors: list[str]) -> None:
+    tests_root = ROOT / "integration-tests"
+    for path in tests_root.iterdir():
+        if not path.is_dir():
+            continue
+        readme = path / "README.md"
+        if not readme.exists():
+            fail(errors, f"integration test missing README.md: {path.relative_to(ROOT)}")
+            continue
+        text = readme.read_text(encoding="ascii")
+        required_phrases = [
+            "Validation status:",
+            "Version set:",
+            "Owning repos:",
+        ]
+        for phrase in required_phrases:
+            if phrase not in text:
+                fail(errors, f"{readme.relative_to(ROOT)} missing required phrase: {phrase}")
+        scripts = [candidate for candidate in path.iterdir() if candidate.is_file() and candidate.stat().st_mode & 0o111]
+        if not scripts:
+            fail(errors, f"integration test missing executable script: {path.relative_to(ROOT)}")
+
+
 def main() -> int:
     errors: list[str] = []
     validate_ascii(errors)
@@ -165,6 +188,7 @@ def main() -> int:
     validate_repo_meta(errors)
     validate_required_docs(errors)
     validate_examples(errors)
+    validate_integration_tests(errors)
 
     if errors:
         for error in errors:

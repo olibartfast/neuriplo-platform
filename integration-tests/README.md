@@ -26,3 +26,7 @@ Each integration test should document:
 - Required model artifacts.
 - Expected inputs and outputs.
 - Operational assumptions such as GPU, CPU, memory, or container runtime.
+## Current Tests
+
+- [Local inference smoke](local-inference-smoke/README.md): validates local sibling
+  checkouts, pinned refs, and the app-owned E2E runner dry-run path.
