@@ -1,0 +1,48 @@
+name: vision-platform
+repo_root: .
+role: architecture-control-plane
+default_branches:
+  default: main
+
+entrypoints:
+  inspect:
+    - find . -maxdepth 3 -type f
+  validate_ascii:
+    - rg -n "[^\\x00-\\x7F]"
+  check_status:
+    - git status -sb
+
+api_surface:
+  public_components:
+    - docs/architecture
+    - docs/adr
+    - contracts
+    - versions.yaml
+    - ops
+    - integration-tests
+    - examples
+
+constraints:
+  keep_runtime_logic_out: true
+  prefer_contract_docs_over_duplication: true
+  keep_cross_repo_docs_here: true
+  keep_repo_specific_implementation_docs_in_owner: true
+
+owned_paths:
+  - README.md
+  - docs/
+  - contracts/
+  - versions.yaml
+  - ops/
+  - examples/
+  - integration-tests/
+  - docker/
+
+automation_rules:
+  allowed_change_classes:
+    - docs-sync
+    - dependency-sync
+  forbidden_change_classes:
+    - inference-logic-change
+    - packaging-release-change
+    - large-refactor

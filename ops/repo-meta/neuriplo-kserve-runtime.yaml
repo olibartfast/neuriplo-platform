@@ -1,0 +1,64 @@
+name: neuriplo-kserve-runtime
+repo_root: ../neuriplo-kserve-runtime
+role: serving-runtime-layer
+default_branches:
+  integration: develop
+  release: master
+status: wip
+
+dependencies:
+  - vision-core
+  - neuriplo
+
+entrypoints:
+  configure:
+    - cmake --preset debug
+  build:
+    - cmake --build --preset debug
+  test:
+    - ctest --preset debug --output-on-failure
+
+api_surface:
+  public_components:
+    - KServe V2 inference protocol
+    - model lifecycle endpoints
+    - health and readiness endpoints
+    - scheduling and batching configuration
+    - metrics and operational status
+
+constraints:
+  preserve_kserve_wire_compatibility: true
+  preserve_model_lifecycle_semantics: true
+  review_batching_scheduler_changes: mandatory
+  review_error_response_changes: mandatory
+
+owned_paths:
+  - src/
+  - include/
+  - tests/
+  - k8s/
+  - docs/
+  - CMakeLists.txt
+
+cross_repo_contracts:
+  consumes_from_vision_core:
+    - task contracts
+    - result semantics
+    - tensor shape assumptions
+  consumes_from_neuriplo:
+    - backend execution contract
+    - capability reporting
+    - runtime errors
+
+automation_rules:
+  allowed_change_classes:
+    - ci-triage
+    - test-fix
+    - docs-sync
+    - downstream-api-migration
+    - runtime-contract-fix
+  forbidden_change_classes:
+    - model-io-change
+    - inference-logic-change
+    - perf-critical-kernel-change
+    - large-refactor

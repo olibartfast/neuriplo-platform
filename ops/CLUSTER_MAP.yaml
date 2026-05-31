@@ -1,0 +1,196 @@
+cluster:
+  name: vision-platform
+  integration_branch: develop
+  release_branch: master
+  source_of_truth:
+    architecture_control_plane: vision-platform
+    task_contracts: vision-core
+    backend_abstraction: neuriplo
+    local_application_flow: vision-inference
+    serving_runtime: neuriplo-kserve-runtime
+    video_io: videocapture
+  local_checkout_hints:
+    vision-platform: .
+    vision-core: ../vision-core
+    neuriplo: ../neuriplo
+    vision-inference: ../vision-inference
+    neuriplo-kserve-runtime: ../neuriplo-kserve-runtime
+    videocapture: ../videocapture
+
+repos:
+  vision-platform:
+    repo_root: .
+    role: architecture-control-plane
+    provides:
+      - architecture_docs
+      - adrs
+      - cross_repo_contracts
+      - version_matrix
+      - integration_test_plans
+      - maintenance_runbooks
+    automation_scope:
+      - docs-sync
+      - dependency-sync
+
+  vision-core:
+    repo_root: ../vision-core
+    role: domain-task-layer
+    provides:
+      - task_factory
+      - task_interface
+      - preprocessing
+      - postprocessing
+      - result_types
+    consumed_by:
+      - vision-inference
+      - neuriplo-kserve-runtime
+      - tritonic
+    automation_scope:
+      - ci-triage
+      - api-migration-source
+      - test-fix
+      - docs-sync
+
+  neuriplo:
+    repo_root: ../neuriplo
+    role: backend-abstraction-layer
+    provides:
+      - backend_abstractions
+      - backend_adapters
+      - backend_version_management
+      - runtime_selection
+    consumed_by:
+      - vision-inference
+      - neuriplo-kserve-runtime
+    automation_scope:
+      - ci-triage
+      - dependency-sync
+      - backend-config-fix
+      - docs-sync
+
+  vision-inference:
+    repo_root: ../vision-inference
+    role: local-application-layer
+    depends_on:
+      - vision-core
+      - neuriplo
+      - videocapture
+    provides:
+      - cli
+      - app_config
+      - runtime_wiring
+      - visualization
+      - local_e2e_execution
+    automation_scope:
+      - ci-triage
+      - downstream-api-migration
+      - docs-sync
+      - test-fix
+
+  neuriplo-kserve-runtime:
+    repo_root: ../neuriplo-kserve-runtime
+    role: serving-runtime-layer
+    depends_on:
+      - vision-core
+      - neuriplo
+    provides:
+      - kserve_v2_protocol
+      - request_admission
+      - scheduling
+      - dynamic_batching
+      - model_lifecycle
+      - operational_endpoints
+    automation_scope:
+      - ci-triage
+      - downstream-api-migration
+      - docs-sync
+      - test-fix
+      - runtime-contract-fix
+
+  videocapture:
+    repo_root: ../videocapture
+    role: video-io
+    provides:
+      - source_capture
+      - stream_backends
+      - file_backends
+      - camera_backends
+    consumed_by:
+      - vision-inference
+    automation_scope:
+      - ci-triage
+      - dependency-sync
+      - io-regression-fix
+      - docs-sync
+
+dependency_edges:
+  - from: vision-inference
+    to: vision-core
+    type: api
+    critical_contracts:
+      - task_factory model type strings
+      - result variant semantics
+      - tensor shape and dtype expectations
+  - from: vision-inference
+    to: neuriplo
+    type: runtime
+    critical_contracts:
+      - backend selection
+      - device placement
+      - dependency setup paths
+  - from: vision-inference
+    to: videocapture
+    type: io
+    critical_contracts:
+      - source semantics
+      - backend priority
+      - stream reliability
+  - from: neuriplo-kserve-runtime
+    to: vision-core
+    type: api
+    critical_contracts:
+      - task contracts
+      - result serialization semantics
+      - tensor shape and dtype expectations
+  - from: neuriplo-kserve-runtime
+    to: neuriplo
+    type: runtime
+    critical_contracts:
+      - backend execution contract
+      - capability reporting
+      - runtime error normalization
+  - from: tritonic
+    to: vision-core
+    type: api
+    critical_contracts:
+      - task_factory model type strings
+      - result variant semantics
+      - tensor shape and dtype expectations
+
+validation_order:
+  - repo_local
+  - downstream_integration
+  - performance_and_output_checks
+
+agents:
+  coordinator:
+    responsibilities:
+      - ingest_pr_ci_and_schedule_signals
+      - classify_change_type
+      - dispatch_repo_scoped_tasks
+  repo_workers:
+    - vision-core-worker
+    - neuriplo-worker
+    - vision-inference-worker
+    - neuriplo-kserve-runtime-worker
+    - videocapture-worker
+  verifier:
+    responsibilities:
+      - run_repo_local_checks
+      - run_cross_repo_compatibility_checks
+      - summarize_evidence
+  release_safety:
+    responsibilities:
+      - enforce_branch_policies
+      - ensure_release_only_changes_target_release_branch
+      - reject_unsafe_packaging_or_version_drift

@@ -24,6 +24,7 @@ vision-platform/
 |- contracts/
 |- examples/
 |- integration-tests/
+|- ops/
 |- docker/
 `- versions.yaml
 ```
@@ -55,3 +56,5 @@ vision-platform         = architecture control plane
 - [ADR index](docs/adr/README.md)
 - [Contract index](contracts/README.md)
 - [Version matrix](versions.yaml)
+- [Maintenance control plane](ops/README.md)
+- [Documentation migration plan](docs/architecture/doc-migration.md)
