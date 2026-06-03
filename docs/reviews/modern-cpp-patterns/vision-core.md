@@ -32,6 +32,17 @@ Key files inspected remotely with `gh`:
 - `std::unique_ptr` ownership is used for task creation, which fits RAII and
   Rule-of-Zero expectations.
 
+## Source Taxonomy Mapping
+
+Relevant source patterns: Factory Registry, Strategy, modern Visitor via
+`std::variant` / `std::visit`, Adapter, explicit ownership, and optional type
+erasure or concepts. `vision-core` should keep task contracts stable and avoid
+plugin machinery until third-party task extension is an explicit product goal.
+
+Acceptance guidance: route all stable model strings through tested descriptors or
+registry entries, keep `Result` schema unchanged, and prefer optional visitor
+helpers over forcing consumers into one dispatch style.
+
 ## Findings
 
 ### Medium: Task registration is still closed at compile time

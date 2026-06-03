@@ -25,6 +25,18 @@ Key files inspected remotely with `gh`:
 - The application is moving toward local infrastructure rather than depending on
   `vision-infra`.
 
+## Source Taxonomy Mapping
+
+Relevant source patterns: RAII, Rule of Zero, modern Visitor via `std::variant`,
+Adapter / Anti-Corruption Layer around Triton APIs, Pipeline, explicit dependency
+pinning, and Service Locator caution for logging. Raw Triton and CUDA resources
+should become immediately owned objects.
+
+Acceptance guidance: replace the manual client union before extending GRPC/HTTP
+behavior, free CUDA memory through RAII cleanup, wrap `InferResult*` immediately
+after successful calls, and align `vision-core` pins with platform compatibility
+metadata.
+
 ## Findings
 
 ### High: Manual union of non-trivial clients violates RAII

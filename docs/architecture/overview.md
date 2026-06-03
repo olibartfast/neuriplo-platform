@@ -1,7 +1,8 @@
 # Architecture Overview
 
 The platform is organized around explicit boundaries between task semantics,
-backend execution, local application flow, and serving operations.
+backend execution, local application flow, and serving operations. Modern C++
+and service patterns are mapped in `modern-patterns.md`.
 
 ## Ecosystem Map
 
@@ -40,6 +41,8 @@ Likely patterns:
 - Template Method
 - Visitor
 - Composite
+- Adapter
+- Explicit task contracts
 
 ### neuriplo
 
@@ -56,6 +59,8 @@ Likely patterns:
 - Abstract Factory
 - Decorator
 - State
+- RAII
+- Runtime factory registry
 
 ### vision-inference
 
@@ -69,6 +74,8 @@ Owns:
 
 Likely patterns:
 
+- Composition Root
+- Pipeline
 - Facade
 - Builder
 - Command
@@ -92,6 +99,12 @@ Likely patterns:
 - Chain of Responsibility
 - Memento
 - Strategy
+- Producer-Consumer
+- Queue Worker
+- Dynamic Batching
+- Timeout / Retry / Bulkhead
+- Health Endpoint
+- Idempotent Consumer
 
 ### vision-platform
 
@@ -103,6 +116,7 @@ Owns:
 - Version matrix
 - Integration tests
 - End-to-end examples
+- Modern pattern taxonomy
 
 Does not own:
 
@@ -110,6 +124,11 @@ Does not own:
 - Runtime implementation
 - Backend code
 - Model-specific task code
+
+## Architecture Pattern References
+
+- `docs/architecture/modern-patterns.md`: modern C++ and service pattern
+  taxonomy for repository boundaries, serving reliability, and change review.
 
 ## Architectural Questions
 

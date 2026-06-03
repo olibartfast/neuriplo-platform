@@ -5,7 +5,9 @@ Reviewed on: 2026-06-03
 These reviews compare each vision-platform related repository against the
 modern C++ and architecture patterns described in:
 
-`/home/oli/Downloads/modern_cpp_design_patterns_beyond_gof.md`
+`/home/oli/Downloads/modern_cpp_design_patterns_beyond_gof.md` and the published source article:
+
+https://olibartfast.ninja/blog/modern-cpp-design-patterns-beyond-gof.html
 
 Remote metadata was checked with `gh`. Source files were inspected on the
 integration branch where available:
@@ -28,6 +30,19 @@ integration branch where available:
 - [neuriplo-kserve-runtime](neuriplo-kserve-runtime.md)
 - [tritonic](tritonic.md)
 - [vision-platform](vision-platform.md)
+
+## Source Taxonomy Applied
+
+The review set now maps findings to these modern C++ and production patterns:
+
+- RAII and Rule of Zero for owned clients, CUDA buffers, sessions, and results.
+- Dependency Injection and Composition Root for explicit wiring.
+- Factory Registry and Plugin Architecture for backend/task selection.
+- Pipeline, Producer-Consumer, Queue Worker, and Dynamic Batching for inference flow.
+- Anti-Corruption Layer and Adapter for vendor SDK and protocol boundaries.
+- Timeout, Retry with Backoff, Circuit Breaker, Bulkhead, Health Endpoint, and
+  Idempotent Consumer for serving reliability.
+- Object Pool, Zero-Copy Ownership, and Double Buffering for hot data paths.
 
 ## Cross-Repository Priorities
 

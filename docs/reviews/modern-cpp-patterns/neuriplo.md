@@ -29,6 +29,18 @@ Key files inspected remotely with `gh`:
   with a State-pattern approach.
 - Version and dependency validation are part of configure-time flow.
 
+## Source Taxonomy Mapping
+
+Relevant source patterns: Backend Adapter, Anti-Corruption Layer, runtime Factory
+Registry, State, Decorator, RAII, zero-copy ownership, and explicit dependency
+compatibility. Vendor SDK types should remain behind backend adapters and should
+not leak into application-facing contracts.
+
+Acceptance guidance: centralize runtime construction only when it preserves
+`DEFAULT_BACKEND` behavior, backend IDs, device placement, and fallback logging.
+Observability should move toward decorators only when timing or metrics grow
+beyond current base-interface helpers.
+
 ## Findings
 
 ### Medium: Backend registry exists at CMake level, but runtime discovery is not clearly represented

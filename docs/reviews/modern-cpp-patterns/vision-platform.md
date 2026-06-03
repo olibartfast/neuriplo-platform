@@ -61,6 +61,18 @@ and currently appears to use `master`.
 Recommendation: update platform metadata to reflect the actual branch policy, or
 create the expected integration branch in the runtime repository.
 
+## Source Taxonomy Mapping
+
+The platform should own documentation for the taxonomy rather than runtime
+implementation. The relevant patterns are Compatibility Registry, ownership map,
+ADR, Composition Root ownership, Anti-Corruption Layer boundaries, and serving
+reliability patterns.
+
+Status: `docs/architecture/modern-patterns.md` now covers the taxonomy from the
+source article and links from `docs/architecture/overview.md`. Remaining work is
+policy: decide whether `tritonic` is tracked in the platform matrix and reconcile
+`neuriplo-kserve-runtime` branch metadata.
+
 ## Recommended Next Actions
 
 1. Add a modern-pattern architecture page based on the supplied pattern document.

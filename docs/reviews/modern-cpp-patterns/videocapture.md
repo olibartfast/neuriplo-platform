@@ -26,6 +26,17 @@ Key files inspected remotely with `gh`:
 - The documented backend priority is explicit: FFmpeg, then GStreamer, then
   OpenCV.
 
+## Source Taxonomy Mapping
+
+Relevant source patterns: Adapter, Strategy, Factory Registry, Anti-Corruption
+Layer, RAII resource ownership, zero-copy frame movement, and double buffering
+when capture/read concurrency appears. Runtime backend selection should not
+weaken the documented default priority.
+
+Acceptance guidance: fix the CMake path typo first. Add runtime backend choice
+only if consumers need it, and keep FFmpeg/GStreamer/OpenCV types behind
+`VideoCaptureInterface`.
+
 ## Findings
 
 ### Medium: Backend selection is compile-time only

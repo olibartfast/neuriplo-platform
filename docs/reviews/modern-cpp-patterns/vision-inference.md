@@ -31,6 +31,18 @@ Key files inspected remotely with `gh`:
   version variables rather than raw `master`, which is aligned with the platform
   compatibility model.
 
+## Source Taxonomy Mapping
+
+Relevant source patterns: Composition Root, Dependency Injection, Pipeline,
+Builder, Command, controlled Service Locator for application-boundary logging,
+and Adapter boundaries for CLI/video inputs. `InferencePipelineBuilder::build()`
+can remain the composition root, but staged helpers should make dependency wiring
+visible and testable.
+
+Acceptance guidance: preserve CLI flags and output schema, keep logging setup at
+the executable boundary, and add tests for pipeline construction paths before
+collapsing or strengthening builder stages.
+
 ## Findings
 
 ### Medium: Builder stages are mostly fluent no-ops

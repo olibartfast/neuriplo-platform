@@ -34,6 +34,17 @@ Key files inspected remotely with `gh`:
 - Runtime exposes health, readiness, and metrics endpoints as first-class
   operational behavior.
 
+## Source Taxonomy Mapping
+
+Relevant source patterns: Queue Worker, Producer-Consumer, Dynamic Batching,
+Timeout, Retry with Backoff, Circuit Breaker, Bulkhead, Health Endpoint,
+Idempotent Consumer, Metrics, and Registry. Scheduler deadlines must isolate
+blocked executor work instead of synchronously waiting during cleanup.
+
+Acceptance guidance: make timeout tests use a deliberately blocking executor,
+make concurrent backend capability reads stress the registry, and preserve KServe
+response ordering and error mapping.
+
 ## Findings
 
 ### High: Async timeout path can block while destroying the future
