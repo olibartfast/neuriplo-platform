@@ -1,4 +1,4 @@
-name: vision-platform
+name: neuriplo-platform
 repo_root: .
 role: architecture-control-plane
 default_branches:

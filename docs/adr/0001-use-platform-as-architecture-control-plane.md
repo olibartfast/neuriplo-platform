@@ -1,4 +1,4 @@
-# ADR 0001: Use vision-platform as architecture control plane
+# ADR 0001: Use neuriplo-platform as architecture control plane
 
 Date: 2026-05-31
 
@@ -23,12 +23,12 @@ into implementation repositories where ownership becomes unclear.
 1. Put all architecture, contracts, integration tests, and runtime code in one
    repository.
 2. Keep all coordination documents scattered across implementation repositories.
-3. Use `vision-platform` as a private architecture control plane while keeping
+3. Use `neuriplo-platform` as a private architecture control plane while keeping
    implementation in the owning repositories.
 
 ## Decision
 
-Use `vision-platform` as the architecture control plane for ADRs, architecture
+Use `neuriplo-platform` as the architecture control plane for ADRs, architecture
 documentation, contracts, version matrix, integration tests, Docker composition,
 and end-to-end examples.
 

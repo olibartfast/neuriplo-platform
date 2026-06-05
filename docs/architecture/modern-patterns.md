@@ -72,7 +72,7 @@ Registries are acceptable when they make supported capabilities auditable:
 
 - `vision-core`: model type to task-family routing.
 - `neuriplo`: backend metadata and construction.
-- `vision-platform`: repository ownership and compatibility metadata.
+- `neuriplo-platform`: repository ownership and compatibility metadata.
 
 Registries should keep ordering and fallback behavior explicit. Dynamic plugin
 registries need their own contract before use.
@@ -162,7 +162,7 @@ patterns.
 | `vision-inference` | Composition Root, Dependency Injection, Pipeline, Builder, Command, application-boundary logging |
 | `neuriplo-kserve-runtime` | Producer-Consumer, Queue Worker, Dynamic Batching, Timeout, Circuit Breaker, Bulkhead, Health Endpoint |
 | `videocapture` | Adapter, RAII resource ownership, Strategy for capture backends, double buffering when needed |
-| `vision-platform` | Compatibility Registry, ownership map, ADRs, cross-repository contract docs |
+| `neuriplo-platform` | Compatibility Registry, ownership map, ADRs, cross-repository contract docs |
 
 ## Change Checklist
 

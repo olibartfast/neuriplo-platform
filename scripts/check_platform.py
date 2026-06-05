@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate vision-platform control-plane metadata."""
+"""Validate neuriplo-platform control-plane metadata."""
 
 from __future__ import annotations
 
@@ -27,6 +27,18 @@ def fail(errors: list[str], message: str) -> None:
     errors.append(message)
 
 
+def cluster_repo_names(cluster: dict[str, Any]) -> set[str]:
+    return set(cluster.get("repos", {}))
+
+
+def pinned_cluster_repos(cluster: dict[str, Any]) -> set[str]:
+    return {
+        name
+        for name, meta in cluster.get("repos", {}).items()
+        if (meta or {}).get("repo_root") != "."
+    }
+
+
 def validate_ascii(errors: list[str]) -> None:
     for path in ROOT.rglob("*"):
         if ".git" in path.parts or not path.is_file():
@@ -39,15 +51,11 @@ def validate_ascii(errors: list[str]) -> None:
 
 def validate_versions(errors: list[str]) -> None:
     versions = load_yaml(ROOT / "versions.yaml")
+    cluster = load_yaml(ROOT / "ops" / "CLUSTER_MAP.yaml")
     repos = versions.get("repositories", {})
     compat_sets = versions.get("compatibility_sets", [])
 
-    required = {
-        "vision-core",
-        "neuriplo",
-        "vision-inference",
-        "neuriplo-kserve-runtime",
-    }
+    required = pinned_cluster_repos(cluster)
     missing = sorted(required - set(repos))
     if missing:
         fail(errors, f"versions.yaml missing repositories: {', '.join(missing)}")
@@ -123,15 +131,15 @@ def validate_runbooks(errors: list[str]) -> None:
 
 def validate_cluster_map(errors: list[str]) -> None:
     cluster = load_yaml(ROOT / "ops" / "CLUSTER_MAP.yaml")
-    cluster_repos = set(cluster.get("repos", {}))
+    cluster_repos = cluster_repo_names(cluster)
 
-    for edge in cluster.get("dependency_edges", []):
-        source = edge.get("from")
-        target = edge.get("to")
-        if source not in cluster_repos:
-            fail(errors, f"CLUSTER_MAP dependency edge references unknown source repo: {source}")
-        if target not in cluster_repos:
-            fail(errors, f"CLUSTER_MAP dependency edge references unknown target repo: {target}")
+    for index, edge in enumerate(cluster.get("dependency_edges", [])):
+        for field, role in (("from", "source"), ("to", "target")):
+            repo = edge.get(field)
+            if not repo:
+                fail(errors, f"CLUSTER_MAP dependency_edges[{index}] missing required field: {field}")
+            elif repo not in cluster_repos:
+                fail(errors, f"CLUSTER_MAP dependency edge references unknown {role} repo: {repo}")
 
     for repo, meta in cluster.get("repos", {}).items():
         for field in ("depends_on", "consumed_by"):
@@ -144,7 +152,7 @@ def validate_repo_meta(errors: list[str]) -> None:
     cluster = load_yaml(ROOT / "ops" / "CLUSTER_MAP.yaml")
     policies = load_yaml(ROOT / "ops" / "policies.yaml")
     sibling_repos = set(policies["branch_policy"].get("sibling_repositories", []))
-    cluster_repos = set(cluster.get("repos", {}))
+    cluster_repos = cluster_repo_names(cluster)
 
     for repo in sorted(cluster_repos):
         meta_path = ROOT / "ops" / "repo-meta" / f"{repo}.yaml"

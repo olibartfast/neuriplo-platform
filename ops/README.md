@@ -24,7 +24,7 @@ Supporting repos:
 
 Control-plane repo:
 
-- `vision-platform`: architecture docs, ADRs, contracts, version matrix,
+- `neuriplo-platform`: architecture docs, ADRs, contracts, version matrix,
   integration plans, cross-repo runbooks.
 
 ## Contents
@@ -39,6 +39,6 @@ Control-plane repo:
 ## Migration Note
 
 This material originated in `vision-inference/ops` when that repository acted as
-the practical integration point for the stack. `vision-platform` is now the
+the practical integration point for the stack. `neuriplo-platform` is now the
 canonical home for cross-repository control-plane assets. `vision-inference`
 should eventually link here and retain only application-local docs.

@@ -28,7 +28,7 @@ Implementation-level sources:
 
 ## Ownership Rules
 
-`vision-platform` owns compatibility policy, not implementation behavior.
+`neuriplo-platform` owns compatibility policy, not implementation behavior.
 
 Released repositories should be referenced by immutable release tags in platform
 compatibility sets. WIP repositories may be pinned by commit SHA until they have
@@ -68,7 +68,7 @@ Sibling implementation repositories follow Gitflow:
 - `master` is release-only
 - direct changes to `master` are not allowed
 
-`vision-platform` currently uses `main` for platform documentation and metadata.
+`neuriplo-platform` currently uses `main` for platform documentation and metadata.
 
 ## Dependency Change Workflow
 
@@ -77,7 +77,7 @@ For cross-repository dependency changes:
 1. Identify the owning repository for the changed contract or dependency.
 2. Update implementation and repo-local tests in the owning repository first.
 3. Update downstream consumers on `develop` or a feature branch.
-4. Update `vision-platform` contracts, runbooks, and `versions.yaml` when the
+4. Update `neuriplo-platform` contracts, runbooks, and `versions.yaml` when the
    ecosystem compatibility surface changes.
 5. Record major boundary or compatibility decisions as ADRs.
 

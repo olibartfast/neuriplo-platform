@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-`vision-platform` is an architecture/control-plane repository. Runtime code stays in sibling repos. Key areas:
+`neuriplo-platform` is an architecture/control-plane repository. Runtime code stays in sibling repos. Key areas:
 
 - `docs/architecture/`: architecture notes and migration policy.
 - `docs/adr/`: Architecture Decision Records; use `0000-template.md` for new decisions.

@@ -73,7 +73,7 @@ platform compatibility matrix and makes the consumer sensitive to unrelated
 changes on the release branch.
 
 Recommendation: use a tag, commit, or version variable aligned with
-`vision-platform/versions.yaml`.
+`neuriplo-platform/versions.yaml`.
 
 ### Low: Logger access uses Service Locator style
 

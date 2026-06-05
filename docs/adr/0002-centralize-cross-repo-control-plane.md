@@ -26,12 +26,12 @@ visualization, and local application flow.
 
 1. Leave cross-repository control-plane docs in `vision-inference`.
 2. Duplicate the same docs across every repository.
-3. Move cross-repository control-plane docs to `vision-platform` and leave
+3. Move cross-repository control-plane docs to `neuriplo-platform` and leave
    implementation-specific docs in the owning repositories.
 
 ## Decision
 
-Use `vision-platform` as the canonical home for cross-repository control-plane
+Use `neuriplo-platform` as the canonical home for cross-repository control-plane
 assets:
 
 - architecture docs
@@ -44,7 +44,7 @@ assets:
 - integration-test plans
 
 `vision-inference` will keep application-specific docs and link to
-`vision-platform` for cross-repository boundaries and maintenance workflows.
+`neuriplo-platform` for cross-repository boundaries and maintenance workflows.
 
 ## Consequences
 
@@ -64,6 +64,6 @@ Negative:
 Follow-up:
 
 - Keep `vision-inference/ops` as a compatibility pointer until automation moves.
-- Add metadata validation in `vision-platform` CI.
+- Add metadata validation in `neuriplo-platform` CI.
 - Move only genuinely cross-repository docs; keep repo-local implementation docs
   in their owning repositories.

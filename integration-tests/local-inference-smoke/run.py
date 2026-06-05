@@ -46,6 +46,17 @@ def require_commit(repo: Path, commit: str) -> None:
         raise RuntimeError(f"{repo.name}: missing commit {commit}\n{result.stdout}")
 
 
+def require_tag_points_at(repo: Path, tag: str, ref: str) -> None:
+    result = run(["git", "rev-parse", "--verify", f"{tag}^{{commit}}"], repo)
+    if result.returncode != 0:
+        raise RuntimeError(f"{repo.name}: cannot resolve tag {tag}\n{result.stdout}")
+    resolved = result.stdout.strip()
+    if resolved != ref:
+        raise RuntimeError(
+            f"{repo.name}: tag {tag} resolves to {resolved}, but versions.yaml pins {ref}"
+        )
+
+
 def validate_repositories(versions: dict[str, Any]) -> None:
     for name, meta in versions["repositories"].items():
         repo = REPOS_ROOT / name
@@ -58,6 +69,7 @@ def validate_repositories(versions: dict[str, Any]) -> None:
         else:
             require_git_ref(repo, version)
             require_commit(repo, ref)
+            require_tag_points_at(repo, version, ref)
 
 
 def validate_runner(preset: str) -> None:

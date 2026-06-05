@@ -43,7 +43,7 @@ neuriplo-kserve-runtime  request contract, model lifecycle, scheduling behavior
    - Preserve public error response semantics.
    - Add protocol and scheduling tests.
 
-5. Update `vision-platform`.
+5. Update `neuriplo-platform`.
    - Add or update ADRs if boundaries change.
    - Update contracts if tensor/result/wire semantics changed.
    - Update `versions.yaml` after compatible releases or WIP pins exist.

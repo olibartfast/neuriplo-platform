@@ -9,6 +9,7 @@ compatibility, integration tests, and end-to-end examples across:
 - `neuriplo`: backend abstraction layer
 - `vision-inference`: local application layer
 - `neuriplo-kserve-runtime`: serving and runtime layer
+- `videocapture`: video and image source layer consumed by `vision-inference`
 
 It should not contain runtime business logic, model-specific implementation,
 backend execution code, or serving implementation code. Those responsibilities
@@ -17,7 +18,7 @@ remain in their owning repositories.
 ## Repository Layout
 
 ```text
-vision-platform/
+neuriplo-platform/
 |- docs/
 |   |- architecture/
 |   `- adr/
@@ -46,7 +47,8 @@ vision-core             = domain/task layer
 neuriplo                = backend abstraction layer
 vision-inference        = local application layer
 neuriplo-kserve-runtime = serving/runtime layer
-vision-platform         = architecture control plane
+videocapture            = video/image source layer
+neuriplo-platform         = architecture control plane
 ```
 
 ## Start Here

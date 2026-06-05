@@ -56,7 +56,7 @@ This example assumes:
 - labels or tokenizer files when the selected task requires them
 
 Large model files and generated artifacts should not be copied into
-`vision-platform`.
+`neuriplo-platform`.
 
 ## Command Shape
 

@@ -1,12 +1,12 @@
 # Documentation Migration Plan
 
 `vision-inference` historically carried some cross-repository documentation
-because it was the practical integration point for the stack. `vision-platform`
+because it was the practical integration point for the stack. `neuriplo-platform`
 is now the canonical home for architecture-control-plane material.
 
 ## Move Here
 
-These belong in `vision-platform`:
+These belong in `neuriplo-platform`:
 
 - Cross-repository ownership and boundary docs.
 - ADRs.
@@ -30,7 +30,7 @@ These stay in implementation repositories:
 ## Initial Transfers
 
 The first migrated area is `vision-inference/ops`, now represented under
-`vision-platform/ops` with paths and roles adapted for the full platform.
+`neuriplo-platform/ops` with paths and roles adapted for the full platform.
 
 `vision-inference` should eventually replace its cross-repo `ops` content with a
 short pointer to this repository, while retaining application-specific docs such

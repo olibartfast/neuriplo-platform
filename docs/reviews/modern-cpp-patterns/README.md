@@ -2,7 +2,7 @@
 
 Reviewed on: 2026-06-03
 
-These reviews compare each vision-platform related repository against the
+These reviews compare each neuriplo-platform related repository against the
 modern C++ and architecture patterns described in:
 
 `/home/oli/Downloads/modern_cpp_design_patterns_beyond_gof.md` and the published source article:
@@ -19,7 +19,7 @@ integration branch where available:
 - `tritonic`: `develop`
 - `neuriplo-kserve-runtime`: `master` because no `develop` or `dev` branch was
   visible
-- `vision-platform`: `main` because no `develop` branch was visible
+- `neuriplo-platform`: `main` because no `develop` branch was visible
 
 ## Repository Reviews
 
@@ -29,7 +29,7 @@ integration branch where available:
 - [videocapture](videocapture.md)
 - [neuriplo-kserve-runtime](neuriplo-kserve-runtime.md)
 - [tritonic](tritonic.md)
-- [vision-platform](vision-platform.md)
+- [neuriplo-platform](neuriplo-platform.md)
 
 ## Source Taxonomy Applied
 

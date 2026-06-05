@@ -17,7 +17,7 @@ neuriplo-kserve-runtime
     |
 neuriplo
 
-vision-platform
+neuriplo-platform
     |
 coordinates architecture, contracts, versions, examples, and integration tests
 ```
@@ -106,7 +106,7 @@ Likely patterns:
 - Health Endpoint
 - Idempotent Consumer
 
-### vision-platform
+### neuriplo-platform
 
 Owns:
 

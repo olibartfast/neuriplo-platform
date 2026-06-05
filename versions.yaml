@@ -27,15 +27,21 @@ repositories:
     visibility: public
     version: wip
     ref: bb17308470cd6ba2c4a850af6704c4bfa51a0558
+  videocapture:
+    owner: video-io
+    visibility: public
+    version: v0.2.0
+    ref: d492fa0335363adbefe4cd29501e7ae0d08c304a
 
 compatibility_sets:
   - name: initial-architecture-baseline
     status: draft
     notes:
-      - vision-core, neuriplo, and vision-inference use published tags.
+      - vision-core, neuriplo, vision-inference, and videocapture use published tags.
       - neuriplo-kserve-runtime is WIP and currently pinned by commit.
     repositories:
       vision-core: v0.3.2
       neuriplo: v0.4.0
       vision-inference: v0.3.2
+      videocapture: v0.2.0
       neuriplo-kserve-runtime: bb17308470cd6ba2c4a850af6704c4bfa51a0558

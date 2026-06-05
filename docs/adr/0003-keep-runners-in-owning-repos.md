@@ -7,13 +7,13 @@ Status: Accepted
 ## Problem
 
 `vision-inference` owns the local CLI and Docker runner used for end-to-end
-local inference examples. `vision-platform` needs to describe and validate
+local inference examples. `neuriplo-platform` needs to describe and validate
 cross-repository scenarios without duplicating app-owned scripts, model files,
 or backend-specific command details.
 
 ## Constraints
 
-- `vision-platform` should not become a runtime implementation repository.
+- `neuriplo-platform` should not become a runtime implementation repository.
 - App-owned CLI behavior belongs in `vision-inference`.
 - Platform examples need stable scenario metadata, version-set references, and
   contract-level validation expectations.
@@ -22,19 +22,19 @@ or backend-specific command details.
 
 ## Options
 
-1. Copy executable E2E scripts and model artifacts into `vision-platform`.
+1. Copy executable E2E scripts and model artifacts into `neuriplo-platform`.
 2. Leave all E2E documentation and validation in `vision-inference`.
-3. Keep executable runners in owning repos and let `vision-platform` orchestrate
+3. Keep executable runners in owning repos and let `neuriplo-platform` orchestrate
    cross-repository smoke and integration checks.
 
 ## Decision
 
 Executable runners remain in the repository that owns the runtime surface they
-exercise. `vision-platform` owns scenario documentation, compatibility metadata,
+exercise. `neuriplo-platform` owns scenario documentation, compatibility metadata,
 and orchestration scripts that call those app-owned runners.
 
 For local inference, `vision-inference/docker_run_inference_e2e_example.sh`
-remains the executable runner. `vision-platform` documents the scenario under
+remains the executable runner. `neuriplo-platform` documents the scenario under
 `examples/e2e-local-inference/` and provides smoke coverage under
 `integration-tests/local-inference-smoke/`.
 
@@ -59,4 +59,4 @@ Follow-up:
   explicit.
 - Keep platform example metadata validated by CI.
 - Update `vision-inference` docs to point scenario-level readers to
-  `vision-platform/examples`.
+  `neuriplo-platform/examples`.

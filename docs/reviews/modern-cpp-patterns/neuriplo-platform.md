@@ -1,8 +1,8 @@
-# vision-platform Modern C++ Pattern Review
+# neuriplo-platform Modern C++ Pattern Review
 
 Reviewed on: 2026-06-03
 
-Remote: https://github.com/olibartfast/vision-platform
+Remote: https://github.com/olibartfast/neuriplo-platform
 
 Reviewed ref: `main`
 

@@ -19,7 +19,7 @@ duplicating repo-local dependency policy.
 
 1. Identify the owning repo and change class.
    - Use `dependency-sync` for version matrix alignment.
-   - Use a separate API migration runbook if public contracts changed.
+   - Use `ops/runbooks/cross-repo-api-migration.md` if public contracts changed.
 
 2. Verify the candidate ref in the sibling repo.
    - Released repos must have a `vX.Y.Z` tag.

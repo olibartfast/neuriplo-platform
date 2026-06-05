@@ -56,7 +56,7 @@ Examples:
 
 ### Architecture Control Plane
 
-Belongs in `vision-platform`.
+Belongs in `neuriplo-platform`.
 
 Examples:
 
@@ -80,4 +80,4 @@ If a change is about serving requests in production, put it in
 `neuriplo-kserve-runtime`.
 
 If a change is about how repositories coordinate, document and test that
-coordination in `vision-platform`.
+coordination in `neuriplo-platform`.

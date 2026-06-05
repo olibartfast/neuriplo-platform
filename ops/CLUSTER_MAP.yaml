@@ -1,16 +1,16 @@
 cluster:
-  name: vision-platform
+  name: neuriplo-platform
   integration_branch: develop
   release_branch: master
   source_of_truth:
-    architecture_control_plane: vision-platform
+    architecture_control_plane: neuriplo-platform
     task_contracts: vision-core
     backend_abstraction: neuriplo
     local_application_flow: vision-inference
     serving_runtime: neuriplo-kserve-runtime
     video_io: videocapture
   local_checkout_hints:
-    vision-platform: .
+    neuriplo-platform: .
     vision-core: ../vision-core
     neuriplo: ../neuriplo
     vision-inference: ../vision-inference
@@ -18,7 +18,7 @@ cluster:
     videocapture: ../videocapture
 
 repos:
-  vision-platform:
+  neuriplo-platform:
     repo_root: .
     role: architecture-control-plane
     provides:
