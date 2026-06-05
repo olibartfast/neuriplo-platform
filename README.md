@@ -1,6 +1,6 @@
-# Neuriplo Platform
+# neuriplo platform
 
-Architecture control plane for the vision inference ecosystem.
+Architecture control plane for the neuriplo inference ecosystem.
 
 This repository coordinates the boundaries, contracts, decisions, version
 compatibility, integration tests, and end-to-end examples across:
