@@ -1,4 +1,4 @@
-# Vision Platform
+# Neuriplo Platform
 
 Architecture control plane for the vision inference ecosystem.
 
@@ -48,7 +48,7 @@ neuriplo                = backend abstraction layer
 vision-inference        = local application layer
 neuriplo-kserve-runtime = serving/runtime layer
 videocapture            = video/image source layer
-neuriplo-platform         = architecture control plane
+neuriplo-platform       = architecture control plane
 ```
 
 ## Start Here
