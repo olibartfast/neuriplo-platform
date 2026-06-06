@@ -1,8 +1,8 @@
 # Result Contract
 
-Owner: `vision-core`
+Owner: `neuriplo-tasks`
 
-Consumers: `vision-inference`, `neuriplo-kserve-runtime`, downstream clients
+Consumers: `neuriplo-infer`, `neuriplo-kserve-runtime`, downstream clients
 
 Status: Draft
 
@@ -13,7 +13,7 @@ contexts.
 
 ## Responsibilities
 
-`vision-core` owns:
+`neuriplo-tasks` owns:
 
 - Result type definitions.
 - Field semantics.

@@ -11,16 +11,16 @@ repositories.
 
 Core inference repos:
 
-- `vision-core`: task contracts, preprocessing, postprocessing, result types.
+- `neuriplo-tasks`: task contracts, preprocessing, postprocessing, result types.
 - `neuriplo`: backend abstraction, backend execution, runtime compatibility.
-- `vision-inference`: CLI, configuration, runtime wiring, visualization, local
+- `neuriplo-infer`: CLI, configuration, runtime wiring, visualization, local
   end-to-end application flow.
 - `neuriplo-kserve-runtime`: KServe protocol, admission, scheduling, model
   lifecycle, operational endpoints.
 
 Supporting repos:
 
-- `videocapture`: image/video source handling consumed by `vision-inference`.
+- `videocapture`: image/video source handling consumed by `neuriplo-infer`.
 
 Control-plane repo:
 
@@ -38,7 +38,7 @@ Control-plane repo:
 
 ## Migration Note
 
-This material originated in `vision-inference/ops` when that repository acted as
+This material originated in `neuriplo-infer/ops` when that repository acted as
 the practical integration point for the stack. `neuriplo-platform` is now the
-canonical home for cross-repository control-plane assets. `vision-inference`
+canonical home for cross-repository control-plane assets. `neuriplo-infer`
 should eventually link here and retain only application-local docs.

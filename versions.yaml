@@ -7,7 +7,7 @@ platform:
   schema_version: 1
 
 repositories:
-  vision-core:
+  neuriplo-tasks:
     owner: domain-task-layer
     visibility: public
     version: v0.3.2
@@ -17,7 +17,7 @@ repositories:
     visibility: public
     version: v0.4.0
     ref: b6bffd0e159a9a82f2deb2bdb92a7fd0c638d487
-  vision-inference:
+  neuriplo-infer:
     owner: local-application-layer
     visibility: public
     version: v0.3.2
@@ -37,11 +37,11 @@ compatibility_sets:
   - name: initial-architecture-baseline
     status: draft
     notes:
-      - vision-core, neuriplo, vision-inference, and videocapture use published tags.
+      - neuriplo-tasks, neuriplo, neuriplo-infer, and videocapture use published tags.
       - neuriplo-kserve-runtime is WIP and currently pinned by commit.
     repositories:
-      vision-core: v0.3.2
+      neuriplo-tasks: v0.3.2
       neuriplo: v0.4.0
-      vision-inference: v0.3.2
+      neuriplo-infer: v0.3.2
       videocapture: v0.2.0
       neuriplo-kserve-runtime: bb17308470cd6ba2c4a850af6704c4bfa51a0558

@@ -46,7 +46,7 @@ owned_paths:
   - versions.env
 
 consumers:
-  - vision-inference
+  - neuriplo-infer
   - neuriplo-kserve-runtime
 
 automation_rules:

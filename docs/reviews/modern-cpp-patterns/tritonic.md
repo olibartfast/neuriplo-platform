@@ -34,7 +34,7 @@ should become immediately owned objects.
 
 Acceptance guidance: replace the manual client union before extending GRPC/HTTP
 behavior, free CUDA memory through RAII cleanup, wrap `InferResult*` immediately
-after successful calls, and align `vision-core` pins with platform compatibility
+after successful calls, and align `neuriplo-tasks` pins with platform compatibility
 metadata.
 
 ## Findings
@@ -66,9 +66,9 @@ parsing throws, the raw result leaks.
 
 Recommendation: immediately wrap the result after a successful `Infer()` call.
 
-### Medium: `vision-core` is fetched from `master`
+### Medium: `neuriplo-tasks` is fetched from `master`
 
-`CMakeLists.txt` fetches `vision-core` with `GIT_TAG master`. This bypasses the
+`CMakeLists.txt` fetches `neuriplo-tasks` with `GIT_TAG master`. This bypasses the
 platform compatibility matrix and makes the consumer sensitive to unrelated
 changes on the release branch.
 
@@ -89,4 +89,4 @@ classes with significant behavior.
 1. Replace `TritonClient` union before further GRPC/HTTP expansion.
 2. Fix CUDA shared-memory ownership.
 3. Wrap Triton raw results immediately after successful inference calls.
-4. Pin `vision-core` to a known-good version or platform-managed ref.
+4. Pin `neuriplo-tasks` to a known-good version or platform-managed ref.

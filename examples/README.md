@@ -26,5 +26,5 @@ Repo-local examples should stay in implementation repos when they primarily show
 ## Current Examples
 
 - [Local inference E2E](e2e-local-inference/README.md): cross-repo local
-  inference scenario using `vision-inference`, `vision-core`, `neuriplo`, and
+  inference scenario using `neuriplo-infer`, `neuriplo-tasks`, `neuriplo`, and
   optional `videocapture`.

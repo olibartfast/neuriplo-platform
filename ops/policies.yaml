@@ -8,9 +8,9 @@ branch_policy:
   release_work_targets:
     - master
   sibling_repositories:
-    - vision-core
+    - neuriplo-tasks
     - neuriplo
-    - vision-inference
+    - neuriplo-infer
     - neuriplo-kserve-runtime
     - videocapture
   sibling_rules:

@@ -16,11 +16,11 @@ Platform-level sources:
 
 Implementation-level sources:
 
-- `vision-core`: task contracts, model task behavior, preprocessing,
+- `neuriplo-tasks`: task contracts, model task behavior, preprocessing,
   postprocessing, result types.
 - `neuriplo`: backend abstractions, backend adapters, backend runtime package
   versions, runtime compatibility behavior.
-- `vision-inference`: local CLI, app configuration, runtime wiring,
+- `neuriplo-infer`: local CLI, app configuration, runtime wiring,
   visualization, local setup scripts.
 - `neuriplo-kserve-runtime`: serving runtime protocol, admission, scheduling,
   batching, lifecycle, operational endpoints.
@@ -37,11 +37,11 @@ stable releases.
 Backend package versions belong to `neuriplo`. Application and serving repos may
 consume those versions, but should not redefine backend version policy in prose.
 
-Task and result semantics belong to `vision-core`. Consumers may document how
+Task and result semantics belong to `neuriplo-tasks`. Consumers may document how
 they use those contracts, but should not redefine tensor shapes, dtype meaning,
 or result schema semantics.
 
-Local app setup behavior belongs to `vision-inference`. Cross-repository
+Local app setup behavior belongs to `neuriplo-infer`. Cross-repository
 compatibility belongs here.
 
 Serving runtime dependency behavior belongs to `neuriplo-kserve-runtime` when it
@@ -57,7 +57,7 @@ For each repository in `versions.yaml`:
 - Compatibility sets must use the declared release tag for released repos.
 - Compatibility sets must use the pinned commit SHA for WIP repos.
 
-The current baseline treats `vision-core`, `neuriplo`, and `vision-inference` as
+The current baseline treats `neuriplo-tasks`, `neuriplo`, and `neuriplo-infer` as
 released repos. `neuriplo-kserve-runtime` is WIP and pinned by commit.
 
 ## Branch Policy
@@ -86,8 +86,8 @@ For cross-repository dependency changes:
 Do not duplicate these in platform docs:
 
 - exact backend installation commands owned by `neuriplo`
-- local CLI setup details owned by `vision-inference`
-- task tensor semantics owned by `vision-core`
+- local CLI setup details owned by `neuriplo-infer`
+- task tensor semantics owned by `neuriplo-tasks`
 - serving implementation details owned by `neuriplo-kserve-runtime`
 - video backend setup matrices owned by `videocapture`
 

@@ -1,6 +1,6 @@
 # Configuration Contract
 
-Owners: `vision-inference`, `neuriplo-kserve-runtime`, `neuriplo`
+Owners: `neuriplo-infer`, `neuriplo-kserve-runtime`, `neuriplo`
 
 Consumers: CLI users, deployment automation, integration tests
 

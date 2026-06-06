@@ -46,7 +46,7 @@ guide under `docs/architecture/`.
 
 ### Medium: `tritonic` is a known consumer but not first-class in platform metadata
 
-`vision-core` metadata lists `tritonic` as a consumer, but `tritonic` is not in
+`neuriplo-tasks` metadata lists `tritonic` as a consumer, but `tritonic` is not in
 `versions.yaml` or the main ownership map.
 
 Recommendation: either add `tritonic` as a tracked repository or remove it from

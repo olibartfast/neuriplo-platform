@@ -7,7 +7,7 @@ default_branches:
 status: wip
 
 dependencies:
-  - vision-core
+  - neuriplo-tasks
   - neuriplo
 
 entrypoints:
@@ -41,7 +41,7 @@ owned_paths:
   - CMakeLists.txt
 
 cross_repo_contracts:
-  consumes_from_vision_core:
+  consumes_from_neuriplo_tasks:
     - task contracts
     - result semantics
     - tensor shape assumptions

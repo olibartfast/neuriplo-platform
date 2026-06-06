@@ -6,9 +6,9 @@ inference stack.
 ## Stack Order
 
 ```text
-vision-core       task contract, preprocess, postprocess, result type
+neuriplo-tasks       task contract, preprocess, postprocess, result type
 neuriplo          backend execution and multimodal adapter behavior
-vision-inference  CLI, AppConfig, routing, rendering, e2e coverage
+neuriplo-infer  CLI, AppConfig, routing, rendering, e2e coverage
 ```
 
 For serving support, add:
@@ -19,7 +19,7 @@ neuriplo-kserve-runtime  request contract, model lifecycle, scheduling behavior
 
 ## Procedure
 
-1. Define the task contract in `vision-core`.
+1. Define the task contract in `neuriplo-tasks`.
    - Register the task type.
    - Define preprocessing tensor layout.
    - Define postprocessing and result semantics.
@@ -31,10 +31,10 @@ neuriplo-kserve-runtime  request contract, model lifecycle, scheduling behavior
    - Normalize backend errors.
    - Add backend-local tests or smoke coverage.
 
-3. Wire local application flow in `vision-inference`.
+3. Wire local application flow in `neuriplo-infer`.
    - Add CLI flags only when the application owns the user-facing option.
    - Extend `AppConfig` and routing.
-   - Keep model/task semantics delegated to `vision-core`.
+   - Keep model/task semantics delegated to `neuriplo-tasks`.
    - Add end-to-end CLI coverage.
 
 4. Wire serving flow in `neuriplo-kserve-runtime`, if required.

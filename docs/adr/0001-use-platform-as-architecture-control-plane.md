@@ -34,9 +34,9 @@ and end-to-end examples.
 
 Implementation remains in the owning repositories:
 
-- `vision-core` owns domain and task behavior.
+- `neuriplo-tasks` owns domain and task behavior.
 - `neuriplo` owns backend abstractions and execution.
-- `vision-inference` owns local application flow.
+- `neuriplo-infer` owns local application flow.
 - `neuriplo-kserve-runtime` owns serving runtime behavior.
 
 ## Consequences
