@@ -12,9 +12,9 @@ https://olibartfast.ninja/blog/modern-cpp-design-patterns-beyond-gof.html
 Remote metadata was checked with `gh`. Source files were inspected on the
 integration branch where available:
 
-- `vision-core`: `develop`
+- `neuriplo-tasks`: `develop`
 - `neuriplo`: `develop`
-- `vision-inference`: `develop`
+- `neuriplo-infer`: `develop`
 - `videocapture`: `develop`
 - `tritonic`: `develop`
 - `neuriplo-kserve-runtime`: `master` because no `develop` or `dev` branch was
@@ -23,9 +23,9 @@ integration branch where available:
 
 ## Repository Reviews
 
-- [vision-core](vision-core.md)
+- [neuriplo-tasks](neuriplo-tasks.md)
 - [neuriplo](neuriplo.md)
-- [vision-inference](vision-inference.md)
+- [neuriplo-infer](neuriplo-infer.md)
 - [videocapture](videocapture.md)
 - [neuriplo-kserve-runtime](neuriplo-kserve-runtime.md)
 - [tritonic](tritonic.md)

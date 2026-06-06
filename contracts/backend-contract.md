@@ -2,7 +2,7 @@
 
 Owner: `neuriplo`
 
-Consumers: `vision-inference`, `neuriplo-kserve-runtime`, integration tests
+Consumers: `neuriplo-infer`, `neuriplo-kserve-runtime`, integration tests
 
 Status: Draft
 

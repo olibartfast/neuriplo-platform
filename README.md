@@ -5,11 +5,11 @@ Architecture control plane for the neuriplo inference ecosystem.
 This repository coordinates the boundaries, contracts, decisions, version
 compatibility, integration tests, and end-to-end examples across:
 
-- `vision-core`: domain and task layer
+- `neuriplo-tasks`: domain and task layer
 - `neuriplo`: backend abstraction layer
-- `vision-inference`: local application layer
+- `neuriplo-infer`: local application layer
 - `neuriplo-kserve-runtime`: serving and runtime layer
-- `videocapture`: video and image source layer consumed by `vision-inference`
+- `videocapture`: video and image source layer consumed by `neuriplo-infer`
 
 It should not contain runtime business logic, model-specific implementation,
 backend execution code, or serving implementation code. Those responsibilities
@@ -43,9 +43,9 @@ For every major platform change:
 ## Ownership
 
 ```text
-vision-core             = domain/task layer
+neuriplo-tasks          = domain/task layer
 neuriplo                = backend abstraction layer
-vision-inference        = local application layer
+neuriplo-infer          = local application layer
 neuriplo-kserve-runtime = serving/runtime layer
 videocapture            = video/image source layer
 neuriplo-platform       = architecture control plane

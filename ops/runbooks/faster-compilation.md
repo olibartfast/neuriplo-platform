@@ -8,9 +8,9 @@ platform. Repo-local build commands stay in each repository's README and
 
 | Repository | Role | Primary compile cost |
 |------------|------|----------------------|
-| vision-core | Task contracts | Single large library + many test binaries |
+| neuriplo-tasks | Task contracts | Single large library + many test binaries |
 | neuriplo | Backend abstraction | Backend SDK headers, per-backend CI matrix |
-| vision-inference | Local application | FetchContent siblings, duplicated app sources |
+| neuriplo-infer | Local application | FetchContent siblings, duplicated app sources |
 | neuriplo-kserve-runtime | Serving runtime | Small runtime tree; optional real-neuriplo preset |
 | videocapture | Video I/O | Small library; avoid building app/tests as subproject |
 
@@ -36,20 +36,20 @@ CI should prefer:
 
 ## Repository-Specific Rules
 
-### vision-inference
+### neuriplo-infer
 
 - FetchContent siblings must not build subproject tests or sample apps:
   `BUILD_INFERENCE_ENGINE_TESTS=OFF` and `BUILD_TESTS=OFF` before
   `FetchContent_MakeAvailable`.
-- App sources compile once via `vision-inference-app` static library; tests link
+- App sources compile once via `neuriplo-infer-app` static library; tests link
   the library instead of recompiling app `.cpp` files.
-- See `vision-inference/docs/FasterCompilationPlan.md` for phased experiments
+- See `neuriplo-infer/docs/FasterCompilationPlan.md` for phased experiments
   (PCH, unity builds, faster linkers).
 
 ### videocapture
 
 - `PROJECT_IS_TOP_LEVEL` guards sample app and test subdirectories.
-- When fetched by vision-inference, only the `VideoCapture` shared library
+- When fetched by neuriplo-infer, only the `VideoCapture` shared library
   should build.
 
 ### neuriplo
@@ -58,7 +58,7 @@ CI should prefer:
   only (`cmake/SetCompilerFlags.cmake`).
 - Avoid `--clean-first` in CI when separate build directories are available.
 
-### vision-core
+### neuriplo-tasks
 
 - CI already uses ccache; prefer Ninja in configure steps.
 - `result_types.hpp` is OpenCV-free: use `BoundingBox`, `ImageMatrix`, and
@@ -102,6 +102,7 @@ Use `ops/PR_EVIDENCE_TEMPLATE.md` for cross-repo maintenance work.
 
 ## Follow-Up Priorities
 
-1. Consolidate vision-core test executables into fewer gtest binaries.
-3. Prebuilt sibling packages instead of FetchContent clones in vision-inference.
+1. Consolidate neuriplo-tasks test executables into fewer gtest binaries.
+2. Execute [ADR 0004: Rename vision repos to neuriplo-tasks and neuriplo-infer](../../docs/adr/0004-rename-vision-repos-to-neuriplo-tasks-infer.md) after compile-speed PRs merge.
+3. Prebuilt sibling packages instead of FetchContent clones in neuriplo-infer.
 4. Share ccache across neuriplo backend matrix jobs in CI.

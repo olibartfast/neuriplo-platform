@@ -7,11 +7,11 @@ and service patterns are mapped in `modern-patterns.md`.
 ## Ecosystem Map
 
 ```text
-vision-core
+neuriplo-tasks
     |
 neuriplo
     |
-vision-inference
+neuriplo-infer
 
 neuriplo-kserve-runtime
     |
@@ -24,7 +24,7 @@ coordinates architecture, contracts, versions, examples, and integration tests
 
 ## Repository Responsibilities
 
-### vision-core
+### neuriplo-tasks
 
 Owns:
 
@@ -62,7 +62,7 @@ Likely patterns:
 - RAII
 - Runtime factory registry
 
-### vision-inference
+### neuriplo-infer
 
 Owns:
 

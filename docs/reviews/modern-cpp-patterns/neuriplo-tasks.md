@@ -1,8 +1,8 @@
-# vision-core Modern C++ Pattern Review
+# neuriplo-tasks Modern C++ Pattern Review
 
 Reviewed on: 2026-06-03
 
-Remote: https://github.com/olibartfast/vision-core
+Remote: https://github.com/olibartfast/neuriplo-tasks
 
 Reviewed ref: `develop` at `ed2d11e5e2f6272d40f136627db7cce7ff1e7d3a`
 
@@ -17,9 +17,9 @@ Key files inspected remotely with `gh`:
 
 - `CMakeLists.txt`
 - `README.md`
-- `include/vision-core/core/task_factory.hpp`
+- `include/neuriplo/tasks/core/task_factory.hpp`
 - `src/core/task_factory.cpp`
-- `include/vision-core/core/task_interface.hpp`
+- `include/neuriplo/tasks/core/task_interface.hpp`
 
 ## Pattern Alignment
 
@@ -36,7 +36,7 @@ Key files inspected remotely with `gh`:
 
 Relevant source patterns: Factory Registry, Strategy, modern Visitor via
 `std::variant` / `std::visit`, Adapter, explicit ownership, and optional type
-erasure or concepts. `vision-core` should keep task contracts stable and avoid
+erasure or concepts. `neuriplo-tasks` should keep task contracts stable and avoid
 plugin machinery until third-party task extension is an explicit product goal.
 
 Acceptance guidance: route all stable model strings through tested descriptors or
@@ -48,7 +48,7 @@ helpers over forcing consumers into one dispatch style.
 ### Medium: Task registration is still closed at compile time
 
 `src/core/task_factory.cpp` uses a static registration table compiled into
-`vision-core`. This is simpler and safer than dynamic plugins, but every new
+`neuriplo-tasks`. This is simpler and safer than dynamic plugins, but every new
 task still requires editing the central factory source.
 
 Recommendation: keep the current table for stable built-in tasks, but consider a

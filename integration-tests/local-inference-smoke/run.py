@@ -73,12 +73,12 @@ def validate_repositories(versions: dict[str, Any]) -> None:
 
 
 def validate_runner(preset: str) -> None:
-    vision_inference = REPOS_ROOT / "vision-inference"
-    runner = vision_inference / "docker_run_inference_e2e_example.sh"
+    neuriplo_infer = REPOS_ROOT / "neuriplo-infer"
+    runner = neuriplo_infer / "docker_run_inference_e2e_example.sh"
     if not runner.is_file():
         raise RuntimeError(f"missing app-owned E2E runner: {runner}")
 
-    list_result = run(["bash", str(runner), "--list-presets"], vision_inference)
+    list_result = run(["bash", str(runner), "--list-presets"], neuriplo_infer)
     if list_result.returncode != 0:
         raise RuntimeError(f"failed to list presets\n{list_result.stdout}")
     if preset not in list_result.stdout.splitlines():
@@ -91,12 +91,12 @@ def validate_runner(preset: str) -> None:
             "--preset",
             preset,
             "--dry-run",
-            "--vision-core-dir",
-            str(REPOS_ROOT / "vision-core"),
+            "--neuriplo-tasks-dir",
+            str(REPOS_ROOT / "neuriplo-tasks"),
             "--skip-export",
             "--skip-convert",
         ],
-        vision_inference,
+        neuriplo_infer,
     )
     if dry_run.returncode != 0:
         raise RuntimeError(f"dry-run failed for preset {preset}\n{dry_run.stdout}")

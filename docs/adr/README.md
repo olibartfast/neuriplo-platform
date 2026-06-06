@@ -13,3 +13,4 @@ Use [0000-template.md](0000-template.md) for new records.
 - [0001 Use neuriplo-platform as architecture control plane](0001-use-platform-as-architecture-control-plane.md)
 - [0002 Centralize cross-repo control plane](0002-centralize-cross-repo-control-plane.md)
 - [0003 Keep executable runners in owning repositories](0003-keep-runners-in-owning-repos.md)
+- [0004 Rename neuriplo-tasks and neuriplo-infer to neuriplo-tasks and neuriplo-infer](0004-rename-vision-repos-to-neuriplo-tasks-infer.md)

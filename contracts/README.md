@@ -6,7 +6,7 @@ interface used across repositories.
 
 ## Initial Contract Areas
 
-- [Task contract](task-contract.md): `vision-core` input/output semantics
+- [Task contract](task-contract.md): `neuriplo-tasks` input/output semantics
   consumed by applications and runtimes.
 - [Backend contract](backend-contract.md): `neuriplo` execution interface
   consumed by local and serving runtimes.

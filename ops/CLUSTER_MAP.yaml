@@ -4,16 +4,16 @@ cluster:
   release_branch: master
   source_of_truth:
     architecture_control_plane: neuriplo-platform
-    task_contracts: vision-core
+    task_contracts: neuriplo-tasks
     backend_abstraction: neuriplo
-    local_application_flow: vision-inference
+    local_application_flow: neuriplo-infer
     serving_runtime: neuriplo-kserve-runtime
     video_io: videocapture
   local_checkout_hints:
     neuriplo-platform: .
-    vision-core: ../vision-core
+    neuriplo-tasks: ../neuriplo-tasks
     neuriplo: ../neuriplo
-    vision-inference: ../vision-inference
+    neuriplo-infer: ../neuriplo-infer
     neuriplo-kserve-runtime: ../neuriplo-kserve-runtime
     videocapture: ../videocapture
 
@@ -32,8 +32,8 @@ repos:
       - docs-sync
       - dependency-sync
 
-  vision-core:
-    repo_root: ../vision-core
+  neuriplo-tasks:
+    repo_root: ../neuriplo-tasks
     role: domain-task-layer
     provides:
       - task_factory
@@ -42,7 +42,7 @@ repos:
       - postprocessing
       - result_types
     consumed_by:
-      - vision-inference
+      - neuriplo-infer
       - neuriplo-kserve-runtime
     automation_scope:
       - ci-triage
@@ -59,7 +59,7 @@ repos:
       - backend_version_management
       - runtime_selection
     consumed_by:
-      - vision-inference
+      - neuriplo-infer
       - neuriplo-kserve-runtime
     automation_scope:
       - ci-triage
@@ -67,11 +67,11 @@ repos:
       - backend-config-fix
       - docs-sync
 
-  vision-inference:
-    repo_root: ../vision-inference
+  neuriplo-infer:
+    repo_root: ../neuriplo-infer
     role: local-application-layer
     depends_on:
-      - vision-core
+      - neuriplo-tasks
       - neuriplo
       - videocapture
     provides:
@@ -90,7 +90,7 @@ repos:
     repo_root: ../neuriplo-kserve-runtime
     role: serving-runtime-layer
     depends_on:
-      - vision-core
+      - neuriplo-tasks
       - neuriplo
     provides:
       - kserve_v2_protocol
@@ -115,7 +115,7 @@ repos:
       - file_backends
       - camera_backends
     consumed_by:
-      - vision-inference
+      - neuriplo-infer
     automation_scope:
       - ci-triage
       - dependency-sync
@@ -123,21 +123,21 @@ repos:
       - docs-sync
 
 dependency_edges:
-  - from: vision-inference
-    to: vision-core
+  - from: neuriplo-infer
+    to: neuriplo-tasks
     type: api
     critical_contracts:
       - task_factory model type strings
       - result variant semantics
       - tensor shape and dtype expectations
-  - from: vision-inference
+  - from: neuriplo-infer
     to: neuriplo
     type: runtime
     critical_contracts:
       - backend selection
       - device placement
       - dependency setup paths
-  - from: vision-inference
+  - from: neuriplo-infer
     to: videocapture
     type: io
     critical_contracts:
@@ -145,7 +145,7 @@ dependency_edges:
       - backend priority
       - stream reliability
   - from: neuriplo-kserve-runtime
-    to: vision-core
+    to: neuriplo-tasks
     type: api
     critical_contracts:
       - task contracts
@@ -170,9 +170,9 @@ agents:
       - classify_change_type
       - dispatch_repo_scoped_tasks
   repo_workers:
-    - vision-core-worker
+    - neuriplo-tasks-worker
     - neuriplo-worker
-    - vision-inference-worker
+    - neuriplo-infer-worker
     - neuriplo-kserve-runtime-worker
     - videocapture-worker
   verifier:

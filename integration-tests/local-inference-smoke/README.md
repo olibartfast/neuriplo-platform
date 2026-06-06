@@ -7,11 +7,11 @@ Version set: `initial-architecture-baseline`
 Owning repos:
 
 - `neuriplo-platform`: smoke-test orchestration and version expectations.
-- `vision-inference`: app-owned E2E runner and CLI behavior.
-- `vision-core`: task/export tooling and task contracts.
+- `neuriplo-infer`: app-owned E2E runner and CLI behavior.
+- `neuriplo-tasks`: task/export tooling and task contracts.
 - `neuriplo`: backend abstraction and execution.
 - `neuriplo-kserve-runtime`: WIP serving runtime, commit-pinned only in this smoke.
-- `videocapture`: video/image source handling consumed by `vision-inference`.
+- `videocapture`: video/image source handling consumed by `neuriplo-infer`.
 
 ## Purpose
 
@@ -25,7 +25,7 @@ matrix before running expensive model export or inference work.
 - released repositories contain the expected release tags.
 - released repository tags resolve to the commit SHA pinned in `versions.yaml`.
 - WIP repositories contain the pinned commit SHA.
-- `vision-inference/docker_run_inference_e2e_example.sh` exists.
+- `neuriplo-infer/docker_run_inference_e2e_example.sh` exists.
 - the app-owned runner can list presets.
 - the app-owned runner can dry-run one representative preset.
 

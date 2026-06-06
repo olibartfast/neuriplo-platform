@@ -8,7 +8,7 @@ where the durable implementation should live.
 
 ### Domain and Task Behavior
 
-Belongs in `vision-core`.
+Belongs in `neuriplo-tasks`.
 
 Examples:
 
@@ -32,7 +32,7 @@ Examples:
 
 ### Local Application Flow
 
-Belongs in `vision-inference`.
+Belongs in `neuriplo-infer`.
 
 Examples:
 
@@ -69,12 +69,12 @@ Examples:
 
 ## Decision Heuristic
 
-If a change is about what a task means, put it in `vision-core`.
+If a change is about what a task means, put it in `neuriplo-tasks`.
 
 If a change is about how inference runs on a backend, put it in `neuriplo`.
 
 If a change is about how a user runs local inference, put it in
-`vision-inference`.
+`neuriplo-infer`.
 
 If a change is about serving requests in production, put it in
 `neuriplo-kserve-runtime`.

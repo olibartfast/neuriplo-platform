@@ -1,12 +1,12 @@
-name: vision-inference
-repo_root: ../vision-inference
+name: neuriplo-infer
+repo_root: ../neuriplo-infer
 role: local-application-layer
 default_branches:
   integration: develop
   release: master
 
 dependencies:
-  - vision-core
+  - neuriplo-tasks
   - neuriplo
   - videocapture
 
@@ -64,7 +64,7 @@ owned_paths:
   - versions.env
 
 cross_repo_contracts:
-  consumes_from_vision_core:
+  consumes_from_neuriplo_tasks:
     - TaskFactory model types
     - Result variant semantics
     - Tensor shape assumptions

@@ -11,7 +11,7 @@ https://olibartfast.ninja/blog/modern-cpp-design-patterns-beyond-gof.html.
 
 ### Composition Root
 
-`vision-inference` owns local executable wiring. `neuriplo-kserve-runtime` owns
+`neuriplo-infer` owns local executable wiring. `neuriplo-kserve-runtime` owns
 serving-process wiring. Runtime dependencies should be created at these
 application boundaries and passed inward, rather than discovered through hidden
 global service locators.
@@ -28,9 +28,9 @@ should not hide domain, backend, or task dependencies from public APIs.
 Inference flows should stay explicit:
 
 1. Acquire input.
-2. Preprocess using `vision-core` task contracts.
+2. Preprocess using `neuriplo-tasks` task contracts.
 3. Execute through `neuriplo` backend abstractions.
-4. Postprocess into `vision-core` result variants.
+4. Postprocess into `neuriplo-tasks` result variants.
 5. Render, serialize, or return results in the owning application.
 
 Pipeline steps may be refactored internally, but cross-repository contracts must
@@ -43,8 +43,8 @@ interfaces:
 
 - `neuriplo`: backend adapters over ONNX Runtime, TensorRT, OpenVINO, and other
   engine APIs.
-- `vision-core`: task adapters between model tensors and stable result types.
-- `vision-inference`: CLI and video IO adapters around user inputs.
+- `neuriplo-tasks`: task adapters between model tensors and stable result types.
+- `neuriplo-infer`: CLI and video IO adapters around user inputs.
 - `neuriplo-kserve-runtime`: KServe V2 protocol adapter around internal task and
   backend contracts.
 
@@ -70,7 +70,7 @@ or compile-time.
 
 Registries are acceptable when they make supported capabilities auditable:
 
-- `vision-core`: model type to task-family routing.
+- `neuriplo-tasks`: model type to task-family routing.
 - `neuriplo`: backend metadata and construction.
 - `neuriplo-platform`: repository ownership and compatibility metadata.
 
@@ -157,9 +157,9 @@ patterns.
 
 | Repository | Primary modern patterns |
 |---|---|
-| `vision-core` | Factory Registry, Strategy, Visitor helpers, type erasure or concepts where useful, Adapter, explicit task contracts |
+| `neuriplo-tasks` | Factory Registry, Strategy, Visitor helpers, type erasure or concepts where useful, Adapter, explicit task contracts |
 | `neuriplo` | Backend Adapter, runtime Factory, State, Decorator for observability, RAII, zero-copy ownership |
-| `vision-inference` | Composition Root, Dependency Injection, Pipeline, Builder, Command, application-boundary logging |
+| `neuriplo-infer` | Composition Root, Dependency Injection, Pipeline, Builder, Command, application-boundary logging |
 | `neuriplo-kserve-runtime` | Producer-Consumer, Queue Worker, Dynamic Batching, Timeout, Circuit Breaker, Bulkhead, Health Endpoint |
 | `videocapture` | Adapter, RAII resource ownership, Strategy for capture backends, double buffering when needed |
 | `neuriplo-platform` | Compatibility Registry, ownership map, ADRs, cross-repository contract docs |

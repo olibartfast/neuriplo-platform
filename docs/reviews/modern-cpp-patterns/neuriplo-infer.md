@@ -1,8 +1,8 @@
-# vision-inference Modern C++ Pattern Review
+# neuriplo-infer Modern C++ Pattern Review
 
 Reviewed on: 2026-06-03
 
-Remote: https://github.com/olibartfast/vision-inference
+Remote: https://github.com/olibartfast/neuriplo-infer
 
 Reviewed ref: `develop` at `6abb233ceef16f3cbd264df8cca8d2e188c9c288`
 
@@ -27,7 +27,7 @@ Key files inspected remotely with `gh`:
 - `VisionApp` is thin and delegates work to an `InferencePipeline`.
 - `InferencePipelineBuilder` is a useful Composition Root for local inference.
 - `CLICommands` and pipeline execution follow a Command-style split.
-- Dependencies on `vision-core`, `neuriplo`, and `videocapture` are fetched via
+- Dependencies on `neuriplo-tasks`, `neuriplo`, and `videocapture` are fetched via
   version variables rather than raw `master`, which is aligned with the platform
   compatibility model.
 

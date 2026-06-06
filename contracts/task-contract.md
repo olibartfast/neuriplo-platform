@@ -1,8 +1,8 @@
 # Task Contract
 
-Owner: `vision-core`
+Owner: `neuriplo-tasks`
 
-Consumers: `vision-inference`, `neuriplo-kserve-runtime`, integration tests
+Consumers: `neuriplo-infer`, `neuriplo-kserve-runtime`, integration tests
 
 Status: Draft
 
@@ -13,7 +13,7 @@ used to execute inference.
 
 ## Responsibilities
 
-`vision-core` owns:
+`neuriplo-tasks` owns:
 
 - Task identity and supported task types.
 - Input normalization requirements.
@@ -47,7 +47,7 @@ Consumers must not:
 
 ## Validation Strategy
 
-- Unit tests in `vision-core` validate task behavior.
+- Unit tests in `neuriplo-tasks` validate task behavior.
 - Integration tests in this repository validate task execution through local and
   serving runtimes.
 - Example fixtures should cover at least one representative input and output per

@@ -17,9 +17,9 @@ behavior changes.
 ## Procedure
 
 1. Identify the source of truth.
-   - `vision-core` for task and result contracts.
+   - `neuriplo-tasks` for task and result contracts.
    - `neuriplo` for backend execution and runtime compatibility.
-   - `vision-inference` for local CLI and application flow.
+   - `neuriplo-infer` for local CLI and application flow.
    - `neuriplo-kserve-runtime` for serving protocol and lifecycle behavior.
    - `videocapture` for source and video IO contracts.
 
