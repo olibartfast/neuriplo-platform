@@ -1,6 +1,6 @@
 # Local Inference Smoke Test
 
-Validation status: Draft executable smoke
+Validation status: Draft executable smoke, not a release E2E
 
 Version set: `initial-architecture-baseline`
 
@@ -36,6 +36,9 @@ matrix before running expensive model export or inference work.
 - backend dependency installation
 - real inference execution
 - numerical or visual output correctness
+
+Use `../kserve-runtime-e2e/run.py` for the real local KServe runtime release
+validation path.
 
 ## Usage
 
