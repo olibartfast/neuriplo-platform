@@ -26,7 +26,7 @@ repositories:
     owner: serving-runtime-layer
     visibility: public
     version: wip
-    ref: bb17308470cd6ba2c4a850af6704c4bfa51a0558
+    ref: 0b559bc78e9a5dbb4c8cbde80ad438e07d92056a
   videocapture:
     owner: video-io
     visibility: public
@@ -44,4 +44,4 @@ compatibility_sets:
       neuriplo: v0.4.0
       neuriplo-infer: v0.3.2
       videocapture: v0.2.0
-      neuriplo-kserve-runtime: bb17308470cd6ba2c4a850af6704c4bfa51a0558
+      neuriplo-kserve-runtime: 0b559bc78e9a5dbb4c8cbde80ad438e07d92056a
