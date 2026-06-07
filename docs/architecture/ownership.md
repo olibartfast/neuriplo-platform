@@ -1,6 +1,6 @@
 # Ownership Model
 
-This document defines responsibility boundaries across the vision inference
+This document defines responsibility boundaries across the neuriplo inference
 ecosystem. When a change spans multiple repositories, use this model to decide
 where the durable implementation should live.
 

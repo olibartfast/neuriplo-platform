@@ -6,7 +6,7 @@ Status: Accepted
 
 ## Problem
 
-The vision inference ecosystem spans multiple repositories with distinct
+The neuriplo inference ecosystem spans multiple repositories with distinct
 responsibilities. Without a coordination point, architecture decisions, version
 compatibility, integration scenarios, and cross-repository contracts can drift
 into implementation repositories where ownership becomes unclear.
