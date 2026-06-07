@@ -54,6 +54,7 @@ neuriplo-platform       = architecture control plane
 ## Start Here
 
 - [Architecture overview](docs/architecture/overview.md)
+- [Production architecture roadmap](docs/architecture/production-roadmap.md)
 - [Ownership model](docs/architecture/ownership.md)
 - [ADR index](docs/adr/README.md)
 - [Contract index](contracts/README.md)

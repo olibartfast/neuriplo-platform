@@ -154,6 +154,9 @@ Does not own:
 
 - `docs/architecture/modern-patterns.md`: modern C++ and service pattern
   taxonomy for repository boundaries, serving reliability, and change review.
+- `docs/architecture/production-roadmap.md`: production-readiness roadmap for
+  contracts, compatibility CI, release policy, observability, reliability,
+  security, deployment, failure modes, fitness tests, and runbooks.
 - `docs/architecture/repo-name-migration.md`: legacy to canonical repository
   naming table for the `vision-*` rename.
 
