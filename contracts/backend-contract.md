@@ -2,14 +2,16 @@
 
 Owner: `neuriplo`
 
-Consumers: `neuriplo-infer`, `neuriplo-kserve-runtime`, integration tests
+Consumers: `neuriplo-infer` embedded local mode, `neuriplo-kserve-runtime`, integration tests
 
 Status: Draft
 
 ## Purpose
 
-Define the execution boundary between application/runtime code and inference
-backends such as ONNX Runtime, TensorRT, OpenVINO, or future engines.
+Define the execution boundary between embedded local application or serving
+runtime code and inference backends such as ONNX Runtime, TensorRT, OpenVINO, or
+future engines. `neuriplo-infer` remote KServe client mode consumes the KServe V2
+runtime contract instead of this backend contract directly.
 
 ## Responsibilities
 

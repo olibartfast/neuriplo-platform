@@ -9,7 +9,9 @@ Status: Draft
 ## Purpose
 
 Define serving runtime behavior for model loading, request admission, scheduling,
-inference execution, and operational endpoints.
+inference execution, and operational endpoints. Remote `neuriplo-infer` usage is
+coupled to the KServe V2 protocol surface; the concrete server may be
+`neuriplo-kserve-runtime` or another compatible endpoint.
 
 ## Responsibilities
 
@@ -25,6 +27,8 @@ inference execution, and operational endpoints.
 Consumers may:
 
 - Submit requests using the supported KServe V2 surface.
+- Use `neuriplo-infer` as a KServe V2 client without depending on `neuriplo`
+  backend internals.
 - Observe model readiness.
 - Query operational endpoints.
 - Depend on documented error responses.
@@ -32,6 +36,7 @@ Consumers may:
 Consumers must not:
 
 - Depend on undocumented scheduler internals.
+- Assume every KServe V2 endpoint is implemented by `neuriplo-kserve-runtime`.
 - Assume batching behavior beyond the public configuration contract.
 - Infer model lifecycle state from implementation-specific logs.
 
