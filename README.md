@@ -8,7 +8,7 @@ compatibility, integration tests, and end-to-end examples across:
 - `neuriplo-tasks`: domain and task layer
 - `neuriplo`: backend abstraction layer
 - `neuriplo-infer`: local application layer
-- `neuriplo-kserve-runtime`: serving and runtime layer (WIP / TODO — commit-pinned, not yet released)
+- `neuriplo-kserve-runtime`: serving and runtime layer (WIP / TODO - commit-pinned, not yet released)
 - `videocapture`: video and image source layer consumed by `neuriplo-infer`
 
 It should not contain runtime business logic, model-specific implementation,
