@@ -30,3 +30,6 @@ Each integration test should document:
 
 - [Local inference smoke](local-inference-smoke/README.md): validates local sibling
   checkouts, pinned refs, and the app-owned E2E runner dry-run path.
+- [KServe runtime E2E](kserve-runtime-e2e/README.md): starts the real serving
+  runtime, runs the app-layer KServe HTTP client against it, verifies rendered
+  output, and checks metrics.
