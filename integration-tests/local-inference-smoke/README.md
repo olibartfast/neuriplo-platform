@@ -40,6 +40,26 @@ matrix before running expensive model export or inference work.
 Use `../kserve-runtime-e2e/run.py` for the real local KServe runtime release
 validation path.
 
+## Integration Test Plan
+
+The release-grade local inference test should extend this smoke in ordered
+stages:
+
+1. Read the selected compatibility set from `versions.yaml`.
+2. Verify each sibling checkout exists and resolves to the pinned tag or commit.
+3. Configure and build the minimum targets needed for `neuriplo-tasks`,
+   `neuriplo`, and `neuriplo-infer`.
+4. Run a mock or tiny fixture inference through the app-owned runner:
+   `local image -> task -> backend -> result`.
+5. Assert contract-level output:
+   task type resolved, backend abstraction used, typed result family returned,
+   and app output artifact created.
+6. Record validation evidence in the PR using `ops/PR_EVIDENCE_TEMPLATE.md`.
+
+The first executable version should prefer a mock backend or tiny fixture model
+so it can run before GPU, model download, or large artifact requirements are
+introduced.
+
 ## Usage
 
 From `neuriplo-platform`:

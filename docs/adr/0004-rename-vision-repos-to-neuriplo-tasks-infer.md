@@ -182,7 +182,8 @@ coordinated ecosystem version bump.
 6. Rename GitHub repo `vision-inference` to `neuriplo-infer`.
 7. Land neuriplo-infer PR: consumer updates, self rename, pins to new task
    release.
-8.  vision-ros already updated to neuriplo-ros, tritonic will remain unchainged; run cross-repo smoke.
+8. `vision-ros` already updated to `neuriplo-ros`; `tritonic` keeps its repo
+   name but must update task-library references. Run cross-repo smoke.
 9. Tag releases; update `versions.yaml` compatibility set to released tags.
 10. Document shim removal target in task-library CHANGELOG; remove shims in next
     major.
