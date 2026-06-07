@@ -22,6 +22,31 @@ neuriplo-platform
 coordinates architecture, contracts, versions, examples, and integration tests
 ```
 
+## C4-Style Context
+
+```text
+Person: platform maintainer
+  |
+  | reads and updates policy, contracts, ADRs, versions, examples, smoke plans
+  v
+System: neuriplo-platform
+  |
+  | governs compatibility expectations for
+  v
+System boundary: neuriplo inference ecosystem
+  |
+  |- neuriplo-tasks: task contract, preprocess, postprocess, result type
+  |- neuriplo: backend abstraction, backend execution
+  |- neuriplo-infer: local CLI, configuration, runtime wiring, output rendering
+  |- neuriplo-kserve-runtime: KServe V2 serving runtime
+  '- videocapture: image and video source handling
+
+External systems:
+  |- model artifacts and labels
+  |- container runtime and GPU or CPU backend packages
+  '- secondary consumers such as neuriplo-ros and tritonic
+```
+
 ## Repository Responsibilities
 
 ### neuriplo-tasks
@@ -129,6 +154,8 @@ Does not own:
 
 - `docs/architecture/modern-patterns.md`: modern C++ and service pattern
   taxonomy for repository boundaries, serving reliability, and change review.
+- `docs/architecture/repo-name-migration.md`: legacy to canonical repository
+  naming table for the `vision-*` rename.
 
 ## Architectural Questions
 

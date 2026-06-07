@@ -85,6 +85,47 @@ focus on contract-level behavior:
 - `neuriplo-infer` renders or serializes the result without redefining task
   semantics
 
+## Concrete Flow
+
+```text
+local image
+  |
+  v
+neuriplo-infer
+  |- parses CLI/config
+  |- opens the source image directly or through videocapture
+  '- selects model preset and backend settings
+  |
+  v
+neuriplo-tasks
+  |- resolves task type
+  |- preprocesses image into task input tensors
+  '- records task metadata needed for postprocessing
+  |
+  v
+neuriplo
+  |- selects backend adapter
+  |- loads or reuses the model artifact
+  '- executes inference and returns raw output tensors
+  |
+  v
+neuriplo-tasks
+  |- postprocesses raw tensors
+  '- returns typed result family
+  |
+  v
+neuriplo-infer
+  |- serializes or renders result
+  '- writes output artifact owned by the app workflow
+```
+
+Contract checkpoints:
+
+- source image path is an app input, not a platform artifact
+- task type and result family come from `neuriplo-tasks`
+- backend selection crosses the `neuriplo` abstraction
+- output rendering does not redefine task or result semantics
+
 ## Future Automation
 
 A future integration test should read `versions.yaml`, verify local checkouts and
