@@ -7,19 +7,16 @@ and service patterns are mapped in `modern-patterns.md`.
 ## Ecosystem Map
 
 ```text
-neuriplo-tasks
-    |
-neuriplo
-    |
-neuriplo-infer
+embedded local mode:
+  neuriplo-infer -> neuriplo-tasks + neuriplo + videocapture
 
-neuriplo-kserve-runtime
-    |
-neuriplo
+remote KServe client mode:
+  neuriplo-infer -> KServe V2 endpoint
+                   |- neuriplo-kserve-runtime -> neuriplo-tasks + neuriplo
+                   '- other KServe-compatible servers
 
-neuriplo-platform
-    |
-coordinates architecture, contracts, versions, examples, and integration tests
+neuriplo-platform coordinates architecture, contracts, versions, examples, and
+integration tests across both modes.
 ```
 
 ## C4-Style Context
@@ -37,13 +34,14 @@ System boundary: neuriplo inference ecosystem
   |
   |- neuriplo-tasks: task contract, preprocess, postprocess, result type
   |- neuriplo: backend abstraction, backend execution
-  |- neuriplo-infer: local CLI, configuration, runtime wiring, output rendering
-  |- neuriplo-kserve-runtime: KServe V2 serving runtime
+  |- neuriplo-infer: embedded local app and KServe V2 client
+  |- neuriplo-kserve-runtime: KServe V2 server backed by neuriplo
   '- videocapture: image and video source handling
 
 External systems:
   |- model artifacts and labels
   |- container runtime and GPU or CPU backend packages
+  |- KServe-compatible serving endpoints
   '- secondary consumers such as neuriplo-ros and tritonic
 ```
 
@@ -93,9 +91,10 @@ Owns:
 
 - CLI
 - Configuration
-- Runtime wiring
+- Runtime wiring for embedded local inference
+- KServe V2 client wiring for remote inference
 - Visualization
-- End-to-end local application flow
+- End-to-end local and remote application flow
 
 Likely patterns:
 
@@ -154,6 +153,8 @@ Does not own:
 
 - `docs/architecture/modern-patterns.md`: modern C++ and service pattern
   taxonomy for repository boundaries, serving reliability, and change review.
+- `docs/architecture/inference-modes.md`: embedded local and remote KServe
+  client/server dependency modes for `neuriplo-infer`.
 - `docs/architecture/production-roadmap.md`: production-readiness roadmap for
   contracts, compatibility CI, release policy, observability, reliability,
   security, deployment, failure modes, fitness tests, and runbooks.

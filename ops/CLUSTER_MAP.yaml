@@ -8,6 +8,7 @@ cluster:
     backend_abstraction: neuriplo
     local_application_flow: neuriplo-infer
     serving_runtime: neuriplo-kserve-runtime
+    remote_inference_protocol: kserve-v2
     video_io: videocapture
   local_checkout_hints:
     neuriplo-platform: .
@@ -74,12 +75,20 @@ repos:
       - neuriplo-tasks
       - neuriplo
       - videocapture
+    mode_dependencies:
+      embedded_local:
+        - neuriplo-tasks
+        - neuriplo
+        - videocapture
+      remote_kserve_client:
+        - kserve-v2-protocol
     provides:
       - cli
       - app_config
       - runtime_wiring
       - visualization
       - local_e2e_execution
+      - kserve_v2_client
     automation_scope:
       - ci-triage
       - downstream-api-migration
@@ -133,6 +142,7 @@ dependency_edges:
   - from: neuriplo-infer
     to: neuriplo
     type: runtime
+    mode: embedded_local
     critical_contracts:
       - backend selection
       - device placement
@@ -158,6 +168,28 @@ dependency_edges:
       - backend execution contract
       - capability reporting
       - runtime error normalization
+
+protocol_edges:
+  - from: neuriplo-infer
+    to: kserve-v2
+    type: remote_client_protocol
+    mode: remote_kserve_client
+    compatible_servers:
+      - neuriplo-kserve-runtime
+      - Triton Inference Server
+      - OpenVINO Model Server
+      - KServe-compatible TorchServe deployment
+    critical_contracts:
+      - inference request and response schema
+      - model metadata schema
+      - health and readiness endpoints
+      - protocol-level error semantics
+  - from: neuriplo-kserve-runtime
+    to: kserve-v2
+    type: server_protocol
+    critical_contracts:
+      - map protocol requests to task and backend execution
+      - normalize backend capability and failure details at protocol boundary
 validation_order:
   - repo_local
   - downstream_integration

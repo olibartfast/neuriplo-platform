@@ -10,7 +10,7 @@ Owning repos:
 - `neuriplo-platform`: cross-repository E2E orchestration and release evidence.
 - `neuriplo-kserve-runtime`: KServe V2 serving runtime process.
 - `neuriplo`: backend abstraction and ONNX Runtime execution.
-- `neuriplo-infer`: app-layer binary that calls a remote KServe endpoint.
+- `neuriplo-infer`: app-layer KServe V2 client binary that calls a remote endpoint.
 - `neuriplo-tasks`: YOLO task preprocessing and postprocessing contracts.
 
 ## Purpose
@@ -19,7 +19,8 @@ Run a real local release-gate path for the serving runtime instead of a dry-run
 smoke. The test starts `neuriplo-kserve-runtime`, waits for KServe readiness,
 checks model metadata, invokes the `neuriplo-infer` app binary against the HTTP
 KServe endpoint, verifies a refreshed rendered output image, checks success and
-failure metrics, and stops the runtime.
+failure metrics, and stops the runtime. This validates `neuriplo-kserve-runtime`
+as one compatible server for the protocol-level client path.
 
 ## Required Local Artifacts
 
@@ -51,7 +52,8 @@ integration-tests/kserve-runtime-e2e/run.py   --runtime-bin ../neuriplo-kserve-r
 - `/v2/health/live` and `/v2/health/ready` report true
 - `/v2/models/yolo` reports `neuriplo_onnx_runtime`, input `images`, and output
   `output0`
-- the app-layer executable sends a real KServe HTTP inference request
+- the app-layer executable sends a real KServe HTTP inference request without
+  depending on `neuriplo` backend internals
 - `../neuriplo-infer/data/output/processed.png` is refreshed and non-empty
 - Prometheus metrics report one successful infer request and zero failures
 
