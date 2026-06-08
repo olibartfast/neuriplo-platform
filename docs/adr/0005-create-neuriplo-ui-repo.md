@@ -82,7 +82,7 @@ Ownership and reuse:
 Sequencing (avoid paying separation costs before they earn their keep):
 
 - The separate repo is the committed *destination*, but it is created when the
-  first non-desktop target (web or Android) is committed — that is the point
+  first non-desktop target (web or Android) is committed; that is the point
   where separation stops being theoretical and the remote-serving transport
   becomes the natural seam.
 - Until then, prototype the Linux desktop GUI inside `neuriplo-infer` behind an
