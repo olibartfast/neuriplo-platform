@@ -10,18 +10,18 @@ repositories:
   neuriplo-tasks:
     owner: domain-task-layer
     visibility: public
-    version: v0.3.2
-    ref: d11e2f9b7bc1df543e46ee96e792a50fda539dab
+    version: v0.4.0
+    ref: 24083b195415285e16009e20371d26f9bcf5b8dc
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
-    version: v0.4.0
-    ref: b6bffd0e159a9a82f2deb2bdb92a7fd0c638d487
+    version: v0.5.0
+    ref: 767240f3c405817c9d58c1c02c3f8952c5e0271e
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.3.2
-    ref: d38900302e2755069c9d625168d018144a4cd07f
+    version: v0.4.1
+    ref: d20c404f00233cdd9bebcfce468f9676c4600402
   neuriplo-kserve-runtime:
     owner: serving-runtime-layer
     visibility: public
@@ -30,8 +30,8 @@ repositories:
   videocapture:
     owner: video-io
     visibility: public
-    version: v0.2.0
-    ref: d492fa0335363adbefe4cd29501e7ae0d08c304a
+    version: v0.3.0
+    ref: fb94bd4f371fa741f8ad0e9a61e7ec2d991359b7
 
 compatibility_sets:
   - name: initial-architecture-baseline
@@ -40,8 +40,8 @@ compatibility_sets:
       - neuriplo-tasks, neuriplo, neuriplo-infer, and videocapture use published tags.
       - neuriplo-kserve-runtime is WIP and currently pinned by commit.
     repositories:
-      neuriplo-tasks: v0.3.2
-      neuriplo: v0.4.0
-      neuriplo-infer: v0.3.2
-      videocapture: v0.2.0
+      neuriplo-tasks: v0.4.0
+      neuriplo: v0.5.0
+      neuriplo-infer: v0.4.1
+      videocapture: v0.3.0
       neuriplo-kserve-runtime: 0b559bc78e9a5dbb4c8cbde80ad438e07d92056a
