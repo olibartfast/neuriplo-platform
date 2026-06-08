@@ -45,8 +45,8 @@ queueing, scheduling, batching, and operational behavior.
 
 `neuriplo-kserve-runtime` is one compatible server implementation. The same
 client path should also be usable with other KServe-compatible endpoints, such as
-Triton Inference Server, OpenVINO Model Server, or a KServe-compatible TorchServe
-deployment, subject to model metadata and tensor schema compatibility.
+Triton Inference Server or OpenVINO Model Server, subject to model metadata and
+tensor schema compatibility.
 
 Use this mode when the goal is remote inference, service isolation, independent
 server deployment, or compatibility with non-Neuriplo KServe endpoints.

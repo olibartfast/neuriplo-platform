@@ -178,7 +178,6 @@ protocol_edges:
       - neuriplo-kserve-runtime
       - Triton Inference Server
       - OpenVINO Model Server
-      - KServe-compatible TorchServe deployment
     critical_contracts:
       - inference request and response schema
       - model metadata schema
