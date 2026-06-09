@@ -54,9 +54,15 @@ CI should prefer:
 
 ### neuriplo
 
+- `cmake/CompileSpeed.cmake` enables ccache when available.
 - Release-only optimization: `-O3 -ffast-math` applies to `Release` builds
   only (`cmake/SetCompilerFlags.cmake`).
 - Avoid `--clean-first` in CI when separate build directories are available.
+
+### neuriplo-kserve-client
+
+- `cmake/CompileSpeed.cmake` enables ccache when available.
+- CI should use Ninja and `ccache-action`.
 
 ### neuriplo-tasks
 
@@ -69,6 +75,25 @@ CI should prefer:
 
 - CMake presets use Ninja.
 - `real-onnx` preset is the largest compile profile because it embeds neuriplo.
+
+## Progress Validation
+
+Run the platform progress checker against local sibling checkouts:
+
+```bash
+scripts/check_component_progress.py
+```
+
+Use `--require-local` to fail when any implementation checkout is missing. The
+checker validates the baseline tooling and repo-specific rules documented in
+this runbook for:
+
+- `neuriplo-tasks`
+- `neuriplo`
+- `neuriplo-infer`
+- `neuriplo-kserve-client`
+- `neuriplo-kserve-runtime`
+- `videocapture`
 
 ## Measurement Before Further Changes
 

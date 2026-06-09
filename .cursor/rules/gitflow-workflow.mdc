@@ -1,0 +1,56 @@
+---
+description: Mandatory Gitflow branching rules before any commit, push, or PR
+alwaysApply: true
+---
+
+# Gitflow Workflow (Mandatory)
+
+Follow the Gitflow model from Atlassian's Gitflow tutorial, mapped to this
+ecosystem's branch names in `ops/policies.yaml`.
+
+Reference: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
+
+## Branch Roles
+
+| Gitflow role | Sibling implementation repos | neuriplo-platform |
+|--------------|------------------------------|-------------------|
+| Production / release history | `master` | `main` |
+| Integration | `develop` | n/a (use `main`) |
+| Feature work | `feat/*`, `feature/*` from `develop` | short-lived branch from `main` if needed |
+| Release prep | `release/*` from `develop` | n/a |
+| Production hotfix | `hotfix/*` from `master` | hotfix branch from `main` |
+
+## Required Flow
+
+1. **Features**: branch from `develop`, merge back to `develop` only. Never merge
+   feature work directly into `master` / platform `main`.
+2. **Releases**: branch `release/*` from `develop`; when ready, merge into both
+   `master` and `develop`; tag the release on `master`.
+3. **Hotfixes**: branch from `master` (or platform `main`); merge into both
+   `master` and `develop` when complete; tag on `master`.
+4. **Platform docs/contracts**: normal work stays on `main` or a branch targeting
+   `main`. Do not use sibling `develop`/`master` naming in `neuriplo-platform`.
+
+## Before Every Commit, Push, or PR
+
+1. Confirm the current branch matches the change type (feature / release / hotfix / platform).
+2. Confirm the target branch is allowed:
+   - sibling normal work -> `develop` (or `feat/*` / `feature/*`)
+   - sibling release -> `master` via release/hotfix flow only
+   - platform -> `main`
+3. Never push normal development work directly to sibling `master`.
+4. Never force-push to `main` or `master`.
+5. Run repo-local validation before commit (`scripts/check_platform.py` here;
+   owning-repo tests/build in implementation repos).
+6. Only commit or push when the user explicitly asks.
+
+## Default Commands (sibling feature work)
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feat/short-description
+# work, validate, commit
+git push -u origin feat/short-description
+# open PR -> develop
+```

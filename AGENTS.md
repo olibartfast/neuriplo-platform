@@ -19,10 +19,11 @@ This repo has no build step. Use validation commands instead:
 
 ```bash
 scripts/check_platform.py
+scripts/check_component_progress.py
 integration-tests/local-inference-smoke/run.py
 ```
 
-`check_platform.py` validates YAML metadata, required docs, examples, integration-test shape, ASCII content, and version policy. The smoke test checks local sibling checkouts and dry-runs the app-owned E2E runner.
+`check_platform.py` validates YAML metadata, required docs, examples, integration-test shape, ASCII content, and version policy. `check_component_progress.py` reports compile-speed and baseline tooling progress across local sibling implementation repos (see `ops/runbooks/faster-compilation.md`). The smoke test checks local sibling checkouts and dry-runs the app-owned E2E runner.
 
 ## Coding Style & Naming Conventions
 
@@ -37,6 +38,12 @@ Run `scripts/check_platform.py` before every commit. If integration-test metadat
 ## Commit & Pull Request Guidelines
 
 Use concise imperative commit subjects, matching existing history, for example `Add local inference smoke integration test`. Keep platform-only changes on `main`. Sibling implementation repos follow Gitflow: normal work targets `develop`, `feat/*`, or `feature/*`; `master` is release-only.
+
+Before any commit or push, follow the mandatory Gitflow rules in
+`.cursor/rules/gitflow-workflow.mdc` and `ops/policies.yaml`. Feature work
+merges to `develop`; release and hotfix work merges to `master` and back to
+`develop`; never push normal work directly to sibling `master` or force-push
+`main`/`master`.
 
 PRs should describe changed docs/contracts, affected repos, validation output, and any follow-up required. Use `ops/PR_EVIDENCE_TEMPLATE.md` for cross-repo maintenance work.
 
