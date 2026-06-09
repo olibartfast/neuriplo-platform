@@ -43,6 +43,18 @@ Examples:
 - Visualization and local output formatting
 - End-to-end local and remote workflows
 
+### KServe Protocol Client
+
+Belongs in `neuriplo-kserve-client`.
+
+Examples:
+
+- KServe V2 / Open Inference Protocol client (HTTP and gRPC transports)
+- Wire encode/decode over raw little-endian tensor bytes
+- Client-side health/readiness probes and model repository calls (index/load/unload)
+- Transport reliability: retry/backoff, keep-alive, TLS/mTLS, auth
+- Anything reusable by a KServe client that must stay free of inference-backend code
+
 ### Serving Runtime
 
 Belongs in `neuriplo-kserve-runtime`.
@@ -77,6 +89,10 @@ If a change is about how inference runs on a backend, put it in `neuriplo`.
 
 If a change is about how a user runs embedded local inference or calls a remote
 KServe endpoint, put it in `neuriplo-infer`.
+
+If a change is about how the KServe V2 wire protocol is spoken on the client side
+(transports, encode/decode, retries, TLS) and must not depend on an inference
+backend, put it in `neuriplo-kserve-client`.
 
 If a change is about serving KServe requests in production or mapping those
 requests to Neuriplo task/backend execution, put it in `neuriplo-kserve-runtime`.

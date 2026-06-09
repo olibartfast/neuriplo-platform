@@ -30,7 +30,10 @@ backend execution without a client/server boundary.
 CLI/config
   |
   v
-neuriplo-infer KServe V2 client
+neuriplo-infer (KServe client wiring: KserveEngine adapter)
+  |
+  v
+neuriplo-kserve-client (backend-agnostic KServe V2 protocol client, HTTP/gRPC)
   |
   v
 KServe V2 endpoint
@@ -40,7 +43,10 @@ KServe V2 endpoint
 ```
 
 In this mode `neuriplo-infer` is coupled to the KServe V2 client protocol, not to
-`neuriplo` backend internals. The server owns model loading, task/backend wiring,
+`neuriplo` backend internals. The wire protocol itself is implemented in the
+standalone `neuriplo-kserve-client` library (consumed via FetchContent); only the
+`KserveEngine` adapter that maps protocol bytes to the neuriplo inference contract
+lives in `neuriplo-infer`. The server owns model loading, task/backend wiring,
 queueing, scheduling, batching, and operational behavior.
 
 `neuriplo-kserve-runtime` is one compatible server implementation. The same
@@ -55,6 +61,8 @@ server deployment, or compatibility with non-Neuriplo KServe endpoints.
 
 - Embedded local mode may depend directly on `neuriplo`.
 - Remote KServe client mode must not depend on `neuriplo` backend internals.
+- `neuriplo-kserve-client` must stay backend-agnostic (raw tensor bytes, no
+  `neuriplo` dependency) so it remains reusable by any KServe V2 consumer.
 - `neuriplo-kserve-runtime` may depend on `neuriplo`; it owns that server-side
   composition.
 - KServe client compatibility is governed by the runtime contract and model

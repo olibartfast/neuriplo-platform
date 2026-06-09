@@ -8,6 +8,7 @@ compatibility, integration tests, and end-to-end examples across:
 - `neuriplo-tasks`: domain and task layer
 - `neuriplo`: backend abstraction layer
 - `neuriplo-infer`: local application layer
+- `neuriplo-kserve-client`: KServe V2 protocol client layer (backend-agnostic HTTP/gRPC client) consumed by `neuriplo-infer`
 - `neuriplo-kserve-runtime`: serving and runtime layer (WIP / TODO - commit-pinned, not yet released)
 - `videocapture`: video and image source layer consumed by `neuriplo-infer`
 
@@ -46,6 +47,7 @@ For every major platform change:
 neuriplo-tasks          = domain/task layer
 neuriplo                = backend abstraction layer
 neuriplo-infer          = local application layer
+neuriplo-kserve-client  = KServe V2 protocol client layer (consumed by neuriplo-infer)
 neuriplo-kserve-runtime = serving/runtime layer (WIP / TODO)
 videocapture            = video/image source layer
 neuriplo-platform       = architecture control plane
