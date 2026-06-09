@@ -37,13 +37,17 @@ Run `scripts/check_platform.py` before every commit. If integration-test metadat
 
 ## Commit & Pull Request Guidelines
 
-Use concise imperative commit subjects, matching existing history, for example `Add local inference smoke integration test`. Keep platform-only changes on `main`. Sibling implementation repos follow Gitflow: normal work targets `develop`, `feat/*`, or `feature/*`; `master` is release-only.
+Use concise imperative commit subjects, matching existing history, for example `Add local inference smoke integration test`. Keep platform-only changes on `main`.
 
-Before any commit or push, follow the mandatory Gitflow rules in
-`.cursor/rules/gitflow-workflow.mdc` and `ops/policies.yaml`. Feature work
-merges to `develop`; release and hotfix work merges to `master` and back to
-`develop`; never push normal work directly to sibling `master` or force-push
-`main`/`master`.
+**Coding components** (`neuriplo-tasks`, `neuriplo`, `neuriplo-infer`,
+`neuriplo-kserve-client`, `neuriplo-kserve-runtime`, `videocapture`) must follow
+Gitflow before commit, push, or PR: normal work targets `develop`, `feat/*`, or
+`feature/*`; `master` is release-only. See `.cursor/rules/gitflow-workflow.mdc`
+and `ops/policies.yaml`.
+
+**neuriplo-platform** is the document/architecture orchestrator. Gitflow is not
+mandatory here; work normally lands on `main`. Do not apply sibling
+`develop`/`master` branch rules to this repo.
 
 PRs should describe changed docs/contracts, affected repos, validation output, and any follow-up required. Use `ops/PR_EVIDENCE_TEMPLATE.md` for cross-repo maintenance work.
 
