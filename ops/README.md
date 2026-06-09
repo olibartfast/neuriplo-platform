@@ -20,6 +20,8 @@ Core inference repos:
 
 Supporting repos:
 
+- `neuriplo-kserve-client`: backend-agnostic KServe V2 protocol client
+  (HTTP/gRPC) consumed by `neuriplo-infer` for remote inference.
 - `videocapture`: image/video source handling consumed by `neuriplo-infer`.
 
 Control-plane repo:

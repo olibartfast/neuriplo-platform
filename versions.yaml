@@ -22,6 +22,11 @@ repositories:
     visibility: public
     version: v0.4.1
     ref: d20c404f00233cdd9bebcfce468f9676c4600402
+  neuriplo-kserve-client:
+    owner: kserve-protocol-client-layer
+    visibility: public
+    version: v0.1.0
+    ref: 77995f9594f854d3bf5425eb469f1dca005e18de
   neuriplo-kserve-runtime:
     owner: serving-runtime-layer
     visibility: public
@@ -37,11 +42,13 @@ compatibility_sets:
   - name: initial-architecture-baseline
     status: draft
     notes:
-      - neuriplo-tasks, neuriplo, neuriplo-infer, and videocapture use published tags.
+      - neuriplo-tasks, neuriplo, neuriplo-infer, videocapture, and neuriplo-kserve-client use published tags.
+      - neuriplo-infer v0.4.1 predates its FetchContent dependency on neuriplo-kserve-client (added post-v0.4.1 on feature/neuriplo-kserve-runtime, pinned to v0.1.0).
       - neuriplo-kserve-runtime is WIP and currently pinned by commit.
     repositories:
       neuriplo-tasks: v0.4.0
       neuriplo: v0.5.0
       neuriplo-infer: v0.4.1
+      neuriplo-kserve-client: v0.1.0
       videocapture: v0.3.0
       neuriplo-kserve-runtime: 0b559bc78e9a5dbb4c8cbde80ad438e07d92056a

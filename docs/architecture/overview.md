@@ -11,9 +11,9 @@ embedded local mode:
   neuriplo-infer -> neuriplo-tasks + neuriplo + videocapture
 
 remote KServe client mode:
-  neuriplo-infer -> KServe V2 endpoint
+  neuriplo-infer -> neuriplo-kserve-client -> KServe V2 endpoint
                    |- neuriplo-kserve-runtime -> neuriplo-tasks + neuriplo
-                   '- other KServe-compatible servers
+                   '- other KServe-compatible servers (Triton, OVMS, ...)
 
 neuriplo-platform coordinates architecture, contracts, versions, examples, and
 integration tests across both modes.
@@ -34,7 +34,8 @@ System boundary: neuriplo inference ecosystem
   |
   |- neuriplo-tasks: task contract, preprocess, postprocess, result type
   |- neuriplo: backend abstraction, backend execution
-  |- neuriplo-infer: embedded local app and KServe V2 client
+  |- neuriplo-infer: embedded local app and KServe V2 client wiring
+  |- neuriplo-kserve-client: backend-agnostic KServe V2 protocol client (HTTP/gRPC)
   |- neuriplo-kserve-runtime: KServe V2 server backed by neuriplo
   '- videocapture: image and video source handling
 
@@ -103,6 +104,24 @@ Likely patterns:
 - Facade
 - Builder
 - Command
+
+### neuriplo-kserve-client
+
+Owns:
+
+- KServe V2 / Open Inference Protocol client (HTTP and gRPC transports)
+- Wire protocol encode/decode over raw little-endian tensor bytes
+- Health/readiness probes and the model repository extension (index/load/unload)
+- Transport concerns: retry/backoff, keep-alive, TLS/mTLS, auth
+- No dependency on any inference backend (consumed by neuriplo-infer)
+
+Likely patterns:
+
+- Adapter
+- Strategy (transport selection)
+- Facade
+- Retry / Backoff / Timeout
+- Pure protocol/codec helpers
 
 ### neuriplo-kserve-runtime
 

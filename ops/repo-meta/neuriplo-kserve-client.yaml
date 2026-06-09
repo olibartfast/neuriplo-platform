@@ -1,0 +1,67 @@
+name: neuriplo-kserve-client
+repo_root: ../neuriplo-kserve-client
+role: kserve-protocol-client-layer
+default_branches:
+  integration: develop
+  release: master
+
+# Backend-agnostic: carries raw little-endian tensor bytes, so it depends on no
+# neuriplo sibling. External-only build deps (nlohmann_json; optional gRPC/
+# Protobuf and OpenSSL) are pinned in the owning repository.
+dependencies: []
+
+entrypoints:
+  configure_default:
+    - cmake -B build -DKSERVE_CLIENT_BUILD_TESTS=ON
+  configure_http_only:
+    - cmake -B build -DKSERVE_CLIENT_BUILD_TESTS=ON -DKSERVE_CLIENT_ENABLE_GRPC=OFF
+  build:
+    - cmake --build build
+  test:
+    - ctest --test-dir build --output-on-failure
+
+api_surface:
+  public_components:
+    - kserve::IClient protocol contract (KserveTypes)
+    - HTTP transport (kserve::HttpClient)
+    - gRPC transport (kserve::GrpcClient)
+    - KServe V2 gRPC service proto (inference.GRPCInferenceService)
+    - protocol helpers (URL/HTTP parsing, tensor encode/decode, path builders)
+    - retry policy with exponential backoff + jitter
+    - model repository extension (index / load / unload)
+  build_flags:
+    - KSERVE_CLIENT_ENABLE_GRPC
+    - KSERVE_CLIENT_ENABLE_TLS
+    - KSERVE_CLIENT_BUILD_TESTS
+  exported_defines:
+    - KSERVE_CLIENT_WITH_GRPC
+
+constraints:
+  preserve_kserve_wire_compatibility: true
+  preserve_raw_byte_payload_contract: true
+  preserve_no_inference_backend_dependency: true
+  review_proto_changes: mandatory
+  review_iclient_contract_changes: mandatory
+
+owned_paths:
+  - include/
+  - src/
+  - proto/
+  - test/
+  - CMakeLists.txt
+  - README.md
+
+consumers:
+  - neuriplo-infer
+
+automation_rules:
+  allowed_change_classes:
+    - ci-triage
+    - test-fix
+    - docs-sync
+    - protocol-compatibility-fix
+  forbidden_change_classes:
+    - inference-backend-dependency
+    - wire-protocol-break
+    - large-refactor
+    - packaging-release-change

@@ -9,6 +9,9 @@ dependencies:
   - neuriplo-tasks
   - neuriplo
   - videocapture
+  # KServe remote runtime mode only (FetchContent, gated by
+  # NEURIPLO_INFER_ENABLE_KSERVE); pinned via NEURIPLO_KSERVE_CLIENT_VERSION.
+  - neuriplo-kserve-client
 
 entrypoints:
   configure_default:
@@ -74,6 +77,10 @@ cross_repo_contracts:
   consumes_from_videocapture:
     - source open semantics
     - backend selection priority
+  consumes_from_neuriplo_kserve_client:
+    - kserve::IClient protocol contract
+    - raw little-endian tensor byte payloads
+    - KSERVE_CLIENT_WITH_GRPC transport-availability define
 
 automation_rules:
   allowed_change_classes:

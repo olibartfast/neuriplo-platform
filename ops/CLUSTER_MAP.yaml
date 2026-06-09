@@ -9,12 +9,14 @@ cluster:
     local_application_flow: neuriplo-infer
     serving_runtime: neuriplo-kserve-runtime
     remote_inference_protocol: kserve-v2
+    kserve_protocol_client: neuriplo-kserve-client
     video_io: videocapture
   local_checkout_hints:
     neuriplo-platform: .
     neuriplo-tasks: ../neuriplo-tasks
     neuriplo: ../neuriplo
     neuriplo-infer: ../neuriplo-infer
+    neuriplo-kserve-client: ../neuriplo-kserve-client
     neuriplo-kserve-runtime: ../neuriplo-kserve-runtime
     videocapture: ../videocapture
 
@@ -75,12 +77,14 @@ repos:
       - neuriplo-tasks
       - neuriplo
       - videocapture
+      - neuriplo-kserve-client
     mode_dependencies:
       embedded_local:
         - neuriplo-tasks
         - neuriplo
         - videocapture
       remote_kserve_client:
+        - neuriplo-kserve-client
         - kserve-v2-protocol
     provides:
       - cli
@@ -92,6 +96,25 @@ repos:
     automation_scope:
       - ci-triage
       - downstream-api-migration
+      - docs-sync
+      - test-fix
+
+  neuriplo-kserve-client:
+    repo_root: ../neuriplo-kserve-client
+    role: kserve-protocol-client-layer
+    provides:
+      - kserve_v2_protocol_client
+      - http_transport
+      - grpc_transport
+      - kserve_grpc_proto
+      - protocol_codec_helpers
+      - retry_backoff_policy
+      - model_repository_extension
+    consumed_by:
+      - neuriplo-infer
+    automation_scope:
+      - ci-triage
+      - protocol-compatibility-fix
       - docs-sync
       - test-fix
 
@@ -154,6 +177,14 @@ dependency_edges:
       - source semantics
       - backend priority
       - stream reliability
+  - from: neuriplo-infer
+    to: neuriplo-kserve-client
+    type: library
+    mode: remote_kserve_client
+    critical_contracts:
+      - kserve::IClient protocol contract
+      - raw little-endian tensor byte payloads
+      - KSERVE_CLIENT_WITH_GRPC transport-availability define
   - from: neuriplo-kserve-runtime
     to: neuriplo-tasks
     type: api
@@ -174,6 +205,7 @@ protocol_edges:
     to: kserve-v2
     type: remote_client_protocol
     mode: remote_kserve_client
+    via: neuriplo-kserve-client
     compatible_servers:
       - neuriplo-kserve-runtime
       - Triton Inference Server
@@ -204,6 +236,7 @@ agents:
     - neuriplo-tasks-worker
     - neuriplo-worker
     - neuriplo-infer-worker
+    - neuriplo-kserve-client-worker
     - neuriplo-kserve-runtime-worker
     - videocapture-worker
   verifier:

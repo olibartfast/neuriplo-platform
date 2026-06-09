@@ -11,6 +11,7 @@ branch_policy:
     - neuriplo-tasks
     - neuriplo
     - neuriplo-infer
+    - neuriplo-kserve-client
     - neuriplo-kserve-runtime
     - videocapture
   sibling_rules:
