@@ -37,6 +37,8 @@ Control-plane repo:
 - `repo-meta/*.yaml`: repo-specific entrypoints, public surfaces, constraints.
 - `runbooks/`: execution guides for high-value maintenance flows.
 - `PR_EVIDENCE_TEMPLATE.md`: standard evidence block for cross-repo PRs.
+- `../scripts/check_component_progress.py`: local progress checker for
+  compile-speed and baseline tooling across sibling implementation repos.
 
 ## Migration Note
 
