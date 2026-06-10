@@ -16,6 +16,8 @@ interface used across repositories.
   for `neuriplo-kserve-runtime`.
 - [Configuration contract](configuration-contract.md): shared configuration
   expectations across local and serving flows.
+- [Event contract](event-contract.md): broker-published result event envelope
+  produced by `neuriplo-infer` and observed by out-of-process consumers.
 
 ## Contract Template
 
