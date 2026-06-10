@@ -210,6 +210,74 @@ ops/runbooks/release-checklist.md
 Runbooks should include symptoms, immediate checks, owner escalation, validation
 commands, rollback criteria, and evidence to attach to PRs or incidents.
 
+### 11. Generative Inference Protocol Alignment
+
+Upstream KServe now splits its data plane into two tracks:
+
+```text
+predictive AI:  V1 protocol and V2 Open Inference Protocol (/infer, gRPC)
+generative AI:  OpenAI-compatible endpoints (/v1/chat/completions,
+                /v1/completions, /v1/embeddings) with SSE streaming
+```
+
+The neuriplo ecosystem currently routes the generative
+`ImageUnderstandingTask` (llama.cpp LLM/VLM) over V2 tensors with a
+float-cast-bytes text encoding. That encoding works for embedded local mode
+but goes against where KServe has landed for serving: text generation does
+not fit the tensor protocol (no streaming, no sampling parameters, no chat
+semantics).
+
+Planned alignment, pending an ADR:
+
+```text
+predictive tasks (detection, segmentation, pose, depth, open-vocab,
+classification) stay on V2 Open Inference Protocol via
+neuriplo-kserve-client and neuriplo-kserve-runtime
+
+generative tasks (image_understanding) keep embedded llama.cpp for local
+and edge mode; at serving scale they are exposed through an
+OpenAI-compatible endpoint (llama-server or a vLLM-backed deployment)
+rather than reimplemented inside neuriplo-kserve-runtime
+
+neuriplo does not compete with vLLM/KServe on LLM serving; its serving
+differentiation stays on the predictive track
+```
+
+Consequences:
+
+- The V2 float-cast-bytes text encoding becomes an internal detail of
+  embedded local mode and is not a public serving contract.
+- OpenAI-compatible consumers (agent frameworks, gateways) integrate with
+  the generative path with no custom protocol client.
+- Agent-loop economics improve on the OpenAI path: vLLM prefix caching
+  amortizes re-sent prompts, which the V2 tensor path cannot do.
+
+### 12. Secondary Consumers: Agentic Frameworks
+
+`ghostgrid` (multi-provider LLM/VLM agentic workflow framework) is a
+planned secondary consumer alongside `neuriplo-ros` and `tritonic`. Two
+integration paths map onto the two protocol tracks:
+
+```text
+generative path:  ghostgrid consumes neuriplo-ecosystem LLM/VLM output
+                  through OpenAI-compatible endpoints using its existing
+                  openai provider with a custom URL; no new client code
+
+predictive path:  ghostgrid ReAct tools (detect, count, read_text,
+                  open-vocab queries) are backed by neuriplo models over
+                  the V2 Open Inference Protocol, replacing prompt-only
+                  vision tools with grounded typed results
+```
+
+Boundary rules for agentic consumers:
+
+- Consume the V2 wire format and the result contract; do not re-implement
+  task preprocessing or postprocessing outside neuriplo-tasks.
+- Infrastructure routing (rate limits, model placement, gateway concerns)
+  belongs to the serving and gateway layer, not the agent framework.
+- Registration as a secondary consumer requires an ADR and an entry in the
+  ecosystem map in `docs/architecture/overview.md`.
+
 ## Definition Of Done
 
 Production architecture is ready when:
@@ -222,3 +290,7 @@ Production architecture is ready when:
 - architecture fitness tests protect repository boundaries
 - production deployment expectations are explicit enough for repeatable release
   evidence
+- an ADR fixes the predictive/generative protocol split and the serving story
+  for image_understanding
+- secondary consumers, including agentic frameworks, are registered with
+  explicit contract boundaries

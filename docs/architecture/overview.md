@@ -43,7 +43,9 @@ External systems:
   |- model artifacts and labels
   |- container runtime and GPU or CPU backend packages
   |- KServe-compatible serving endpoints
-  '- secondary consumers such as neuriplo-ros and tritonic
+  '- secondary consumers such as neuriplo-ros, tritonic, and ghostgrid
+     (agentic framework; OpenAI-compatible generative path and KServe V2
+     predictive tools, see ADR 0006 and ADR 0007)
 ```
 
 ## Repository Responsibilities
