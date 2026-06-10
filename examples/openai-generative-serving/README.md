@@ -1,5 +1,9 @@
 # OpenAI-Compatible Generative Serving E2E
 
+Validation status: Draft
+
+Version set: `initial-architecture-baseline` from `versions.yaml`
+
 Cross-repo scenario for the generative track defined in ADR 0006: a GGUF
 model from the neuriplo ecosystem is served through an OpenAI-compatible
 endpoint and consumed by external clients, including an agentic secondary
