@@ -5,7 +5,8 @@ semantics via the result contract)
 
 Producer: `neuriplo-infer` (event publisher sink, see ADR 0008)
 
-Consumers: renderer (first consumer), `ghostgrid` (ADR 0007), recorders,
+Consumers: renderer (first consumer),
+[`ghostgrid`](https://github.com/olibartfast/ghostgrid) (ADR 0007), recorders,
 alerting, dashboards, other observers
 
 Status: Draft

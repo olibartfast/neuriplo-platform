@@ -160,6 +160,7 @@ patterns.
 | `neuriplo-tasks` | Factory Registry, Strategy, Visitor helpers, type erasure or concepts where useful, Adapter, explicit task contracts |
 | `neuriplo` | Backend Adapter, runtime Factory, State, Decorator for observability, RAII, zero-copy ownership |
 | `neuriplo-infer` | Composition Root, Dependency Injection, Pipeline, Builder, Command, application-boundary logging |
+| `neuriplo-kserve-client` | Strategy (transport selection), Retry/Backoff/Timeout, Facade, Adapter, pure protocol/codec helpers |
 | `neuriplo-kserve-runtime` | Producer-Consumer, Queue Worker, Dynamic Batching, Timeout, Circuit Breaker, Bulkhead, Health Endpoint |
 | `videocapture` | Adapter, RAII resource ownership, Strategy for capture backends, double buffering when needed |
 | `neuriplo-platform` | Compatibility Registry, ownership map, ADRs, cross-repository contract docs |

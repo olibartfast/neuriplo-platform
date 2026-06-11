@@ -10,11 +10,17 @@ version matrix works across repositories.
 The ecosystem already has several structural patterns in place:
 
 - `neuriplo-infer` has an `InferencePipelineBuilder` that builds source, batch,
-  renderer, backend, task, and presentation stages.
+  renderer, backend, task, and presentation stages, and now supports remote
+  KServe V2 client mode (v0.5.0) via the standalone `neuriplo-kserve-client`
+  library.
 - `neuriplo-tasks` uses built-in task descriptors with matchers and creators,
   which satisfies the registry goal for compiled-in tasks.
+- `neuriplo-kserve-client` is a standalone backend-agnostic KServe V2 protocol
+  client (HTTP/gRPC, retry/TLS/auth, model repository extension, v0.2.0)
+  consumed by `neuriplo-infer` via FetchContent.
 - `neuriplo-kserve-runtime` has a request pipeline with validation, admission,
-  scheduling, and response encoding stages.
+  scheduling, and response encoding stages; the feature branch merged into
+  develop (2026-06-09) and the WIP serving runtime is advancing.
 - `neuriplo` has backend metadata, lifecycle, state, performance, memory, and
   interface structure, but backend capabilities still need a formal public
   contract.
@@ -227,7 +233,7 @@ but goes against where KServe has landed for serving: text generation does
 not fit the tensor protocol (no streaming, no sampling parameters, no chat
 semantics).
 
-Planned alignment, pending an ADR:
+ADR 0006 adopted the predictive/generative split:
 
 ```text
 predictive tasks (detection, segmentation, pose, depth, open-vocab,
@@ -243,6 +249,11 @@ neuriplo does not compete with vLLM/KServe on LLM serving; its serving
 differentiation stays on the predictive track
 ```
 
+Status: ADR decided. The remote KServe V2 client path is implemented
+(neuriplo-infer v0.5.0 + neuriplo-kserve-client v0.2.0). The OpenAI-compatible
+generative path is documented but not yet plumbed through a platform integration
+test. Remaining work: generative serving smoke test in integration-tests/.
+
 Consequences:
 
 - The V2 float-cast-bytes text encoding becomes an internal detail of
@@ -255,8 +266,8 @@ Consequences:
 ### 12. Secondary Consumers: Agentic Frameworks
 
 `ghostgrid` (multi-provider LLM/VLM agentic workflow framework) is a
-planned secondary consumer alongside `neuriplo-ros` and `tritonic`. Two
-integration paths map onto the two protocol tracks:
+registered secondary consumer alongside `neuriplo-ros` and `tritonic`.
+Two integration paths map onto the two protocol tracks:
 
 ```text
 generative path:  ghostgrid consumes neuriplo-ecosystem LLM/VLM output
@@ -268,6 +279,11 @@ predictive path:  ghostgrid ReAct tools (detect, count, read_text,
                   the V2 Open Inference Protocol, replacing prompt-only
                   vision tools with grounded typed results
 ```
+
+Status: ADR 0007 registered ghostgrid as a secondary consumer. ADR 0008
+published result events from neuriplo-infer with renderer as first consumer.
+Pending work: end-to-end integration smoke test that validates the ghostgrid
+provider -> neuriplo inference chain.
 
 Boundary rules for agentic consumers:
 
@@ -290,7 +306,9 @@ Production architecture is ready when:
 - architecture fitness tests protect repository boundaries
 - production deployment expectations are explicit enough for repeatable release
   evidence
-- an ADR fixes the predictive/generative protocol split and the serving story
-  for image_understanding
+- the predictive/generative protocol split is implemented (ADR 0006 adopted,
+  remote KServe V2 client path operational in neuriplo-infer v0.5.0; generative
+  smoke test still pending)
 - secondary consumers, including agentic frameworks, are registered with
-  explicit contract boundaries
+  explicit contract boundaries (ADRs 0007, 0008 accepted; integration smoke
+  test pending)

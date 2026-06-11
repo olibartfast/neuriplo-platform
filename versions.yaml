@@ -20,18 +20,18 @@ repositories:
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.4.1
-    ref: d20c404f00233cdd9bebcfce468f9676c4600402
+    version: v0.5.0
+    ref: c2596b4dc7e4841bc4eb84fb4828e749f5776202
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public
-    version: v0.1.0
-    ref: 77995f9594f854d3bf5425eb469f1dca005e18de
+    version: v0.2.0
+    ref: 300e8c3ccf4492e2eb5886ef7395cb651ef36953
   neuriplo-kserve-runtime:
     owner: serving-runtime-layer
     visibility: public
     version: wip
-    ref: 0b559bc78e9a5dbb4c8cbde80ad438e07d92056a
+    ref: 6a18bed6ca4cf78ba4bac824b5f939c3e6e03541
   videocapture:
     owner: video-io
     visibility: public
@@ -43,12 +43,12 @@ compatibility_sets:
     status: draft
     notes:
       - neuriplo-tasks, neuriplo, neuriplo-infer, videocapture, and neuriplo-kserve-client use published tags.
-      - neuriplo-infer v0.4.1 predates its FetchContent dependency on neuriplo-kserve-client (added post-v0.4.1 on feature/neuriplo-kserve-runtime, pinned to v0.1.0).
+      - neuriplo-infer v0.5.0 includes a FetchContent dependency on neuriplo-kserve-client v0.1.0 (pinned via NEURIPLO_KSERVE_CLIENT_VERSION in versions.env).
       - neuriplo-kserve-runtime is WIP and currently pinned by commit.
     repositories:
       neuriplo-tasks: v0.4.0
       neuriplo: v0.5.0
-      neuriplo-infer: v0.4.1
-      neuriplo-kserve-client: v0.1.0
+      neuriplo-infer: v0.5.0
+      neuriplo-kserve-client: v0.2.0
       videocapture: v0.3.0
-      neuriplo-kserve-runtime: 0b559bc78e9a5dbb4c8cbde80ad438e07d92056a
+      neuriplo-kserve-runtime: 6a18bed6ca4cf78ba4bac824b5f939c3e6e03541

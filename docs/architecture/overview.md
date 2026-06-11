@@ -48,9 +48,13 @@ External systems:
      predictive tools, see ADR 0006 and ADR 0007)
 ```
 
+Secondary consumers named above: [neuriplo-ros](https://github.com/olibartfast/neuriplo-ros),
+[tritonic](https://github.com/olibartfast/tritonic), and
+[ghostgrid](https://github.com/olibartfast/ghostgrid) (ADR 0007).
+
 ## Repository Responsibilities
 
-### neuriplo-tasks
+### [neuriplo-tasks](https://github.com/olibartfast/neuriplo-tasks)
 
 Owns:
 
@@ -70,7 +74,7 @@ Likely patterns:
 - Adapter
 - Explicit task contracts
 
-### neuriplo
+### [neuriplo](https://github.com/olibartfast/neuriplo)
 
 Owns:
 
@@ -88,7 +92,7 @@ Likely patterns:
 - RAII
 - Runtime factory registry
 
-### neuriplo-infer
+### [neuriplo-infer](https://github.com/olibartfast/neuriplo-infer)
 
 Owns:
 
@@ -107,7 +111,7 @@ Likely patterns:
 - Builder
 - Command
 
-### neuriplo-kserve-client
+### [neuriplo-kserve-client](https://github.com/olibartfast/neuriplo-kserve-client)
 
 Owns:
 
@@ -125,7 +129,7 @@ Likely patterns:
 - Retry / Backoff / Timeout
 - Pure protocol/codec helpers
 
-### neuriplo-kserve-runtime
+### [neuriplo-kserve-runtime](https://github.com/olibartfast/neuriplo-kserve-runtime)
 
 Owns:
 
@@ -151,7 +155,7 @@ Likely patterns:
 - Health Endpoint
 - Idempotent Consumer
 
-### neuriplo-platform
+### [neuriplo-platform](https://github.com/olibartfast/neuriplo-platform)
 
 Owns:
 
@@ -179,8 +183,6 @@ Does not own:
 - `docs/architecture/production-roadmap.md`: production-readiness roadmap for
   contracts, compatibility CI, release policy, observability, reliability,
   security, deployment, failure modes, fitness tests, and runbooks.
-- `docs/architecture/repo-name-migration.md`: legacy to canonical repository
-  naming table for the `vision-*` rename.
 
 ## Architectural Questions
 
