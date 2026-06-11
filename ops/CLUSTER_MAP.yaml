@@ -56,6 +56,7 @@ repos:
   neuriplo:
     repo_root: ../neuriplo
     role: backend-abstraction-layer
+    primary_agent: claude
     provides:
       - backend_abstractions
       - backend_adapters
@@ -73,6 +74,7 @@ repos:
   neuriplo-infer:
     repo_root: ../neuriplo-infer
     role: local-application-layer
+    primary_agent: cursor
     depends_on:
       - neuriplo-tasks
       - neuriplo
@@ -102,6 +104,7 @@ repos:
   neuriplo-kserve-client:
     repo_root: ../neuriplo-kserve-client
     role: kserve-protocol-client-layer
+    primary_agent: codex
     provides:
       - kserve_v2_protocol_client
       - http_transport
@@ -121,6 +124,7 @@ repos:
   neuriplo-kserve-runtime:
     repo_root: ../neuriplo-kserve-runtime
     role: serving-runtime-layer
+    primary_agent: cursor
     depends_on:
       - neuriplo-tasks
       - neuriplo
@@ -245,7 +249,16 @@ agents:
       - run_cross_repo_compatibility_checks
       - summarize_evidence
   release_safety:
+    owner: human
     responsibilities:
+      - merge_approval_and_integration_across_repos
+      - release_tags_and_sibling_pin_bumps
       - enforce_branch_policies
       - ensure_release_only_changes_target_release_branch
       - reject_unsafe_packaging_or_version_drift
+  primary_agent_ownership:
+    neuriplo: claude
+    neuriplo-kserve-client: codex
+    neuriplo-kserve-runtime: cursor
+    neuriplo-infer: cursor
+    merges_and_releases: human
