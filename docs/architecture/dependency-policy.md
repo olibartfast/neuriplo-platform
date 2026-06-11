@@ -1,7 +1,7 @@
 # Dependency Policy
 
 This document defines cross-repository dependency ownership and compatibility
-rules for the vision platform. Repo-local build details stay in the owning
+rules for the neuriplo platform. Repo-local build details stay in the owning
 repositories.
 
 ## Source Of Truth
@@ -22,6 +22,9 @@ Implementation-level sources:
   versions, runtime compatibility behavior.
 - `neuriplo-infer`: local CLI, app configuration, runtime wiring,
   visualization, local setup scripts.
+- `neuriplo-kserve-client`: KServe V2 protocol client (HTTP/gRPC), wire
+  encode/decode, transport reliability, model repository extension.
+  Backend-agnostic; consumed via FetchContent.
 - `neuriplo-kserve-runtime`: serving runtime protocol, admission, scheduling,
   batching, lifecycle, operational endpoints.
 - `videocapture`: video and image source semantics, video backend behavior.
@@ -57,8 +60,9 @@ For each repository in `versions.yaml`:
 - Compatibility sets must use the declared release tag for released repos.
 - Compatibility sets must use the pinned commit SHA for WIP repos.
 
-The current baseline treats `neuriplo-tasks`, `neuriplo`, and `neuriplo-infer` as
-released repos. `neuriplo-kserve-runtime` is WIP and pinned by commit.
+The current baseline treats `neuriplo-tasks`, `neuriplo`, `neuriplo-infer`,
+`neuriplo-kserve-client`, and `videocapture` as released repos.
+`neuriplo-kserve-runtime` is WIP and pinned by commit.
 
 ## Branch Policy
 

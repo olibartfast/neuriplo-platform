@@ -12,7 +12,8 @@ live outside the inference process have no way to receive results as they are
 produced:
 
 - a renderer that draws results over video in a separate process or machine,
-- agentic consumers such as `ghostgrid` reacting to detections (ADR 0007),
+- agentic consumers such as [`ghostgrid`](https://github.com/olibartfast/ghostgrid)
+  reacting to detections (ADR 0007),
 - recorders, alerting, dashboards, and other observers.
 
 The immediate motivation is a renderer module that listens for published task

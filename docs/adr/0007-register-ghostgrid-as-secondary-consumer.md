@@ -6,7 +6,8 @@ Status: Proposed
 
 ## Problem
 
-`ghostgrid` is a multi-provider LLM/VLM agentic workflow framework (Python)
+[`ghostgrid`](https://github.com/olibartfast/ghostgrid) is a multi-provider
+LLM/VLM agentic workflow framework (Python)
 with sequential, parallel, conditional, iterative, Mixture-of-Agents, and
 ReAct workflows, including tool-using vision agents. It wants to consume
 neuriplo inference output in two ways:

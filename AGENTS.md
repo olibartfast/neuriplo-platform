@@ -27,7 +27,11 @@ integration-tests/local-inference-smoke/run.py
 
 ## Coding Style & Naming Conventions
 
-Prefer Markdown and YAML with short, explicit sections. Keep files ASCII-only. Use lowercase kebab-case for docs and directories, for example `dependency-policy.md` and `local-inference-smoke/`. ADRs use zero-padded numeric prefixes: `0003-keep-runners-in-owning-repos.md`.
+Prefer Markdown and YAML with short, explicit sections. Keep files ASCII-only.
+Hyperlink component and repository names to their GitHub repository on first
+mention in a document (outside code blocks); a reader must not need prior
+context to know what `ghostgrid` or `tritonic` refers to. The root `README.md`
+is the canonical linked registry. Use lowercase kebab-case for docs and directories, for example `dependency-policy.md` and `local-inference-smoke/`. ADRs use zero-padded numeric prefixes: `0003-keep-runners-in-owning-repos.md`.
 
 Python scripts should be small, dependency-light, executable, and compatible with Python 3.12. Use clear error messages and nonzero exits for validation failures.
 
