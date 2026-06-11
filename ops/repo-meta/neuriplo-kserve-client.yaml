@@ -1,6 +1,7 @@
 name: neuriplo-kserve-client
 repo_root: ../neuriplo-kserve-client
 role: kserve-protocol-client-layer
+primary_agent: codex
 default_branches:
   integration: develop
   release: master
