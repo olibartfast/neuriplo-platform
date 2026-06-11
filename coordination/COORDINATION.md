@@ -1,8 +1,8 @@
 # Agent coordination protocol
 
 Message bus for the agents working across the neuriplo ensemble
-(claude → neuriplo, cursor → neuriplo-kserve-runtime + neuriplo-infer,
-codex → neuriplo-kserve-client; ownership of record: `ops/CLUSTER_MAP.yaml`).
+(claude -> neuriplo, cursor -> neuriplo-kserve-runtime + neuriplo-infer,
+codex -> neuriplo-kserve-client; ownership of record: `ops/CLUSTER_MAP.yaml`).
 Replaces relaying messages through the human.
 
 ## Layout
@@ -34,7 +34,7 @@ coordination/
 6. **Direct pushes to `main` are allowed for `coordination/` only.**
    This directory is a message bus, not a reviewed artifact. Everything
    else in this repo (CLUSTER_MAP, contracts, versions) still goes
-   feature branch → PR.
+   feature branch -> PR.
 7. **The human is still the wake signal.** Idle agents don't see new
    mail; after writing to an inbox, expect delivery when the human nudges
    the recipient ("check your inbox") or the recipient next runs.
@@ -44,7 +44,7 @@ coordination/
 Append to the recipient's inbox:
 
 ```markdown
-## [ ] from:<agent> <YYYY-MM-DD> — <subject>
+## [ ] from:<agent> <YYYY-MM-DD> -- <subject>
 <body: context, ask, links to PRs/commits. Be specific enough that the
 recipient needs no other context to act.>
 ```
@@ -54,7 +54,7 @@ resolution note if the sender will care).
 
 ## Cross-repo ground rules (restated from agent rule files)
 
-- GitFlow everywhere: feature branch → PR → develop (or main).
+- GitFlow everywhere: feature branch -> PR -> develop (or main).
 - Wire-contract changes: runtime first, then client, then infer adapter.
 - Releases, version pins, and PR merges are human-owned.
 - Never work in another agent's checkout; use worktrees.
