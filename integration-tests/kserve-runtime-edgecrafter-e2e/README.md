@@ -63,9 +63,10 @@ integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend tensorrt --tra
 Select the client transport with `--transport {http,grpc}` (default `http`). The
 `grpc` transport requires the runtime binary to be built with
 `-DNEURIPLO_RUNTIME_ENABLE_GRPC=ON`; the runtime then serves gRPC on
-`--grpc-port` (default `--port + 1`) alongside HTTP. HTTP serializes the input
-tensor as a JSON number array, so for large image inputs gRPC (binary protobuf)
-is far faster; HTTP is the simplest path for small tensors and debugging.
+`--grpc-port` (default `--port + 1`) alongside HTTP. The HTTP E2E path enables
+the KServe binary tensor extension for inference requests so large image tensors
+travel as raw bytes instead of JSON number arrays; gRPC still uses protobuf raw
+tensor contents by default.
 
 The `tensorrt` backend adds the TensorRT library directory to `LD_LIBRARY_PATH`
 for the runtime process; override the default with `--tensorrt-lib-dir` (it is
@@ -78,7 +79,7 @@ and `--infer-build-dir` when using non-default locations.
 - `/v2/models/ecdet` reports `neuriplo_<backend>`, inputs `images` +
   `orig_target_sizes`, outputs `labels` / `boxes` / `scores`
 - advertised datatypes match the contract (`orig_target_sizes` and `labels` are
-  `INT64`; `images`, `boxes`, `scores` are `FP32`) — the dtype regression guard
+  `INT64`; `images`, `boxes`, `scores` are `FP32`) - the dtype regression guard
 - the app-layer executable runs a real KServe inference request over the
   selected transport (HTTP or gRPC)
 - `../neuriplo-infer/data/output/processed_ecdet_kserve.png` is refreshed and
