@@ -30,6 +30,15 @@ def default_model(neuriplo_infer: Path) -> Path:
     return candidates[0]
 
 
+def processed_image_name(model: str, backend: str) -> str:
+    # Mirror neuriplo-infer CLICommands.cpp: non-alphanumeric characters in the
+    # model/backend tags are replaced with '-'.
+    def sanitize(value: str) -> str:
+        return "".join(c if c.isalnum() else "-" for c in value)
+
+    return f"processed_{sanitize(model)}_{sanitize(backend)}.png"
+
+
 def http_json(url: str, timeout: float = 5.0) -> dict[str, Any]:
     with urllib.request.urlopen(url, timeout=timeout) as response:
         payload = response.read().decode("utf-8")
@@ -108,7 +117,9 @@ def main() -> int:
     runtime_repo = REPOS_ROOT / "neuriplo-kserve-runtime"
     model = args.model if args.model is not None else default_model(neuriplo_infer)
     infer_bin = find_infer_binary(neuriplo_infer, args.infer_build_dir, args.infer_bin)
-    output_image = neuriplo_infer / "data" / "output" / "processed.png"
+    # neuriplo-infer names the rendered image processed_<model>_<backend>.png; the
+    # remote path always reports the "kserve" backend and uses --type as the model.
+    output_image = neuriplo_infer / "data" / "output" / processed_image_name(args.task_type, "kserve")
     base_url = f"http://127.0.0.1:{args.port}"
 
     require_file(args.runtime_bin, "neuriplo-kserve-runtime binary")

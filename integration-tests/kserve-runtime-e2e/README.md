@@ -54,7 +54,8 @@ integration-tests/kserve-runtime-e2e/run.py   --runtime-bin ../neuriplo-kserve-r
   `output0`
 - the app-layer executable sends a real KServe HTTP inference request without
   depending on `neuriplo` backend internals
-- `../neuriplo-infer/data/output/processed.png` is refreshed and non-empty
+- `../neuriplo-infer/data/output/processed_<model>_<backend>.png` (e.g.
+  `processed_yolo26_kserve.png`) is refreshed and non-empty
 - Prometheus metrics report one successful infer request and zero failures
 
 ## Current Limitations
