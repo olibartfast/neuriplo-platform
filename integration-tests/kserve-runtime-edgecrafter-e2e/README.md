@@ -50,12 +50,22 @@ and build the TensorRT engine from it with `trtexec`.
 From `neuriplo-platform`:
 
 ```bash
-# ONNX Runtime backend
+# ONNX Runtime backend (HTTP transport)
 integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend onnx_runtime
 
-# TensorRT backend
+# TensorRT backend (HTTP transport)
 integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend tensorrt
+
+# TensorRT backend over gRPC (needs a runtime built with gRPC support)
+integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend tensorrt --transport grpc
 ```
+
+Select the client transport with `--transport {http,grpc}` (default `http`). The
+`grpc` transport requires the runtime binary to be built with
+`-DNEURIPLO_RUNTIME_ENABLE_GRPC=ON`; the runtime then serves gRPC on
+`--grpc-port` (default `--port + 1`) alongside HTTP. HTTP serializes the input
+tensor as a JSON number array, so for large image inputs gRPC (binary protobuf)
+is far faster; HTTP is the simplest path for small tensors and debugging.
 
 The `tensorrt` backend adds the TensorRT library directory to `LD_LIBRARY_PATH`
 for the runtime process; override the default with `--tensorrt-lib-dir` (it is
@@ -69,10 +79,14 @@ and `--infer-build-dir` when using non-default locations.
   `orig_target_sizes`, outputs `labels` / `boxes` / `scores`
 - advertised datatypes match the contract (`orig_target_sizes` and `labels` are
   `INT64`; `images`, `boxes`, `scores` are `FP32`) — the dtype regression guard
-- the app-layer executable runs a real KServe HTTP inference request
+- the app-layer executable runs a real KServe inference request over the
+  selected transport (HTTP or gRPC)
 - `../neuriplo-infer/data/output/processed_ecdet_kserve.png` is refreshed and
   non-empty
-- Prometheus metrics report one successful infer request and zero failures
+- Prometheus metrics confirm one successful request and zero failures: the HTTP
+  per-transport counters for `--transport http`, and the transport-agnostic
+  `neuriplo_scheduler_requests_{accepted,rejected,timed_out}_total` for
+  `--transport grpc` (the gRPC server has no per-transport counter)
 
 ## Notes
 

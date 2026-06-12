@@ -148,7 +148,10 @@ def metadata_datatypes(metadata: dict[str, Any]) -> dict[str, str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--backend", choices=sorted(BACKEND_DEFAULTS), default="onnx_runtime")
-    parser.add_argument("--port", type=int, default=19094)
+    parser.add_argument("--transport", choices=("http", "grpc"), default="http",
+                        help="KServe client transport. grpc requires a runtime built with gRPC support.")
+    parser.add_argument("--port", type=int, default=19094, help="HTTP port (also used for readiness/metrics).")
+    parser.add_argument("--grpc-port", type=int, default=None, help="gRPC port (default: --port + 1).")
     parser.add_argument("--model-name", default="ecdet")
     parser.add_argument("--task-type", default="ecdet")
     parser.add_argument("--runtime-bin", type=Path, default=None)
@@ -174,7 +177,12 @@ def main() -> int:
     model = args.model if args.model is not None else default_model(args.backend)
     infer_bin = find_infer_binary(neuriplo_infer, args.infer_build_dir, args.infer_bin)
     output_image = neuriplo_infer / "data" / "output" / processed_image_name(args.task_type, "kserve")
-    base_url = f"http://127.0.0.1:{args.port}"
+    base_url = f"http://127.0.0.1:{args.port}"  # HTTP health/metadata/metrics regardless of transport
+    grpc_port = args.grpc_port if args.grpc_port is not None else args.port + 1
+    if args.transport == "grpc":
+        infer_endpoint = f"grpc://127.0.0.1:{grpc_port}"
+    else:
+        infer_endpoint = base_url
 
     tensorrt_lib_dirs = args.tensorrt_lib_dir or [
         Path("/home/oli/dependencies/TensorRT-10.13.3.9/targets/x86_64-linux-gnu/lib"),
@@ -201,6 +209,8 @@ def main() -> int:
             "--port", str(args.port),
             "--instances", "1",
         ]
+        if args.transport == "grpc":
+            runtime_cmd += ["--grpc-port", str(grpc_port)]
         process = subprocess.Popen(
             runtime_cmd,
             cwd=runtime_repo,
@@ -245,9 +255,9 @@ def main() -> int:
             f"--type={args.task_type}",
             f"--source={args.source}",
             f"--labels={args.labels}",
-            f"--kserve_endpoint={base_url}",
+            f"--kserve_endpoint={infer_endpoint}",
             f"--kserve_model_name={args.model_name}",
-            "--kserve_transport=http",
+            f"--kserve_transport={args.transport}",
             "--min_confidence=0.25",
         ]
         app_output = run_checked(infer_cmd, cwd=neuriplo_infer, timeout=args.infer_timeout)
@@ -258,14 +268,24 @@ def main() -> int:
             raise RuntimeError(f"output image was not refreshed: {output_image} size={stat.st_size}")
 
         metrics = urllib.request.urlopen(f"{base_url}/metrics", timeout=5.0).read().decode("utf-8")
-        expected_metric = f'neuriplo_http_infer_requests_success_total{{model="{args.model_name}",version="1"}} 1'
-        if expected_metric not in metrics:
-            raise RuntimeError(f"missing success metric: {expected_metric}")
-        failure_metric = f'neuriplo_http_infer_requests_failure_total{{model="{args.model_name}",version="1"}} 0'
-        if failure_metric not in metrics:
-            raise RuntimeError(f"failure metric is not zero: {failure_metric}")
+        model_label = f'{{model="{args.model_name}",version="1"}}'
+        if args.transport == "http":
+            # HTTP server emits per-transport success/failure counters.
+            if f'neuriplo_http_infer_requests_success_total{model_label} 1' not in metrics:
+                raise RuntimeError("missing http success metric")
+            if f'neuriplo_http_infer_requests_failure_total{model_label} 0' not in metrics:
+                raise RuntimeError("http failure metric is not zero")
+        else:
+            # gRPC has no per-transport counter; assert the transport-agnostic
+            # scheduler accepted one request and rejected/timed out none.
+            if f'neuriplo_scheduler_requests_accepted_total{model_label} 1' not in metrics:
+                raise RuntimeError("scheduler did not accept exactly one request")
+            if f'neuriplo_scheduler_requests_rejected_total{model_label} 0' not in metrics:
+                raise RuntimeError("scheduler rejected a request")
+            if f'neuriplo_scheduler_requests_timed_out_total{model_label} 0' not in metrics:
+                raise RuntimeError("scheduler timed out a request")
 
-        print(f"edgecrafter kserve runtime e2e ok ({args.backend})")
+        print(f"edgecrafter kserve runtime e2e ok ({args.backend}, {args.transport})")
         print(f"runtime log: {log_path}")
         print(f"model: {model}")
         print(f"output image: {output_image} ({stat.st_size} bytes)")
