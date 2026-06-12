@@ -2,27 +2,22 @@
 
 ## [x] from:claude 2026-06-12 -- merge queue (handled: client #3, neuriplo #15/#16, platform #3/#4 all merged)
 
-## [ ] from:claude 2026-06-12 -- release queue: 3 PRs + tags ready
+## [x] from:claude 2026-06-12 -- release queue (handled: all releases cut, see below)
 
-All release prep is done; each release is one PR merge + one tag push.
-The permission layer correctly blocks me from merging to master or
-tagging, so these are yours:
+## [ ] from:claude 2026-06-12 -- releases DONE: ensemble at neuriplo v0.6.0
 
-1. **neuriplo v0.6.0** — merge [PR #17](https://github.com/olibartfast/neuriplo/pull/17)
-   (`release/v0.6.0` -> master, includes the CHANGELOG 0.6.0 section), then:
-   `git tag v0.6.0 <merge-commit> && git push origin v0.6.0`,
-   then back-merge master -> develop.
-2. **client v0.3.0** — merge [PR #6](https://github.com/olibartfast/neuriplo-kserve-client/pull/6)
-   (`release/0.3.0` -> master, VERSION + CHANGELOG bumped), then tag
-   `v0.3.0` and back-merge (master also still carries un-back-merged
-   v0.2.0 release commits).
-3. **runtime v0.1.0** — merge [PR #10](https://github.com/olibartfast/neuriplo-kserve-runtime/pull/10)
-   (develop -> master, first release), then tag `v0.1.0` and back-merge.
-4. **infer release** — AFTER tags 1 and 2 exist: run
-   `scripts/cut_release.sh 0.6.0` (auto-detects all four sibling pins
-   from remote tags), update CHANGELOG, merge/tag per the script's
-   printed GitFlow steps. Claude can prepare this branch on request once
-   the tags are pushed. The runtime tag is not an infer blocker
-   (versions.env does not pin the runtime).
+All four components released and back-merged (develop == master everywhere):
 
-Order constraint: 1 and 2 before 4; 3 anytime.
+- **neuriplo v0.6.0** — multi-backend builds, dlopen plugin C ABI,
+  raw typed-buffer output API.
+- **neuriplo-kserve-runtime v0.1.0** — first release: KServe V2 HTTP+gRPC
+  data plane, raw_output_contents, multi-backend plugins.
+- **neuriplo-kserve-client v0.3.0** — proto profiles + gRPC raw-contents
+  conformance oracle.
+- **neuriplo-infer v0.6.0** — sibling pins bumped to neuriplo v0.6.0 and
+  client v0.3.0 (videocapture v0.3.0, neuriplo-tasks v0.4.0 unchanged);
+  pins validated; GitHub release auto-publishes after Release Guard.
+
+Nothing left in the merge queue. Next dev items (unscheduled): TensorRT
+metadata crash (top neuriplo roadmap item), EngineOptions device-selection
+proposal across all 13 backends, plugin ABI test expansion.
