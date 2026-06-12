@@ -123,11 +123,12 @@ def runtime_env(backend: str, tensorrt_lib_dirs: list[Path]) -> dict[str, str]:
     return env
 
 
-def run_checked(cmd: list[str], cwd: Path, timeout: float) -> str:
+def run_checked(cmd: list[str], cwd: Path, timeout: float, env: dict[str, str] | None = None) -> str:
     result = subprocess.run(
         cmd,
         cwd=cwd,
         check=False,
+        env=env,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -260,7 +261,12 @@ def main() -> int:
             f"--kserve_transport={args.transport}",
             "--min_confidence=0.25",
         ]
-        app_output = run_checked(infer_cmd, cwd=neuriplo_infer, timeout=args.infer_timeout)
+        infer_env = dict(os.environ)
+        if args.transport == "http":
+            infer_env["KSERVE_BINARY"] = "1"
+        app_output = run_checked(
+            infer_cmd, cwd=neuriplo_infer, timeout=args.infer_timeout, env=infer_env
+        )
 
         require_file(output_image, "processed output image")
         stat = output_image.stat()
