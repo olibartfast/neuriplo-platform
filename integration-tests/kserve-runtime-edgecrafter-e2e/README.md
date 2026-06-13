@@ -1,6 +1,6 @@
 # EdgeCrafter KServe Runtime E2E
 
-Validation status: Real local E2E (onnx_runtime and tensorrt backends)
+Validation status: Real local E2E (onnx_runtime, tensorrt, and openvino backends)
 
 Version set: sibling branch set with local built binaries and model artifacts.
 
@@ -8,7 +8,7 @@ Owning repos:
 
 - `neuriplo-platform`: cross-repository E2E orchestration and release evidence.
 - `neuriplo-kserve-runtime`: KServe V2 serving runtime process.
-- `neuriplo`: backend abstraction and ONNX Runtime / TensorRT execution.
+- `neuriplo`: backend abstraction and ONNX Runtime / TensorRT / OpenVINO execution.
 - `neuriplo-infer`: app-layer KServe V2 client binary.
 - `neuriplo-tasks`: EdgeCrafter (`ecdet`) preprocessing and postprocessing.
 
@@ -28,22 +28,71 @@ This is the regression coverage for the metadata dtype-propagation fix: the test
 asserts the advertised datatypes (`orig_target_sizes`/`labels` must be `INT64`,
 not `FP32`). Before the fix the backend metadata hardcoded `FP32`, so the INT64
 input was rejected by the runtime element-count check and the INT64 output
-decoded as garbage. Both the ONNX Runtime and TensorRT backends are validated.
+decoded as garbage. The ONNX Runtime, TensorRT, and OpenVINO backends are
+validated.
+
+## Model repository layout
+
+All backends read artifacts from one Triton-style version directory:
+
+```text
+${NEURIPLO_MODEL_REPOSITORY}/ecdet/1/
+  model.onnx      onnx_runtime (and OpenVINO import source)
+  model.engine    tensorrt
+  model.xml       openvino IR
+  model.bin       openvino IR weights
+```
+
+Default repository root: `~/model_repository` (override with
+`NEURIPLO_MODEL_REPOSITORY`).
+
+Prepare or refresh the directory:
+
+```bash
+integration-tests/kserve-runtime-edgecrafter-e2e/prepare_model_repository.py
+```
+
+The prepare script copies ONNX and TensorRT engine sources when present and
+runs `ovc` to generate OpenVINO IR when `model.xml` is missing.
 
 ## Required Local Artifacts
 
 - runtime binaries (build per backend):
   - `../neuriplo-kserve-runtime/build/real-onnx/neuriplo-kserve-runtime`
   - `../neuriplo-kserve-runtime/build/real-trt/neuriplo-kserve-runtime`
-- app binary: `../neuriplo-infer/build-kserve-codex/app/neuriplo-infer`
-- EdgeCrafter model artifacts:
-  - onnx_runtime: `ecdet_s.onnx` (e.g. `../edgecrafter-cpp-inference/models/ecdet_s.onnx`)
-  - tensorrt: `ecdet_s.trt.engine` built with the same TensorRT version the
-    runtime links (engines are version-locked)
+  - `../neuriplo-kserve-runtime/build/real-openvino/neuriplo-kserve-runtime`
+  - gRPC variants: `real-onnx-grpc`, `real-trt-grpc`, `real-openvino-grpc`
+- app binaries:
+  - KServe client: `../neuriplo-infer/build-kserve-codex/app/neuriplo-infer`
+  - local OpenVINO: `../neuriplo-infer/build-openvino/app/neuriplo-infer`
+- model repository under `~/model_repository/ecdet/1/` (see above)
 - `../neuriplo-infer/data/dog.jpg` and `../neuriplo-infer/labels/coco.names`
 
-Export the ONNX model per `neuriplo-tasks/export/detection/edgecrafter/README.md`
-and build the TensorRT engine from it with `trtexec`.
+Build the OpenVINO runtime from `neuriplo-kserve-runtime`:
+
+```bash
+cmake --preset real-openvino
+cmake --build --preset real-openvino
+cmake --preset real-openvino-grpc
+cmake --build --preset real-openvino-grpc
+```
+
+Build the local OpenVINO app binary from `neuriplo-infer` (required for
+`--mode local`):
+
+```bash
+cmake -S . -B build-openvino -G Ninja \
+  -DDEFAULT_BACKEND=OPENVINO \
+  -DNEURIPLO_INFER_ENABLE_KSERVE=ON
+cmake --build build-openvino --parallel
+```
+
+When a sibling `../neuriplo` checkout exists, `neuriplo-infer` uses it automatically
+so local OpenVINO picks up the same backend fixes as the runtime build.
+
+Export the ONNX model per `neuriplo-tasks/export/detection/edgecrafter/README.md`,
+copy or convert artifacts with `prepare_model_repository.py`, and build the
+TensorRT engine from the same ONNX with `trtexec` when exercising `tensorrt`.
 
 Latency measurements (local in-process TRT vs KServe HTTP/gRPC, including the
 HTTP binary-tensor fix) are recorded in [BENCHMARK.md](BENCHMARK.md).
@@ -53,19 +102,31 @@ HTTP binary-tensor fix) are recorded in [BENCHMARK.md](BENCHMARK.md).
 From `neuriplo-platform`:
 
 ```bash
+# Prepare model repository (once)
+integration-tests/kserve-runtime-edgecrafter-e2e/prepare_model_repository.py
+
 # ONNX Runtime backend (HTTP transport)
 integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend onnx_runtime
 
 # TensorRT backend (HTTP transport)
 integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend tensorrt
 
+# OpenVINO backend over HTTP
+integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend openvino
+
+# OpenVINO in-process (no KServe hop)
+integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend openvino --mode local
+
+# OpenVINO local + HTTP + gRPC in one invocation
+integration-tests/kserve-runtime-edgecrafter-e2e/run_openvino_matrix.py
+
 # TensorRT backend over gRPC (needs a runtime built with gRPC support)
 integration-tests/kserve-runtime-edgecrafter-e2e/run.py --backend tensorrt --transport grpc
 ```
 
-Select the client transport with `--transport {http,grpc}` (default `http`). The
-`grpc` transport requires the runtime binary to be built with
-`-DNEURIPLO_RUNTIME_ENABLE_GRPC=ON`; the runtime then serves gRPC on
+Select the client transport with `--transport {http,grpc}` (default `http`) in
+`--mode kserve`. The `grpc` transport requires the runtime binary to be built
+with `-DNEURIPLO_RUNTIME_ENABLE_GRPC=ON`; the runtime then serves gRPC on
 `--grpc-port` (default `--port + 1`) alongside HTTP. The HTTP E2E path enables
 the KServe binary tensor extension for inference requests so large image tensors
 travel as raw bytes instead of JSON number arrays; gRPC still uses protobuf raw
@@ -73,8 +134,10 @@ tensor contents by default.
 
 The `tensorrt` backend adds the TensorRT library directory to `LD_LIBRARY_PATH`
 for the runtime process; override the default with `--tensorrt-lib-dir` (it is
-repeatable). Override model and binary paths with `--model`, `--runtime-bin`,
-and `--infer-build-dir` when using non-default locations.
+repeatable). The `openvino` backend adds
+`$OPENVINO_DIR/runtime/lib/intel64` (default `~/dependencies/openvino_2025.2.0`).
+Override model and binary paths with `--model`, `--runtime-bin`, `--infer-bin`,
+and `--local-infer-bin` when using non-default locations.
 
 ## What It Checks
 
@@ -84,9 +147,9 @@ and `--infer-build-dir` when using non-default locations.
 - advertised datatypes match the contract (`orig_target_sizes` and `labels` are
   `INT64`; `images`, `boxes`, `scores` are `FP32`) - the dtype regression guard
 - the app-layer executable runs a real KServe inference request over the
-  selected transport (HTTP or gRPC)
-- `../neuriplo-infer/data/output/processed_ecdet_kserve.png` is refreshed and
-  non-empty
+  selected transport (HTTP or gRPC), or in-process OpenVINO for `--mode local`
+- `../neuriplo-infer/data/output/processed_ecdet_kserve.png` (KServe) or
+  `processed_ecdet_openvino.png` (local) is refreshed and non-empty
 - Prometheus metrics confirm one successful request and zero failures: the HTTP
   per-transport counters for `--transport http`, and the transport-agnostic
   `neuriplo_scheduler_requests_{accepted,rejected,timed_out}_total` for
@@ -96,7 +159,9 @@ and `--infer-build-dir` when using non-default locations.
 
 - The rendered image is named `processed_<model>_<backend>.png` by the app,
   where backend is always `kserve` for remote inference (the client does not
-  observe the runtime's compute backend), so both backends write
-  `processed_ecdet_kserve.png`.
+  observe the runtime's compute backend), so KServe cases write
+  `processed_ecdet_kserve.png`. Local OpenVINO writes `processed_ecdet_openvino.png`.
 - TensorRT engines are TensorRT-version and GPU specific; a runtime built
   against a different TensorRT version will fail to deserialize the engine.
+- OpenVINO IR can be served from `model.xml` or imported directly from
+  `model.onnx` when IR conversion is skipped.

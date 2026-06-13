@@ -7,9 +7,21 @@ Mirrors the YOLO ``kserve-runtime-e2e`` runner but exercises the EdgeCrafter
 datatypes, which is the regression guard for the metadata dtype-propagation fix:
 without it the INT64 tensors were reported (and served) as FP32.
 
-Select the serving backend with ``--backend`` (``onnx_runtime`` or
-``tensorrt``); the matching runtime binary and model artifact are chosen by
-default and can be overridden.
+All model artifacts are read from a Triton-style model repository:
+
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet/1/
+    model.onnx      onnx_runtime (OpenVINO import source)
+    model.engine    tensorrt
+    model.xml       openvino IR
+    model.bin       openvino IR weights
+
+Prepare the repository with ``prepare_model_repository.py`` when files are
+missing.
+
+Select the serving backend with ``--backend`` (``onnx_runtime``, ``tensorrt``,
+or ``openvino``). Use ``--mode local`` for in-process OpenVINO inference
+(without a KServe hop) or ``--mode kserve`` with ``--transport {http,grpc}``.
+``run_openvino_matrix.py`` runs local + HTTP + gRPC in one invocation.
 """
 
 from __future__ import annotations
@@ -28,33 +40,59 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 REPOS_ROOT = ROOT.parent
+DEFAULT_MODEL_REPOSITORY = Path(
+    os.environ.get("NEURIPLO_MODEL_REPOSITORY", Path.home() / "model_repository")
+)
 
-# Per-backend defaults: (runtime build dir, model artifact candidates).
+# Per-backend defaults: runtime build dir(s) and artifact filename under ecdet/1/.
 BACKEND_DEFAULTS = {
     "onnx_runtime": {
         "build": "real-onnx",
-        "models": [
-            REPOS_ROOT / "neuriplo-infer" / "models" / "e2e" / "ecdet_s.onnx",
-            REPOS_ROOT / "edgecrafter-cpp-inference" / "models" / "ecdet_s.onnx",
-        ],
+        "build_grpc": "real-onnx-grpc",
+        "artifact": "model.onnx",
     },
     "tensorrt": {
         "build": "real-trt",
-        "models": [
-            REPOS_ROOT / "edgecrafter-cpp-inference" / "models" / "ecdet_s.trt.engine",
-        ],
+        "build_grpc": "real-trt-grpc",
+        "artifact": "model.engine",
+    },
+    "openvino": {
+        "build": "real-openvino",
+        "build_grpc": "real-openvino-grpc",
+        "artifact": "model.xml",
+        "artifact_fallback": "model.onnx",
     },
 }
 
 
 def processed_image_name(model: str, backend: str) -> str:
-    # Mirror neuriplo-infer CLICommands.cpp: non-alphanumeric characters in the
-    # model/backend tags are replaced with '-'. The app reports the "kserve"
-    # backend for all remote inference regardless of the runtime's backend.
     def sanitize(value: str) -> str:
         return "".join(c if c.isalnum() else "-" for c in value)
 
     return f"processed_{sanitize(model)}_{sanitize(backend)}.png"
+
+
+def model_version_dir(model_repository: Path) -> Path:
+    return model_repository / "ecdet" / "1"
+
+
+def resolve_model_artifact(backend: str, model_repository: Path) -> Path:
+    cfg = BACKEND_DEFAULTS[backend]
+    primary = model_version_dir(model_repository) / cfg["artifact"]
+    if primary.is_file():
+        return primary
+    fallback_name = cfg.get("artifact_fallback")
+    if fallback_name:
+        fallback = model_version_dir(model_repository) / fallback_name
+        if fallback.is_file():
+            return fallback
+    return primary
+
+
+def default_runtime_bin(backend: str, transport: str) -> Path:
+    cfg = BACKEND_DEFAULTS[backend]
+    build = cfg["build_grpc"] if transport == "grpc" else cfg["build"]
+    return REPOS_ROOT / "neuriplo-kserve-runtime" / "build" / build / "neuriplo-kserve-runtime"
 
 
 def http_json(url: str, timeout: float = 5.0) -> dict[str, Any]:
@@ -84,20 +122,11 @@ def require_file(path: Path, label: str) -> None:
         raise RuntimeError(f"missing {label}: {path}")
 
 
-def default_model(backend: str) -> Path:
-    candidates = BACKEND_DEFAULTS[backend]["models"]
-    for candidate in candidates:
-        if candidate.is_file():
-            return candidate
-    return candidates[0]
-
-
-def default_runtime_bin(backend: str) -> Path:
-    build = BACKEND_DEFAULTS[backend]["build"]
-    return REPOS_ROOT / "neuriplo-kserve-runtime" / "build" / build / "neuriplo-kserve-runtime"
-
-
-def find_infer_binary(neuriplo_infer: Path, build_dir: Path | None, explicit: Path | None) -> Path:
+def find_kserve_infer_binary(
+    neuriplo_infer: Path,
+    build_dir: Path | None,
+    explicit: Path | None,
+) -> Path:
     if explicit is not None:
         return explicit
     candidates: list[Path] = []
@@ -114,12 +143,50 @@ def find_infer_binary(neuriplo_infer: Path, build_dir: Path | None, explicit: Pa
     raise RuntimeError("missing neuriplo-infer app binary; checked: " + ", ".join(str(p) for p in candidates))
 
 
-def runtime_env(backend: str, tensorrt_lib_dirs: list[Path]) -> dict[str, str]:
+def find_local_infer_binary(
+    neuriplo_infer: Path,
+    backend: str,
+    build_dir: Path | None,
+    explicit: Path | None,
+) -> Path:
+    if explicit is not None:
+        return explicit
+    candidates: list[Path] = []
+    if build_dir is not None:
+        candidates.append(build_dir / "app" / "neuriplo-infer")
+    if backend == "openvino":
+        candidates.extend([
+            neuriplo_infer / "build-openvino" / "app" / "neuriplo-infer",
+            neuriplo_infer / "build" / "app" / "neuriplo-infer",
+        ])
+    for candidate in candidates:
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return candidate
+    raise RuntimeError(
+        f"missing local neuriplo-infer binary for {backend}; checked: "
+        + ", ".join(str(p) for p in candidates)
+    )
+
+
+def prepend_ld_library_path(env: dict[str, str], lib_dirs: list[Path]) -> None:
+    existing = env.get("LD_LIBRARY_PATH", "")
+    extra = os.pathsep.join(str(d) for d in lib_dirs if d.is_dir())
+    if extra:
+        env["LD_LIBRARY_PATH"] = os.pathsep.join(p for p in (extra, existing) if p)
+
+
+def default_openvino_root() -> Path:
+    if "OPENVINO_DIR" in os.environ:
+        return Path(os.environ["OPENVINO_DIR"])
+    return Path.home() / "dependencies" / "openvino_2025.2.0"
+
+
+def runtime_env(backend: str, tensorrt_lib_dirs: list[Path], openvino_root: Path) -> dict[str, str]:
     env = dict(os.environ)
     if backend == "tensorrt":
-        existing = env.get("LD_LIBRARY_PATH", "")
-        extra = os.pathsep.join(str(d) for d in tensorrt_lib_dirs if d.is_dir())
-        env["LD_LIBRARY_PATH"] = os.pathsep.join(p for p in (extra, existing) if p)
+        prepend_ld_library_path(env, tensorrt_lib_dirs)
+    elif backend == "openvino":
+        prepend_ld_library_path(env, [openvino_root / "runtime" / "lib" / "intel64"])
     return env
 
 
@@ -146,39 +213,99 @@ def metadata_datatypes(metadata: dict[str, Any]) -> dict[str, str]:
     return types
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--backend", choices=sorted(BACKEND_DEFAULTS), default="onnx_runtime")
-    parser.add_argument("--transport", choices=("http", "grpc"), default="http",
-                        help="KServe client transport. grpc requires a runtime built with gRPC support.")
-    parser.add_argument("--port", type=int, default=19094, help="HTTP port (also used for readiness/metrics).")
-    parser.add_argument("--grpc-port", type=int, default=None, help="gRPC port (default: --port + 1).")
-    parser.add_argument("--model-name", default="ecdet")
-    parser.add_argument("--task-type", default="ecdet")
-    parser.add_argument("--runtime-bin", type=Path, default=None)
-    parser.add_argument("--infer-build-dir", type=Path, default=None)
-    parser.add_argument("--infer-bin", type=Path, default=None)
-    parser.add_argument("--model", type=Path, default=None)
-    parser.add_argument("--source", type=Path, default=REPOS_ROOT / "neuriplo-infer" / "data" / "dog.jpg")
-    parser.add_argument("--labels", type=Path, default=REPOS_ROOT / "neuriplo-infer" / "labels" / "coco.names")
-    parser.add_argument(
-        "--tensorrt-lib-dir",
-        type=Path,
-        action="append",
-        default=None,
-        help="TensorRT lib directory added to LD_LIBRARY_PATH for the tensorrt backend (repeatable).",
-    )
-    parser.add_argument("--startup-timeout", type=float, default=120.0)
-    parser.add_argument("--infer-timeout", type=float, default=180.0)
-    args = parser.parse_args()
+def assert_edgecrafter_metadata(metadata: dict[str, Any], backend: str) -> None:
+    expected_platform = "neuriplo_" + backend
+    if metadata.get("platform") != expected_platform:
+        raise RuntimeError(f"unexpected runtime platform metadata: {metadata!r}")
 
+    input_names = {item.get("name") for item in metadata.get("inputs", [])}
+    output_names = {item.get("name") for item in metadata.get("outputs", [])}
+    if not {"images", "orig_target_sizes"} <= input_names:
+        raise RuntimeError(f"metadata missing expected EdgeCrafter inputs: {metadata!r}")
+    if not {"labels", "boxes", "scores"} <= output_names:
+        raise RuntimeError(f"metadata missing expected EdgeCrafter outputs: {metadata!r}")
+
+    datatypes = metadata_datatypes(metadata)
+    expected_datatypes = {
+        "images": "FP32",
+        "orig_target_sizes": "INT64",
+        "labels": "INT64",
+        "boxes": "FP32",
+        "scores": "FP32",
+    }
+    for name, expected in expected_datatypes.items():
+        if datatypes.get(name) != expected:
+            raise RuntimeError(
+                f"datatype mismatch for {name!r}: expected {expected}, got {datatypes.get(name)!r} "
+                f"(metadata: {metadata!r})"
+            )
+
+
+def prepare_model_repository(model_repository: Path, skip_openvino: bool) -> None:
+    script = Path(__file__).resolve().parent / "prepare_model_repository.py"
+    cmd = [sys.executable, str(script), "--model-repository", str(model_repository)]
+    if skip_openvino:
+        cmd.append("--skip-openvino")
+    run_checked(cmd, cwd=ROOT, timeout=600.0)
+
+
+def run_e2e(args: argparse.Namespace) -> int:
     neuriplo_infer = REPOS_ROOT / "neuriplo-infer"
     runtime_repo = REPOS_ROOT / "neuriplo-kserve-runtime"
-    runtime_bin = args.runtime_bin if args.runtime_bin is not None else default_runtime_bin(args.backend)
-    model = args.model if args.model is not None else default_model(args.backend)
-    infer_bin = find_infer_binary(neuriplo_infer, args.infer_build_dir, args.infer_bin)
+    model_repository = args.model_repository
+    model = args.model if args.model is not None else resolve_model_artifact(args.backend, model_repository)
+    start_ns = time.time_ns()
+
+    if args.mode == "local":
+        if args.backend != "openvino":
+            raise RuntimeError("--mode local is supported only with --backend openvino")
+        infer_bin = find_local_infer_binary(
+            neuriplo_infer, args.backend, args.local_infer_build_dir, args.local_infer_bin
+        )
+        output_candidates = [
+            neuriplo_infer / "data" / "output" / processed_image_name(args.task_type, "openvino"),
+            neuriplo_infer / "data" / "output" / processed_image_name(args.task_type, "local"),
+        ]
+        require_file(infer_bin, "local neuriplo-infer app binary (OpenVINO build)")
+        require_file(model, f"EdgeCrafter {args.backend} model artifact")
+        require_file(args.source, "input image")
+        require_file(args.labels, "labels file")
+
+        infer_cmd = [
+            str(infer_bin),
+            f"--type={args.task_type}",
+            f"--source={args.source}",
+            f"--labels={args.labels}",
+            f"--weights={model}",
+            "--min_confidence=0.25",
+        ]
+        env = runtime_env(args.backend, args.tensorrt_lib_dir or [], args.openvino_dir)
+        app_output = run_checked(infer_cmd, cwd=neuriplo_infer, timeout=args.infer_timeout, env=env)
+
+        output_image = next(
+            (path for path in output_candidates if path.is_file()),
+            output_candidates[0],
+        )
+        require_file(output_image, "processed output image")
+        stat = output_image.stat()
+        if stat.st_size <= 0 or stat.st_mtime_ns < start_ns:
+            raise RuntimeError(f"output image was not refreshed: {output_image} size={stat.st_size}")
+
+        print(f"edgecrafter local e2e ok ({args.backend})")
+        print(f"model repository: {model_repository}")
+        print(f"model: {model}")
+        print(f"output image: {output_image} ({stat.st_size} bytes)")
+        if app_output.strip():
+            print("app output tail:")
+            print("\n".join(app_output.strip().splitlines()[-8:]))
+        return 0
+
+    runtime_bin = args.runtime_bin if args.runtime_bin is not None else default_runtime_bin(
+        args.backend, args.transport
+    )
+    infer_bin = find_kserve_infer_binary(neuriplo_infer, args.infer_build_dir, args.infer_bin)
     output_image = neuriplo_infer / "data" / "output" / processed_image_name(args.task_type, "kserve")
-    base_url = f"http://127.0.0.1:{args.port}"  # HTTP health/metadata/metrics regardless of transport
+    base_url = f"http://127.0.0.1:{args.port}"
     grpc_port = args.grpc_port if args.grpc_port is not None else args.port + 1
     if args.transport == "grpc":
         infer_endpoint = f"grpc://127.0.0.1:{grpc_port}"
@@ -196,10 +323,11 @@ def main() -> int:
     require_file(args.source, "input image")
     require_file(args.labels, "labels file")
 
-    log_path = Path(os.environ.get("TMPDIR", "/tmp")) / f"neuriplo-ecdet-e2e-{args.backend}-{args.port}.log"
+    log_path = Path(os.environ.get("TMPDIR", "/tmp")) / (
+        f"neuriplo-ecdet-e2e-{args.backend}-{args.transport}-{args.port}.log"
+    )
     log_handle = log_path.open("w", encoding="utf-8")
     process: subprocess.Popen[str] | None = None
-    start_ns = time.time_ns()
 
     try:
         runtime_cmd = [
@@ -218,38 +346,12 @@ def main() -> int:
             text=True,
             stdout=log_handle,
             stderr=subprocess.STDOUT,
-            env=runtime_env(args.backend, tensorrt_lib_dirs),
+            env=runtime_env(args.backend, tensorrt_lib_dirs, args.openvino_dir),
         )
         wait_until_ready(base_url, args.startup_timeout)
 
         metadata = http_json(f"{base_url}/v2/models/{args.model_name}", timeout=5.0)
-        expected_platform = "neuriplo_" + args.backend
-        if metadata.get("platform") != expected_platform:
-            raise RuntimeError(f"unexpected runtime platform metadata: {metadata!r}")
-
-        input_names = {item.get("name") for item in metadata.get("inputs", [])}
-        output_names = {item.get("name") for item in metadata.get("outputs", [])}
-        if not {"images", "orig_target_sizes"} <= input_names:
-            raise RuntimeError(f"metadata missing expected EdgeCrafter inputs: {metadata!r}")
-        if not {"labels", "boxes", "scores"} <= output_names:
-            raise RuntimeError(f"metadata missing expected EdgeCrafter outputs: {metadata!r}")
-
-        # Regression guard for the dtype-propagation fix: the dual-input INT64
-        # contract must be advertised with real datatypes, not collapsed to FP32.
-        datatypes = metadata_datatypes(metadata)
-        expected_datatypes = {
-            "images": "FP32",
-            "orig_target_sizes": "INT64",
-            "labels": "INT64",
-            "boxes": "FP32",
-            "scores": "FP32",
-        }
-        for name, expected in expected_datatypes.items():
-            if datatypes.get(name) != expected:
-                raise RuntimeError(
-                    f"datatype mismatch for {name!r}: expected {expected}, got {datatypes.get(name)!r} "
-                    f"(metadata: {metadata!r})"
-                )
+        assert_edgecrafter_metadata(metadata, args.backend)
 
         infer_cmd = [
             str(infer_bin),
@@ -276,14 +378,11 @@ def main() -> int:
         metrics = urllib.request.urlopen(f"{base_url}/metrics", timeout=5.0).read().decode("utf-8")
         model_label = f'{{model="{args.model_name}",version="1"}}'
         if args.transport == "http":
-            # HTTP server emits per-transport success/failure counters.
             if f'neuriplo_http_infer_requests_success_total{model_label} 1' not in metrics:
                 raise RuntimeError("missing http success metric")
             if f'neuriplo_http_infer_requests_failure_total{model_label} 0' not in metrics:
                 raise RuntimeError("http failure metric is not zero")
         else:
-            # gRPC has no per-transport counter; assert the transport-agnostic
-            # scheduler accepted one request and rejected/timed out none.
             if f'neuriplo_scheduler_requests_accepted_total{model_label} 1' not in metrics:
                 raise RuntimeError("scheduler did not accept exactly one request")
             if f'neuriplo_scheduler_requests_rejected_total{model_label} 0' not in metrics:
@@ -293,16 +392,13 @@ def main() -> int:
 
         print(f"edgecrafter kserve runtime e2e ok ({args.backend}, {args.transport})")
         print(f"runtime log: {log_path}")
+        print(f"model repository: {model_repository}")
         print(f"model: {model}")
         print(f"output image: {output_image} ({stat.st_size} bytes)")
         if app_output.strip():
             print("app output tail:")
             print("\n".join(app_output.strip().splitlines()[-8:]))
         return 0
-    except Exception as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
-        print(f"runtime log: {log_path}", file=sys.stderr)
-        return 1
     finally:
         if process is not None and process.poll() is None:
             process.send_signal(signal.SIGTERM)
@@ -312,6 +408,87 @@ def main() -> int:
                 process.kill()
                 process.wait(timeout=5.0)
         log_handle.close()
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--backend", choices=sorted(BACKEND_DEFAULTS), default="onnx_runtime")
+    parser.add_argument(
+        "--mode",
+        choices=("kserve", "local"),
+        default="kserve",
+        help="local runs in-process OpenVINO (openvino backend only); kserve starts the runtime",
+    )
+    parser.add_argument(
+        "--transport",
+        choices=("http", "grpc"),
+        default="http",
+        help="KServe client transport (kserve mode only). grpc requires a runtime built with gRPC support.",
+    )
+    parser.add_argument("--port", type=int, default=19094, help="HTTP port (also used for readiness/metrics).")
+    parser.add_argument("--grpc-port", type=int, default=None, help="gRPC port (default: --port + 1).")
+    parser.add_argument("--model-name", default="ecdet")
+    parser.add_argument("--task-type", default="ecdet")
+    parser.add_argument(
+        "--model-repository",
+        type=Path,
+        default=DEFAULT_MODEL_REPOSITORY,
+        help="Root model repository directory (default: $NEURIPLO_MODEL_REPOSITORY or ~/model_repository)",
+    )
+    parser.add_argument(
+        "--prepare-model-repository",
+        action="store_true",
+        help="Run prepare_model_repository.py before the test when artifacts are missing",
+    )
+    parser.add_argument(
+        "--skip-openvino-conversion",
+        action="store_true",
+        help="When preparing the repository, skip ovc IR conversion",
+    )
+    parser.add_argument("--runtime-bin", type=Path, default=None)
+    parser.add_argument("--infer-build-dir", type=Path, default=None)
+    parser.add_argument("--infer-bin", type=Path, default=None)
+    parser.add_argument("--local-infer-build-dir", type=Path, default=None)
+    parser.add_argument("--local-infer-bin", type=Path, default=None)
+    parser.add_argument("--model", type=Path, default=None, help="Override model artifact path")
+    parser.add_argument("--source", type=Path, default=REPOS_ROOT / "neuriplo-infer" / "data" / "dog.jpg")
+    parser.add_argument("--labels", type=Path, default=REPOS_ROOT / "neuriplo-infer" / "labels" / "coco.names")
+    parser.add_argument(
+        "--tensorrt-lib-dir",
+        type=Path,
+        action="append",
+        default=None,
+        help="TensorRT lib directory added to LD_LIBRARY_PATH for the tensorrt backend (repeatable).",
+    )
+    parser.add_argument(
+        "--openvino-dir",
+        type=Path,
+        default=default_openvino_root(),
+        help="OpenVINO install root added to LD_LIBRARY_PATH for the openvino backend",
+    )
+    parser.add_argument("--startup-timeout", type=float, default=120.0)
+    parser.add_argument("--infer-timeout", type=float, default=180.0)
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+
+    if args.mode == "local" and args.backend != "openvino":
+        print("ERROR: --mode local requires --backend openvino", file=sys.stderr)
+        return 2
+
+    model = args.model if args.model is not None else resolve_model_artifact(args.backend, args.model_repository)
+    if args.prepare_model_repository or not model.is_file():
+        prepare_model_repository(args.model_repository, args.skip_openvino_conversion)
+        model = args.model if args.model is not None else resolve_model_artifact(args.backend, args.model_repository)
+
+    try:
+        return run_e2e(args)
+    except Exception as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":
