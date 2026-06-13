@@ -29,6 +29,73 @@ from repository_layout import BACKEND_REPO_SUFFIX, backend_model_name, model_ver
 REPOS_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_REPO = Path(os.environ.get("NEURIPLO_MODEL_REPOSITORY", Path.home() / "model_repository"))
 
+# Triton-style platform label per backend. The neuriplo runtime advertises its
+# own ``neuriplo_<backend>`` platform; this field is for repository/Triton
+# compatibility and human readability only.
+BACKEND_PLATFORM: dict[str, str] = {
+    "onnx_runtime": "onnxruntime_onnx",
+    "tensorrt": "tensorrt_plan",
+    "openvino": "openvino",
+    "executorch": "executorch_pte",
+}
+
+# Backends whose model format does not carry tensor names, so the server cannot
+# auto-complete metadata from the model and needs an explicit config.pbtxt. ONNX,
+# TensorRT, and OpenVINO all self-describe (Triton-style auto-complete), so they
+# get no generated config and report their own real names/datatypes.
+CONFIG_REQUIRED_BACKENDS: set[str] = {"executorch"}
+
+# Authoritative EdgeCrafter ecdet dual-input contract for name-less backends.
+# The runtime overlays these I/O names and datatypes onto backend metadata, so a
+# name-less model format (ExecuTorch .pte) advertises the right contract without
+# any model-specific hardcoding in the backend itself.
+ECDET_CONFIG_BODY = """\
+max_batch_size: 0
+
+input [
+  {
+    name: "images"
+    data_type: TYPE_FP32
+    dims: [ 1, 3, 640, 640 ]
+  },
+  {
+    name: "orig_target_sizes"
+    data_type: TYPE_INT64
+    dims: [ 1, 2 ]
+  }
+]
+
+output [
+  {
+    name: "labels"
+    data_type: TYPE_INT64
+    dims: [ 1, 300 ]
+  },
+  {
+    name: "boxes"
+    data_type: TYPE_FP32
+    dims: [ 1, 300, 4 ]
+  },
+  {
+    name: "scores"
+    data_type: TYPE_FP32
+    dims: [ 1, 300 ]
+  }
+]
+"""
+
+
+def ensure_config_pbtxt(model_repository: Path, backend: str) -> None:
+    dest = model_repository / backend_model_name(backend) / "config.pbtxt"
+    if dest.is_file():
+        print(f"ok: config.pbtxt already present at {dest}")
+        return
+    platform = BACKEND_PLATFORM.get(backend, "neuriplo_" + backend)
+    contents = f'name: "{backend_model_name(backend)}"\nplatform: "{platform}"\n{ECDET_CONFIG_BODY}'
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(contents)
+    print(f"wrote config.pbtxt: {dest}")
+
 ONNX_SOURCES = [
     DEFAULT_REPO / "ecdet_s_onnx" / "1" / "model.onnx",
     DEFAULT_REPO / "ecdet" / "1" / "model.onnx",
@@ -194,6 +261,13 @@ def main() -> int:
         prepare_openvino(model_repository, onnx_path)
     if "executorch" in backends and not args.skip_executorch:
         prepare_executorch(model_repository)
+
+    for backend in sorted(backends):
+        if backend not in CONFIG_REQUIRED_BACKENDS:
+            continue
+        if backend == "executorch" and args.skip_executorch:
+            continue
+        ensure_config_pbtxt(model_repository, backend)
 
     prepared = [backend_model_name(backend) for backend in sorted(backends)]
     print(f"model repository ready for: {', '.join(prepared)} under {model_repository}")
