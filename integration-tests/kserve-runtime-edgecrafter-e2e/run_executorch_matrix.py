@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Run EdgeCrafter ecdet ExecuTorch validation: local, HTTP, and gRPC."""
+"""Run EdgeCrafter ecdet ExecuTorch validation: local, HTTP, and gRPC.
+
+Model artifacts are read from ``${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_executorch/1/``.
+"""
 
 from __future__ import annotations
 
