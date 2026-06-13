@@ -9,7 +9,7 @@ a CI regression gate.
 
 | Item | Value |
 |------|-------|
-| Model | `ecdet_s.trt.engine` (EdgeCrafter v1 small; built with TensorRT 10.13.3.9) |
+| Model | `~/model_repository/ecdet_s_tensorrt/1/model.engine` (EdgeCrafter v1 small; built with TensorRT 10.13.3.9) |
 | GPU | NVIDIA GeForce RTX 3060 Laptop GPU |
 | CPU | 11th Gen Intel Core i5-11400H |
 | Input | `neuriplo-infer/data/dog.jpg` (576x768, resized to 640x640) |
@@ -71,7 +71,7 @@ For manual runs outside the E2E script:
 ```bash
 export KSERVE_BINARY=1
 ./neuriplo-infer --type=ecdet --source=data/dog.jpg --labels=labels/coco.names \
-  --kserve_endpoint=http://127.0.0.1:8080 --kserve_model_name=ecdet \
+  --kserve_endpoint=http://127.0.0.1:8080 --kserve_model_name=ecdet_s_tensorrt \
   --kserve_transport=http
 ```
 
@@ -82,7 +82,7 @@ binary tensor framing on the server side; see that repo's CHANGELOG.
 
 ## How to reproduce
 
-From `neuriplo-platform` (requires local binaries and `ecdet_s.trt.engine`):
+From `neuriplo-platform` (requires local binaries and `ecdet_s_tensorrt/1/model.engine`):
 
 ```bash
 # Correctness + transport smoke (HTTP uses KSERVE_BINARY=1 in the runner)
