@@ -33,29 +33,29 @@ validated.
 
 ## Model repository layout
 
-All backends read artifacts from one Triton-style version directory:
+Each backend has its own Triton-style model folder named
+``<model>_<size>_<backend>``:
 
 ```text
-${NEURIPLO_MODEL_REPOSITORY}/ecdet/1/
-  model.onnx      onnx_runtime (and OpenVINO import source)
-  model.engine    tensorrt
-  model.xml       openvino IR
-  model.bin       openvino IR weights
-  model.pte       executorch
+${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_onnx/1/model.onnx
+${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_tensorrt/1/model.engine
+${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_openvino/1/model.{xml,bin}
+${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_executorch/1/model.pte
 ```
 
 Default repository root: `~/model_repository` (override with
 `NEURIPLO_MODEL_REPOSITORY`).
 
-Prepare or refresh the directory:
+Prepare or refresh all backend folders:
 
 ```bash
 integration-tests/kserve-runtime-edgecrafter-e2e/prepare_model_repository.py
 ```
 
 The prepare script copies ONNX and TensorRT engine sources when present, runs
-`ovc` to generate OpenVINO IR when `model.xml` is missing, and exports or copies
-`model.pte` for ExecuTorch when missing.
+`ovc` into `ecdet_s_openvino/1/` when IR is missing, and exports or copies
+`model.pte` into `ecdet_s_executorch/1/` when missing. Pass `--backend` to
+prepare a single backend folder.
 
 ## Required Local Artifacts
 
@@ -69,7 +69,7 @@ The prepare script copies ONNX and TensorRT engine sources when present, runs
   - KServe client: `../neuriplo-infer/build-kserve-codex/app/neuriplo-infer`
   - local OpenVINO: `../neuriplo-infer/build-openvino/app/neuriplo-infer`
   - local ExecuTorch: `../neuriplo-infer/build-executorch/app/neuriplo-infer`
-- model repository under `~/model_repository/ecdet/1/` (see above)
+- model repository under `~/model_repository/ecdet_s_<backend>/1/` (see above)
 - `../neuriplo-infer/data/dog.jpg` and `../neuriplo-infer/labels/coco.names`
 
 Build the OpenVINO runtime from `neuriplo-kserve-runtime`:
@@ -176,7 +176,7 @@ and `--local-infer-bin` when using non-default locations.
 ## What It Checks
 
 - runtime starts with the requested backend; `/v2/health/{live,ready}` are true
-- `/v2/models/ecdet` reports `neuriplo_<backend>`, inputs `images` +
+- `/v2/models/ecdet_s_<backend>` reports `neuriplo_<backend>`, inputs `images` +
   `orig_target_sizes`, outputs `labels` / `boxes` / `scores`
 - advertised datatypes match the contract (`orig_target_sizes` and `labels` are
   `INT64`; `images`, `boxes`, `scores` are `FP32`) - the dtype regression guard
@@ -198,8 +198,8 @@ and `--local-infer-bin` when using non-default locations.
   local ExecuTorch writes `processed_ecdet_executorch.png`.
 - TensorRT engines are TensorRT-version and GPU specific; a runtime built
   against a different TensorRT version will fail to deserialize the engine.
-- OpenVINO IR can be served from `model.xml` or imported directly from
-  `model.onnx` when IR conversion is skipped.
-- ExecuTorch serves `model.pte` exported from the EdgeCrafter PyTorch checkpoint via
+- OpenVINO IR is served from `ecdet_s_openvino/1/model.xml` (or `model.onnx` in
+  that folder when IR conversion is skipped).
+- ExecuTorch serves `ecdet_s_executorch/1/model.pte` exported from the EdgeCrafter PyTorch checkpoint via
   `export_ecdet_executorch.py` (or copied by `prepare_model_repository.py`). Requires
   `edgecrafter-cpp-inference/third_party/EdgeCrafter` and `ecdet_s.pth`.

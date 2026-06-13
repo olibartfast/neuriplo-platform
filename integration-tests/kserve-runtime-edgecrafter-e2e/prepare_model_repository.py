@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """Prepare the local Triton-style model repository layout for EdgeCrafter ecdet.
 
-All integration-test backends read artifacts from a single version directory:
+Each backend has its own model folder named ``<model>_<size>_<backend>``:
 
-  ${NEURIPLO_MODEL_REPOSITORY}/ecdet/1/
-    model.onnx      # onnx_runtime (and OpenVINO import source)
-    model.engine    # tensorrt
-    model.xml       # openvino IR
-    model.bin       # openvino IR weights
-    model.pte       # executorch
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_onnx/1/model.onnx
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_tensorrt/1/model.engine
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_openvino/1/model.{xml,bin}
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_executorch/1/model.pte
 
 Run once before the e2e runners when artifacts are missing.
 """
@@ -22,21 +20,31 @@ import subprocess
 import sys
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from repository_layout import BACKEND_REPO_SUFFIX, backend_model_name, model_version_dir
+
 REPOS_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_REPO = Path(os.environ.get("NEURIPLO_MODEL_REPOSITORY", Path.home() / "model_repository"))
-ECDET_DIR = DEFAULT_REPO / "ecdet" / "1"
 
 ONNX_SOURCES = [
     DEFAULT_REPO / "ecdet_s_onnx" / "1" / "model.onnx",
+    DEFAULT_REPO / "ecdet" / "1" / "model.onnx",
     REPOS_ROOT / "edgecrafter-cpp-inference" / "models" / "ecdet_s.onnx",
     REPOS_ROOT / "neuriplo-infer" / "models" / "e2e" / "ecdet_s.onnx",
 ]
 
 TRT_SOURCES = [
+    DEFAULT_REPO / "ecdet_s_tensorrt" / "1" / "model.engine",
+    DEFAULT_REPO / "ecdet" / "1" / "model.engine",
     REPOS_ROOT / "edgecrafter-cpp-inference" / "models" / "ecdet_s.trt.engine",
 ]
 
 PTE_SOURCES = [
+    DEFAULT_REPO / "ecdet_s_executorch" / "1" / "model.pte",
+    DEFAULT_REPO / "ecdet" / "1" / "model.pte",
     REPOS_ROOT / "edgecrafter-cpp-inference" / "models" / "ecdet_s.pte",
     REPOS_ROOT / "neuriplo-infer" / "models" / "e2e" / "ecdet_s.pte",
 ]
@@ -88,12 +96,12 @@ def convert_openvino_ir(onnx_path: Path, xml_path: Path) -> None:
         raise RuntimeError(f"ovc did not produce {xml_path}")
 
 
-def export_executorch_pte(onnx_path: Path, pte_path: Path) -> None:
+def export_executorch_pte(pte_path: Path) -> None:
     if pte_path.is_file():
         print(f"ok: ExecuTorch program already present at {pte_path}")
         return
     source = first_existing(PTE_SOURCES)
-    if source is not None:
+    if source is not None and source != pte_path:
         copy_if_missing(source, pte_path, "ExecuTorch program")
         return
     pte_path.parent.mkdir(parents=True, exist_ok=True)
@@ -117,6 +125,43 @@ def export_executorch_pte(onnx_path: Path, pte_path: Path) -> None:
         raise RuntimeError(f"export did not produce {pte_path}")
 
 
+def prepare_onnx(model_repository: Path) -> Path:
+    dest = model_version_dir(model_repository, "onnx_runtime") / "model.onnx"
+    if dest.is_file():
+        print(f"ok: ONNX already present at {dest}")
+        return dest
+    source = first_existing(ONNX_SOURCES)
+    if source is None:
+        raise RuntimeError(
+            "no ecdet ONNX found; export per neuriplo-tasks/export/detection/edgecrafter/README.md "
+            f"or place model.onnx under {dest.parent}/"
+        )
+    copy_if_missing(source, dest, "ONNX")
+    return dest
+
+
+def prepare_tensorrt(model_repository: Path) -> None:
+    dest = model_version_dir(model_repository, "tensorrt") / "model.engine"
+    if dest.is_file():
+        print(f"ok: TensorRT engine already present at {dest}")
+        return
+    source = first_existing(TRT_SOURCES)
+    if source is None:
+        print(f"warn: no TensorRT engine source found; {dest} still missing")
+        return
+    copy_if_missing(source, dest, "TensorRT engine")
+
+
+def prepare_openvino(model_repository: Path, onnx_path: Path) -> None:
+    xml_path = model_version_dir(model_repository, "openvino") / "model.xml"
+    convert_openvino_ir(onnx_path, xml_path)
+
+
+def prepare_executorch(model_repository: Path) -> None:
+    pte_path = model_version_dir(model_repository, "executorch") / "model.pte"
+    export_executorch_pte(pte_path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -125,38 +170,33 @@ def main() -> int:
         default=DEFAULT_REPO,
         help="Root model repository directory (default: $NEURIPLO_MODEL_REPOSITORY or ~/model_repository)",
     )
+    parser.add_argument(
+        "--backend",
+        choices=sorted(BACKEND_REPO_SUFFIX),
+        action="append",
+        help="Prepare only the selected backend folder(s). Default: all backends.",
+    )
     parser.add_argument("--skip-openvino", action="store_true", help="Do not run ovc IR conversion")
     parser.add_argument("--skip-executorch", action="store_true", help="Do not export/copy ExecuTorch model.pte")
     args = parser.parse_args()
 
-    global ECDET_DIR
-    ECDET_DIR = args.model_repository / "ecdet" / "1"
+    backends = set(args.backend or BACKEND_REPO_SUFFIX)
+    model_repository = args.model_repository
 
-    onnx_dest = ECDET_DIR / "model.onnx"
-    if not onnx_dest.is_file():
-        source = first_existing(ONNX_SOURCES)
-        if source is None:
-            raise RuntimeError(
-                "no ecdet ONNX found; export per neuriplo-tasks/export/detection/edgecrafter/README.md "
-                "or place model.onnx under ~/model_repository/ecdet/1/"
-            )
-        copy_if_missing(source, onnx_dest, "ONNX")
+    onnx_path: Path | None = None
+    if "onnx_runtime" in backends or "openvino" in backends:
+        onnx_path = prepare_onnx(model_repository)
+    if "tensorrt" in backends:
+        prepare_tensorrt(model_repository)
+    if "openvino" in backends and not args.skip_openvino:
+        if onnx_path is None:
+            onnx_path = prepare_onnx(model_repository)
+        prepare_openvino(model_repository, onnx_path)
+    if "executorch" in backends and not args.skip_executorch:
+        prepare_executorch(model_repository)
 
-    trt_dest = ECDET_DIR / "model.engine"
-    if not trt_dest.is_file():
-        source = first_existing(TRT_SOURCES)
-        if source is None:
-            print(f"warn: no TensorRT engine source found; {trt_dest} still missing")
-        else:
-            copy_if_missing(source, trt_dest, "TensorRT engine")
-
-    if not args.skip_openvino:
-        convert_openvino_ir(onnx_dest, ECDET_DIR / "model.xml")
-
-    if not args.skip_executorch:
-        export_executorch_pte(onnx_dest, ECDET_DIR / "model.pte")
-
-    print(f"model repository ready under {ECDET_DIR}")
+    prepared = [backend_model_name(backend) for backend in sorted(backends)]
+    print(f"model repository ready for: {', '.join(prepared)} under {model_repository}")
     return 0
 
 

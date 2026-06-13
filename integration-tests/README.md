@@ -46,12 +46,12 @@ Each integration test should document:
 | Task type | Model | Backend | Mode | Status |
 |-----------|-------|---------|------|--------|
 | `yolo26` | `yolo26s.onnx` | `onnx_runtime` | KServe runtime, localhost | passing |
-| `ecdet` (EdgeCrafter detection) | `ecdet/1/model.onnx` | `onnx_runtime` | KServe runtime, localhost | passing |
-| `ecdet` (EdgeCrafter detection) | `ecdet/1/model.engine` | `tensorrt` | KServe runtime, localhost | passing |
-| `ecdet` (EdgeCrafter detection) | `ecdet/1/model.xml` | `openvino` | local in-process | passing |
-| `ecdet` (EdgeCrafter detection) | `ecdet/1/model.xml` | `openvino` | KServe runtime HTTP/gRPC, localhost | passing |
-| `ecdet` (EdgeCrafter detection) | `ecdet/1/model.pte` | `executorch` | local in-process | passing |
-| `ecdet` (EdgeCrafter detection) | `ecdet/1/model.pte` | `executorch` | KServe runtime HTTP/gRPC, localhost | passing |
+| `ecdet` (EdgeCrafter detection) | `ecdet_s_onnx/1/model.onnx` | `onnx_runtime` | KServe runtime, localhost | passing |
+| `ecdet` (EdgeCrafter detection) | `ecdet_s_tensorrt/1/model.engine` | `tensorrt` | KServe runtime, localhost | passing |
+| `ecdet` (EdgeCrafter detection) | `ecdet_s_openvino/1/model.xml` | `openvino` | local in-process | passing |
+| `ecdet` (EdgeCrafter detection) | `ecdet_s_openvino/1/model.xml` | `openvino` | KServe runtime HTTP/gRPC, localhost | passing |
+| `ecdet` (EdgeCrafter detection) | `ecdet_s_executorch/1/model.pte` | `executorch` | local in-process | passing |
+| `ecdet` (EdgeCrafter detection) | `ecdet_s_executorch/1/model.pte` | `executorch` | KServe runtime HTTP/gRPC, localhost | passing |
 
 EdgeCrafter exercises the dual-input contract (`images` FP32 + `orig_target_sizes`
 INT64 -> `labels` INT64, `boxes`/`scores` FP32) end to end. The metadata-driven
@@ -67,7 +67,7 @@ fixed by carrying a typed datatype through the backend metadata boundary:
   (`neuriplo-kserve-runtime/src/RealNeuriploAdapter.cpp`) reports the real
   per-layer datatype as KServe V2 tokens.
 
-Model artifacts live under `~/model_repository/ecdet/1/` (see
+Model artifacts live under `~/model_repository/ecdet_s_<backend>/1/` (see
 `kserve-runtime-edgecrafter-e2e/prepare_model_repository.py`). Export the ONNX
 per `neuriplo-tasks` `export/detection/edgecrafter/README.md`; build the
 TensorRT engine from it with `trtexec`; convert OpenVINO IR with `ovc`; export
