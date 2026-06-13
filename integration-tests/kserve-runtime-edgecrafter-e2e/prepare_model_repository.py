@@ -6,8 +6,9 @@ All integration-test backends read artifacts from a single version directory:
   ${NEURIPLO_MODEL_REPOSITORY}/ecdet/1/
     model.onnx      # onnx_runtime (and OpenVINO import source)
     model.engine    # tensorrt
-    model.xml       # openvino IR (optional; generated from model.onnx)
+    model.xml       # openvino IR
     model.bin       # openvino IR weights
+    model.pte       # executorch
 
 Run once before the e2e runners when artifacts are missing.
 """
@@ -33,6 +34,11 @@ ONNX_SOURCES = [
 
 TRT_SOURCES = [
     REPOS_ROOT / "edgecrafter-cpp-inference" / "models" / "ecdet_s.trt.engine",
+]
+
+PTE_SOURCES = [
+    REPOS_ROOT / "edgecrafter-cpp-inference" / "models" / "ecdet_s.pte",
+    REPOS_ROOT / "neuriplo-infer" / "models" / "e2e" / "ecdet_s.pte",
 ]
 
 
@@ -82,6 +88,35 @@ def convert_openvino_ir(onnx_path: Path, xml_path: Path) -> None:
         raise RuntimeError(f"ovc did not produce {xml_path}")
 
 
+def export_executorch_pte(onnx_path: Path, pte_path: Path) -> None:
+    if pte_path.is_file():
+        print(f"ok: ExecuTorch program already present at {pte_path}")
+        return
+    source = first_existing(PTE_SOURCES)
+    if source is not None:
+        copy_if_missing(source, pte_path, "ExecuTorch program")
+        return
+    pte_path.parent.mkdir(parents=True, exist_ok=True)
+    script = Path(__file__).resolve().parent / "export_ecdet_executorch.py"
+    cmd = [
+        sys.executable,
+        str(script),
+        "--output",
+        str(pte_path),
+    ]
+    print("running:", " ".join(cmd))
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(
+            "ExecuTorch export failed (install EdgeCrafter deps + executorch in EdgeCrafter .venv, "
+            "or place model.pte manually):\n"
+            + (result.stdout or "")
+            + (result.stderr or "")
+        )
+    if not pte_path.is_file():
+        raise RuntimeError(f"export did not produce {pte_path}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -91,6 +126,7 @@ def main() -> int:
         help="Root model repository directory (default: $NEURIPLO_MODEL_REPOSITORY or ~/model_repository)",
     )
     parser.add_argument("--skip-openvino", action="store_true", help="Do not run ovc IR conversion")
+    parser.add_argument("--skip-executorch", action="store_true", help="Do not export/copy ExecuTorch model.pte")
     args = parser.parse_args()
 
     global ECDET_DIR
@@ -116,6 +152,9 @@ def main() -> int:
 
     if not args.skip_openvino:
         convert_openvino_ir(onnx_dest, ECDET_DIR / "model.xml")
+
+    if not args.skip_executorch:
+        export_executorch_pte(onnx_dest, ECDET_DIR / "model.pte")
 
     print(f"model repository ready under {ECDET_DIR}")
     return 0

@@ -35,9 +35,9 @@ Each integration test should document:
   output, and checks metrics.
 - [EdgeCrafter KServe runtime E2E](kserve-runtime-edgecrafter-e2e/README.md):
   exercises the EdgeCrafter `ecdet` dual-input INT64 contract across the
-  `onnx_runtime`, `tensorrt`, and `openvino` backends, asserting the advertised
+  `onnx_runtime`, `tensorrt`, `openvino`, and `executorch` backends, asserting the advertised
   datatypes as the regression guard for the metadata dtype-propagation fix.
-  OpenVINO coverage includes in-process local inference plus KServe HTTP and gRPC.
+  OpenVINO and ExecuTorch coverage includes in-process local inference plus KServe HTTP and gRPC.
   Transport latency evidence (HTTP JSON vs binary vs gRPC) is in
   [kserve-runtime-edgecrafter-e2e/BENCHMARK.md](kserve-runtime-edgecrafter-e2e/BENCHMARK.md).
 
@@ -50,6 +50,8 @@ Each integration test should document:
 | `ecdet` (EdgeCrafter detection) | `ecdet/1/model.engine` | `tensorrt` | KServe runtime, localhost | passing |
 | `ecdet` (EdgeCrafter detection) | `ecdet/1/model.xml` | `openvino` | local in-process | passing |
 | `ecdet` (EdgeCrafter detection) | `ecdet/1/model.xml` | `openvino` | KServe runtime HTTP/gRPC, localhost | passing |
+| `ecdet` (EdgeCrafter detection) | `ecdet/1/model.pte` | `executorch` | local in-process | passing |
+| `ecdet` (EdgeCrafter detection) | `ecdet/1/model.pte` | `executorch` | KServe runtime HTTP/gRPC, localhost | passing |
 
 EdgeCrafter exercises the dual-input contract (`images` FP32 + `orig_target_sizes`
 INT64 -> `labels` INT64, `boxes`/`scores` FP32) end to end. The metadata-driven
@@ -68,5 +70,6 @@ fixed by carrying a typed datatype through the backend metadata boundary:
 Model artifacts live under `~/model_repository/ecdet/1/` (see
 `kserve-runtime-edgecrafter-e2e/prepare_model_repository.py`). Export the ONNX
 per `neuriplo-tasks` `export/detection/edgecrafter/README.md`; build the
-TensorRT engine from it with `trtexec`; convert OpenVINO IR with `ovc`. TensorRT
-engines are version- and GPU-specific.
+TensorRT engine from it with `trtexec`; convert OpenVINO IR with `ovc`; export
+ExecuTorch `.pte` with `export_ecdet_executorch.py`. TensorRT engines are version-
+and GPU-specific.

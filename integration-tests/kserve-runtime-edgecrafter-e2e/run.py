@@ -14,14 +14,16 @@ All model artifacts are read from a Triton-style model repository:
     model.engine    tensorrt
     model.xml       openvino IR
     model.bin       openvino IR weights
+    model.pte       executorch
 
 Prepare the repository with ``prepare_model_repository.py`` when files are
 missing.
 
 Select the serving backend with ``--backend`` (``onnx_runtime``, ``tensorrt``,
-or ``openvino``). Use ``--mode local`` for in-process OpenVINO inference
-(without a KServe hop) or ``--mode kserve`` with ``--transport {http,grpc}``.
-``run_openvino_matrix.py`` runs local + HTTP + gRPC in one invocation.
+``openvino``, or ``executorch``). Use ``--mode local`` for in-process inference
+(without a KServe hop) on ``openvino`` or ``executorch``, or ``--mode kserve``
+with ``--transport {http,grpc}``. ``run_openvino_matrix.py`` and
+``run_executorch_matrix.py`` run local + HTTP + gRPC in one invocation.
 """
 
 from __future__ import annotations
@@ -43,6 +45,11 @@ REPOS_ROOT = ROOT.parent
 DEFAULT_MODEL_REPOSITORY = Path(
     os.environ.get("NEURIPLO_MODEL_REPOSITORY", Path.home() / "model_repository")
 )
+LOCAL_BACKENDS = frozenset({"openvino", "executorch"})
+LOCAL_OUTPUT_BACKEND_LABELS = {
+    "openvino": ("openvino", "local"),
+    "executorch": ("executorch", "local"),
+}
 
 # Per-backend defaults: runtime build dir(s) and artifact filename under ecdet/1/.
 BACKEND_DEFAULTS = {
@@ -61,6 +68,11 @@ BACKEND_DEFAULTS = {
         "build_grpc": "real-openvino-grpc",
         "artifact": "model.xml",
         "artifact_fallback": "model.onnx",
+    },
+    "executorch": {
+        "build": "real-executorch",
+        "build_grpc": "real-executorch-grpc",
+        "artifact": "model.pte",
     },
 }
 
@@ -159,6 +171,11 @@ def find_local_infer_binary(
             neuriplo_infer / "build-openvino" / "app" / "neuriplo-infer",
             neuriplo_infer / "build" / "app" / "neuriplo-infer",
         ])
+    elif backend == "executorch":
+        candidates.extend([
+            neuriplo_infer / "build-executorch" / "app" / "neuriplo-infer",
+            neuriplo_infer / "build" / "app" / "neuriplo-infer",
+        ])
     for candidate in candidates:
         if candidate.is_file() and os.access(candidate, os.X_OK):
             return candidate
@@ -181,12 +198,25 @@ def default_openvino_root() -> Path:
     return Path.home() / "dependencies" / "openvino_2025.2.0"
 
 
-def runtime_env(backend: str, tensorrt_lib_dirs: list[Path], openvino_root: Path) -> dict[str, str]:
+def default_executorch_root() -> Path:
+    if "EXECUTORCH_DIR" in os.environ:
+        return Path(os.environ["EXECUTORCH_DIR"])
+    return Path.home() / "dependencies" / "executorch"
+
+
+def runtime_env(
+    backend: str,
+    tensorrt_lib_dirs: list[Path],
+    openvino_root: Path,
+    executorch_root: Path,
+) -> dict[str, str]:
     env = dict(os.environ)
     if backend == "tensorrt":
         prepend_ld_library_path(env, tensorrt_lib_dirs)
     elif backend == "openvino":
         prepend_ld_library_path(env, [openvino_root / "runtime" / "lib" / "intel64"])
+    elif backend == "executorch":
+        prepend_ld_library_path(env, [executorch_root / "lib"])
     return env
 
 
@@ -241,12 +271,18 @@ def assert_edgecrafter_metadata(metadata: dict[str, Any], backend: str) -> None:
             )
 
 
-def prepare_model_repository(model_repository: Path, skip_openvino: bool) -> None:
+def prepare_model_repository(
+    model_repository: Path,
+    skip_openvino: bool,
+    skip_executorch: bool,
+) -> None:
     script = Path(__file__).resolve().parent / "prepare_model_repository.py"
     cmd = [sys.executable, str(script), "--model-repository", str(model_repository)]
     if skip_openvino:
         cmd.append("--skip-openvino")
-    run_checked(cmd, cwd=ROOT, timeout=600.0)
+    if skip_executorch:
+        cmd.append("--skip-executorch")
+    run_checked(cmd, cwd=ROOT, timeout=900.0)
 
 
 def run_e2e(args: argparse.Namespace) -> int:
@@ -257,14 +293,14 @@ def run_e2e(args: argparse.Namespace) -> int:
     start_ns = time.time_ns()
 
     if args.mode == "local":
-        if args.backend != "openvino":
-            raise RuntimeError("--mode local is supported only with --backend openvino")
+        if args.backend not in LOCAL_BACKENDS:
+            raise RuntimeError(f"--mode local is supported only with --backend {' or '.join(sorted(LOCAL_BACKENDS))}")
         infer_bin = find_local_infer_binary(
             neuriplo_infer, args.backend, args.local_infer_build_dir, args.local_infer_bin
         )
         output_candidates = [
-            neuriplo_infer / "data" / "output" / processed_image_name(args.task_type, "openvino"),
-            neuriplo_infer / "data" / "output" / processed_image_name(args.task_type, "local"),
+            neuriplo_infer / "data" / "output" / processed_image_name(args.task_type, label)
+            for label in LOCAL_OUTPUT_BACKEND_LABELS[args.backend]
         ]
         require_file(infer_bin, "local neuriplo-infer app binary (OpenVINO build)")
         require_file(model, f"EdgeCrafter {args.backend} model artifact")
@@ -279,7 +315,12 @@ def run_e2e(args: argparse.Namespace) -> int:
             f"--weights={model}",
             "--min_confidence=0.25",
         ]
-        env = runtime_env(args.backend, args.tensorrt_lib_dir or [], args.openvino_dir)
+        env = runtime_env(
+            args.backend,
+            args.tensorrt_lib_dir or [],
+            args.openvino_dir,
+            args.executorch_dir,
+        )
         app_output = run_checked(infer_cmd, cwd=neuriplo_infer, timeout=args.infer_timeout, env=env)
 
         output_image = next(
@@ -337,6 +378,7 @@ def run_e2e(args: argparse.Namespace) -> int:
             "--backend", args.backend,
             "--port", str(args.port),
             "--instances", "1",
+            "--request-timeout-ms", str(int(args.infer_timeout * 1000)),
         ]
         if args.transport == "grpc":
             runtime_cmd += ["--grpc-port", str(grpc_port)]
@@ -346,7 +388,12 @@ def run_e2e(args: argparse.Namespace) -> int:
             text=True,
             stdout=log_handle,
             stderr=subprocess.STDOUT,
-            env=runtime_env(args.backend, tensorrt_lib_dirs, args.openvino_dir),
+            env=runtime_env(
+                args.backend,
+                tensorrt_lib_dirs,
+                args.openvino_dir,
+                args.executorch_dir,
+            ),
         )
         wait_until_ready(base_url, args.startup_timeout)
 
@@ -361,6 +408,7 @@ def run_e2e(args: argparse.Namespace) -> int:
             f"--kserve_endpoint={infer_endpoint}",
             f"--kserve_model_name={args.model_name}",
             f"--kserve_transport={args.transport}",
+            f"--kserve_timeout_ms={int(args.infer_timeout * 1000)}",
             "--min_confidence=0.25",
         ]
         infer_env = dict(os.environ)
@@ -417,7 +465,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--mode",
         choices=("kserve", "local"),
         default="kserve",
-        help="local runs in-process OpenVINO (openvino backend only); kserve starts the runtime",
+        help="local runs in-process inference (openvino or executorch); kserve starts the runtime",
     )
     parser.add_argument(
         "--transport",
@@ -445,6 +493,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="When preparing the repository, skip ovc IR conversion",
     )
+    parser.add_argument(
+        "--skip-executorch-conversion",
+        action="store_true",
+        help="When preparing the repository, skip ExecuTorch .pte export",
+    )
     parser.add_argument("--runtime-bin", type=Path, default=None)
     parser.add_argument("--infer-build-dir", type=Path, default=None)
     parser.add_argument("--infer-bin", type=Path, default=None)
@@ -466,6 +519,12 @@ def build_parser() -> argparse.ArgumentParser:
         default=default_openvino_root(),
         help="OpenVINO install root added to LD_LIBRARY_PATH for the openvino backend",
     )
+    parser.add_argument(
+        "--executorch-dir",
+        type=Path,
+        default=default_executorch_root(),
+        help="ExecuTorch install root added to LD_LIBRARY_PATH for the executorch backend",
+    )
     parser.add_argument("--startup-timeout", type=float, default=120.0)
     parser.add_argument("--infer-timeout", type=float, default=180.0)
     return parser
@@ -475,13 +534,20 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
-    if args.mode == "local" and args.backend != "openvino":
-        print("ERROR: --mode local requires --backend openvino", file=sys.stderr)
+    if args.mode == "local" and args.backend not in LOCAL_BACKENDS:
+        print(
+            f"ERROR: --mode local requires --backend {' or '.join(sorted(LOCAL_BACKENDS))}",
+            file=sys.stderr,
+        )
         return 2
 
     model = args.model if args.model is not None else resolve_model_artifact(args.backend, args.model_repository)
     if args.prepare_model_repository or not model.is_file():
-        prepare_model_repository(args.model_repository, args.skip_openvino_conversion)
+        prepare_model_repository(
+            args.model_repository,
+            args.skip_openvino_conversion,
+            args.skip_executorch_conversion,
+        )
         model = args.model if args.model is not None else resolve_model_artifact(args.backend, args.model_repository)
 
     try:
