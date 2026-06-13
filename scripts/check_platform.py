@@ -39,14 +39,24 @@ def pinned_cluster_repos(cluster: dict[str, Any]) -> set[str]:
     }
 
 
+ASCII_SKIP_DIRS = {".git", ".cursor"}
+
+
+def read_ascii_text(errors: list[str], path: Path) -> str | None:
+    try:
+        return path.read_text(encoding="ascii")
+    except UnicodeDecodeError:
+        fail(errors, f"non-ASCII content: {path.relative_to(ROOT)}")
+        return None
+
+
 def validate_ascii(errors: list[str]) -> None:
     for path in ROOT.rglob("*"):
-        if ".git" in path.parts or not path.is_file():
+        if not path.is_file():
             continue
-        try:
-            path.read_text(encoding="ascii")
-        except UnicodeDecodeError:
-            fail(errors, f"non-ASCII content: {path.relative_to(ROOT)}")
+        if any(part in ASCII_SKIP_DIRS for part in path.parts):
+            continue
+        read_ascii_text(errors, path)
 
 
 def validate_versions(errors: list[str]) -> None:
@@ -122,7 +132,9 @@ def validate_runbooks(errors: list[str]) -> None:
         return
 
     for path in runbooks:
-        text = path.read_text(encoding="ascii")
+        text = read_ascii_text(errors, path)
+        if text is None:
+            continue
         if not text.startswith("# "):
             fail(errors, f"{path.relative_to(ROOT)} must start with a title")
         if "## Procedure" not in text:
@@ -188,7 +200,9 @@ def validate_examples(errors: list[str]) -> None:
         if not readme.exists():
             fail(errors, f"example missing README.md: {path.relative_to(ROOT)}")
             continue
-        text = readme.read_text(encoding="ascii")
+        text = read_ascii_text(errors, readme)
+        if text is None:
+            continue
         required_phrases = [
             "Validation status:",
             "Version set:",
@@ -208,7 +222,9 @@ def validate_integration_tests(errors: list[str]) -> None:
         if not readme.exists():
             fail(errors, f"integration test missing README.md: {path.relative_to(ROOT)}")
             continue
-        text = readme.read_text(encoding="ascii")
+        text = read_ascii_text(errors, readme)
+        if text is None:
+            continue
         required_phrases = [
             "Validation status:",
             "Version set:",
