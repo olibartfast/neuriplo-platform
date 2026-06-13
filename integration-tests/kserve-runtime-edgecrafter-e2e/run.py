@@ -7,14 +7,13 @@ Mirrors the YOLO ``kserve-runtime-e2e`` runner but exercises the EdgeCrafter
 datatypes, which is the regression guard for the metadata dtype-propagation fix:
 without it the INT64 tensors were reported (and served) as FP32.
 
-All model artifacts are read from a Triton-style model repository:
+All model artifacts are read from per-backend Triton-style model folders named
+``<model>_<size>_<backend>``:
 
-  ${NEURIPLO_MODEL_REPOSITORY}/ecdet/1/
-    model.onnx      onnx_runtime (OpenVINO import source)
-    model.engine    tensorrt
-    model.xml       openvino IR
-    model.bin       openvino IR weights
-    model.pte       executorch
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_onnx/1/model.onnx
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_tensorrt/1/model.engine
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_openvino/1/model.{xml,bin}
+  ${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_executorch/1/model.pte
 
 Prepare the repository with ``prepare_model_repository.py`` when files are
 missing.
@@ -41,6 +40,11 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+from repository_layout import backend_model_name, model_version_dir
+
 REPOS_ROOT = ROOT.parent
 DEFAULT_MODEL_REPOSITORY = Path(
     os.environ.get("NEURIPLO_MODEL_REPOSITORY", Path.home() / "model_repository")
@@ -51,7 +55,7 @@ LOCAL_OUTPUT_BACKEND_LABELS = {
     "executorch": ("executorch", "local"),
 }
 
-# Per-backend defaults: runtime build dir(s) and artifact filename under ecdet/1/.
+# Per-backend defaults: runtime build dir(s) and artifact filename under ecdet_s_<backend>/1/.
 BACKEND_DEFAULTS = {
     "onnx_runtime": {
         "build": "real-onnx",
@@ -84,20 +88,21 @@ def processed_image_name(model: str, backend: str) -> str:
     return f"processed_{sanitize(model)}_{sanitize(backend)}.png"
 
 
-def model_version_dir(model_repository: Path) -> Path:
-    return model_repository / "ecdet" / "1"
-
-
 def resolve_model_artifact(backend: str, model_repository: Path) -> Path:
     cfg = BACKEND_DEFAULTS[backend]
-    primary = model_version_dir(model_repository) / cfg["artifact"]
+    version_dir = model_version_dir(model_repository, backend)
+    primary = version_dir / cfg["artifact"]
     if primary.is_file():
         return primary
     fallback_name = cfg.get("artifact_fallback")
     if fallback_name:
-        fallback = model_version_dir(model_repository) / fallback_name
+        fallback = version_dir / fallback_name
         if fallback.is_file():
             return fallback
+        if backend == "openvino" and fallback_name == "model.onnx":
+            shared_onnx = model_version_dir(model_repository, "onnx_runtime") / fallback_name
+            if shared_onnx.is_file():
+                return shared_onnx
     return primary
 
 
@@ -272,12 +277,20 @@ def assert_edgecrafter_metadata(metadata: dict[str, Any], backend: str) -> None:
 
 
 def prepare_model_repository(
+    backend: str,
     model_repository: Path,
     skip_openvino: bool,
     skip_executorch: bool,
 ) -> None:
     script = Path(__file__).resolve().parent / "prepare_model_repository.py"
-    cmd = [sys.executable, str(script), "--model-repository", str(model_repository)]
+    cmd = [
+        sys.executable,
+        str(script),
+        "--model-repository",
+        str(model_repository),
+        "--backend",
+        backend,
+    ]
     if skip_openvino:
         cmd.append("--skip-openvino")
     if skip_executorch:
@@ -475,7 +488,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--port", type=int, default=19094, help="HTTP port (also used for readiness/metrics).")
     parser.add_argument("--grpc-port", type=int, default=None, help="gRPC port (default: --port + 1).")
-    parser.add_argument("--model-name", default="ecdet")
+    parser.add_argument(
+        "--model-name",
+        default=None,
+        help="KServe model name (default: ecdet_s_<backend>, e.g. ecdet_s_executorch)",
+    )
     parser.add_argument("--task-type", default="ecdet")
     parser.add_argument(
         "--model-repository",
@@ -541,9 +558,13 @@ def main() -> int:
         )
         return 2
 
+    if args.model_name is None:
+        args.model_name = backend_model_name(args.backend)
+
     model = args.model if args.model is not None else resolve_model_artifact(args.backend, args.model_repository)
     if args.prepare_model_repository or not model.is_file():
         prepare_model_repository(
+            args.backend,
             args.model_repository,
             args.skip_openvino_conversion,
             args.skip_executorch_conversion,

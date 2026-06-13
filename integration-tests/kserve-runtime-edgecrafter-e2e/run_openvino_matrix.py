@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Run EdgeCrafter ecdet OpenVINO validation: local, HTTP, and gRPC.
 
-Each case reads model artifacts from the model repository under
-``${NEURIPLO_MODEL_REPOSITORY}/ecdet/1/`` (see ``prepare_model_repository.py``).
+Each case reads model artifacts from the per-backend model repository folder
+``${NEURIPLO_MODEL_REPOSITORY}/ecdet_s_<backend>/1/`` (see ``prepare_model_repository.py``).
 """
 
 from __future__ import annotations
