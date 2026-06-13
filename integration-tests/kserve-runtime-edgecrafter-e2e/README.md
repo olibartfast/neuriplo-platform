@@ -45,6 +45,9 @@ decoded as garbage. Both the ONNX Runtime and TensorRT backends are validated.
 Export the ONNX model per `neuriplo-tasks/export/detection/edgecrafter/README.md`
 and build the TensorRT engine from it with `trtexec`.
 
+Latency measurements (local in-process TRT vs KServe HTTP/gRPC, including the
+HTTP binary-tensor fix) are recorded in [BENCHMARK.md](BENCHMARK.md).
+
 ## Usage
 
 From `neuriplo-platform`:

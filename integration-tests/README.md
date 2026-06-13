@@ -36,7 +36,9 @@ Each integration test should document:
 - [EdgeCrafter KServe runtime E2E](kserve-runtime-edgecrafter-e2e/README.md):
   exercises the EdgeCrafter `ecdet` dual-input INT64 contract across the
   `onnx_runtime` and `tensorrt` backends, asserting the advertised datatypes as
-  the regression guard for the metadata dtype-propagation fix.
+  the regression guard for the metadata dtype-propagation fix. Transport latency
+  evidence (HTTP JSON vs binary vs gRPC) is in
+  [kserve-runtime-edgecrafter-e2e/BENCHMARK.md](kserve-runtime-edgecrafter-e2e/BENCHMARK.md).
 
 ## Validated Matrix Cases
 
