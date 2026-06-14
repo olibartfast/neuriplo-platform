@@ -15,23 +15,23 @@ repositories:
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
-    version: wip
-    ref: 62d42949b92b658368f1855c28e296ca31594c49
+    version: v0.7.0
+    ref: 056a4dda777ecda43674aeaa9e77c1b0de530ff4
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: wip
-    ref: caeff35380d077e254a2329a4c627db9c658c98c
+    version: v0.6.2
+    ref: ce2575a0e7854823d63616022ce632084d5ba78c
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public
-    version: wip
-    ref: 44eab58ed379e45c6c9456ffcb88b91230213268
+    version: v0.3.0
+    ref: 638702469b154cc3031d007e37e9c80e1e8eb757
   neuriplo-kserve-runtime:
     owner: serving-runtime-layer
     visibility: public
-    version: wip
-    ref: 03d195f15f2889b4a9fdd4ce0ad6400dd246abce
+    version: v0.2.0
+    ref: 86773e4f8300b50577dee6ca3d725961e09e9405
   videocapture:
     owner: video-io
     visibility: public
@@ -48,8 +48,8 @@ compatibility_sets:
       - kserve client and runtime docs clarify GitFlow branch cleanup rules used during release maintenance.
     repositories:
       neuriplo-tasks: v0.4.0
-      neuriplo: 62d42949b92b658368f1855c28e296ca31594c49
-      neuriplo-infer: caeff35380d077e254a2329a4c627db9c658c98c
-      neuriplo-kserve-client: 44eab58ed379e45c6c9456ffcb88b91230213268
+      neuriplo: v0.7.0
+      neuriplo-infer: v0.6.2
+      neuriplo-kserve-client: v0.3.0
       videocapture: v0.3.0
-      neuriplo-kserve-runtime: 03d195f15f2889b4a9fdd4ce0ad6400dd246abce
+      neuriplo-kserve-runtime: v0.2.0
