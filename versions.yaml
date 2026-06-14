@@ -15,23 +15,23 @@ repositories:
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
-    version: v0.5.0
-    ref: 767240f3c405817c9d58c1c02c3f8952c5e0271e
+    version: wip
+    ref: 62d42949b92b658368f1855c28e296ca31594c49
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.5.0
-    ref: c2596b4dc7e4841bc4eb84fb4828e749f5776202
+    version: wip
+    ref: 159b8361bf18d64600a7066ff6ed17a0de5448e5
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public
-    version: v0.2.0
-    ref: 300e8c3ccf4492e2eb5886ef7395cb651ef36953
+    version: wip
+    ref: 44eab58ed379e45c6c9456ffcb88b91230213268
   neuriplo-kserve-runtime:
     owner: serving-runtime-layer
     visibility: public
     version: wip
-    ref: 6a18bed6ca4cf78ba4bac824b5f939c3e6e03541
+    ref: 03d195f15f2889b4a9fdd4ce0ad6400dd246abce
   videocapture:
     owner: video-io
     visibility: public
@@ -39,16 +39,17 @@ repositories:
     ref: fb94bd4f371fa741f8ad0e9a61e7ec2d991359b7
 
 compatibility_sets:
-  - name: initial-architecture-baseline
+  - name: ecdet-kserve-litert-followup
     status: draft
     notes:
-      - neuriplo-tasks, neuriplo, neuriplo-infer, videocapture, and neuriplo-kserve-client use published tags.
-      - neuriplo-infer v0.5.0 includes a FetchContent dependency on neuriplo-kserve-client v0.1.0 (pinned via NEURIPLO_KSERVE_CLIENT_VERSION in versions.env).
-      - neuriplo-kserve-runtime is WIP and currently pinned by commit.
+      - EdgeCrafter ecdet remains validated across ONNX Runtime, TensorRT, OpenVINO, and ExecuTorch.
+      - neuriplo adds LiteRT custom kernels needed by the converted ecdet graph, but ecdet TFLite remains excluded because ONNX-to-TFLite conversion fidelity is known bad.
+      - neuriplo-infer documents the ecdet TFLite limitation and keeps the LiteRT warning in the E2E helper.
+      - kserve client and runtime docs clarify GitFlow branch cleanup rules used during release maintenance.
     repositories:
       neuriplo-tasks: v0.4.0
-      neuriplo: v0.5.0
-      neuriplo-infer: v0.5.0
-      neuriplo-kserve-client: v0.2.0
+      neuriplo: 62d42949b92b658368f1855c28e296ca31594c49
+      neuriplo-infer: 159b8361bf18d64600a7066ff6ed17a0de5448e5
+      neuriplo-kserve-client: 44eab58ed379e45c6c9456ffcb88b91230213268
       videocapture: v0.3.0
-      neuriplo-kserve-runtime: 6a18bed6ca4cf78ba4bac824b5f939c3e6e03541
+      neuriplo-kserve-runtime: 03d195f15f2889b4a9fdd4ce0ad6400dd246abce

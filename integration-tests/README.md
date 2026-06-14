@@ -53,6 +53,13 @@ Each integration test should document:
 | `ecdet` (EdgeCrafter detection) | `ecdet_s_executorch/1/model.pte` | `executorch` | local in-process | passing |
 | `ecdet` (EdgeCrafter detection) | `ecdet_s_executorch/1/model.pte` | `executorch` | KServe runtime HTTP/gRPC, localhost | passing |
 
+`ecdet` converted to TFLite is intentionally not a passing matrix case. The
+LiteRT backend now has the custom `ONNX_GRIDSAMPLE` and integer `SIGN` kernels
+needed to load the converted graph, but local validation showed the
+ONNX-to-TFLite conversion produces numerically invalid detections for this
+deformable/transformer model. Serve `ecdet` through ONNX Runtime, TensorRT, or
+OpenVINO until a conversion path with correct outputs is available.
+
 EdgeCrafter exercises the dual-input contract (`images` FP32 + `orig_target_sizes`
 INT64 -> `labels` INT64, `boxes`/`scores` FP32) end to end. The metadata-driven
 N-input plumbing was already correct; the missing piece was datatype propagation,
