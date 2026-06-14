@@ -21,7 +21,7 @@ repositories:
     owner: local-application-layer
     visibility: public
     version: wip
-    ref: 159b8361bf18d64600a7066ff6ed17a0de5448e5
+    ref: caeff35380d077e254a2329a4c627db9c658c98c
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public
@@ -49,7 +49,7 @@ compatibility_sets:
     repositories:
       neuriplo-tasks: v0.4.0
       neuriplo: 62d42949b92b658368f1855c28e296ca31594c49
-      neuriplo-infer: 159b8361bf18d64600a7066ff6ed17a0de5448e5
+      neuriplo-infer: caeff35380d077e254a2329a4c627db9c658c98c
       neuriplo-kserve-client: 44eab58ed379e45c6c9456ffcb88b91230213268
       videocapture: v0.3.0
       neuriplo-kserve-runtime: 03d195f15f2889b4a9fdd4ce0ad6400dd246abce
