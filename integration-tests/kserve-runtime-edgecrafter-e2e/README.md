@@ -121,6 +121,12 @@ TensorRT engine from the same ONNX with `trtexec` when exercising `tensorrt`.
 Latency measurements (local in-process TRT vs KServe HTTP/gRPC, including the
 HTTP binary-tensor fix) are recorded in [BENCHMARK.md](BENCHMARK.md).
 
+LiteRT/TFLite is not part of the passing `ecdet` matrix. The LiteRT backend can
+load the converted graph with custom `ONNX_GRIDSAMPLE` and integer `SIGN`
+kernels, but the ONNX-to-TFLite conversion currently produces invalid detection
+scores and boxes for this deformable/transformer model. Keep `ecdet` on ONNX
+Runtime, TensorRT, or OpenVINO until conversion fidelity is fixed.
+
 ## Usage
 
 From `neuriplo-platform`:
