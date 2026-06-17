@@ -16,7 +16,6 @@ integration branch where available:
 - `neuriplo`: `develop`
 - `neuriplo-infer`: `develop`
 - `videocapture`: `develop`
-- `tritonic`: `develop`
 - `neuriplo-kserve-runtime`: `master` because no `develop` or `dev` branch was
   visible
 - `neuriplo-platform`: `main` because no `develop` branch was visible
@@ -28,7 +27,6 @@ integration branch where available:
 - [neuriplo-infer](neuriplo-infer.md)
 - [videocapture](videocapture.md)
 - [neuriplo-kserve-runtime](neuriplo-kserve-runtime.md)
-- [tritonic](tritonic.md)
 - [neuriplo-platform](neuriplo-platform.md)
 
 ## Source Taxonomy Applied
@@ -46,9 +44,8 @@ The review set now maps findings to these modern C++ and production patterns:
 
 ## Cross-Repository Priorities
 
-1. Fix RAII and lifetime issues in `tritonic`.
-2. Fix timeout and registry concurrency issues in `neuriplo-kserve-runtime`.
-3. Reconcile platform metadata with actual remote branches and tracked
+1. Fix timeout and registry concurrency issues in `neuriplo-kserve-runtime`.
+2. Reconcile platform metadata with actual remote branches and tracked
    consumers.
-4. Update platform architecture docs to include modern non-GoF patterns used by
+3. Update platform architecture docs to include modern non-GoF patterns used by
    inference and serving systems.

@@ -1,8 +1,8 @@
 # Ownership Model
 
-This document defines responsibility boundaries across the neuriplo inference
-ecosystem. When a change spans multiple repositories, use this model to decide
-where the durable implementation should live.
+This document defines responsibility boundaries across the neuriplo AI
+infrastructure platform. When a change spans multiple repositories, use this
+model to decide where the durable implementation should live.
 
 ## Boundary Rules
 
@@ -18,16 +18,20 @@ Examples:
 - Model-family task adapters
 - Task registry and factory behavior
 
+The first task domain is computer vision. Additional domains (NLP embeddings,
+audio transcription, tabular models, generative VLM output postprocessing) are
+natural extensions under the same contract.
+
 ### Backend Execution
 
 Belongs in `neuriplo`.
 
 Examples:
 
-- Backend interfaces
-- ONNX Runtime, TensorRT, OpenVINO, or future backend adapters
-- Execution session abstractions
-- Backend capability reporting
+- GPU-first backend interfaces (CUDA, TensorRT, ONNX Runtime, OpenVINO, future accelerators)
+- Execution session abstractions with GPU memory management
+- Backend capability reporting (GPU device count, memory, compute capability)
+- Mixed-precision and quantization policy
 - Runtime compatibility behavior
 
 ### Local Application Flow
@@ -61,12 +65,13 @@ Belongs in `neuriplo-kserve-runtime`.
 
 Examples:
 
-- KServe V2 server protocol handling
+- KServe V2 / Open Inference Protocol server
 - Request admission
 - Scheduling and dynamic batching
-- Model lifecycle
+- Multi-GPU model placement and scheduling policy
+- Model lifecycle and version management
+- GPU health, utilization reporting, and operational endpoints
 - Server-side wiring from KServe requests to `neuriplo-tasks` and `neuriplo`
-- Health, readiness, metrics, and operational endpoints
 
 ### Architecture Control Plane
 

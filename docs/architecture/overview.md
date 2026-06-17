@@ -1,5 +1,10 @@
 # Architecture Overview
 
+Neuriplo is an AI infrastructure and GPU-first serving platform. It provides an
+Open Inference Protocol (KServe V2) runtime and client, a backend-agnostic GPU
+execution layer (ONNX Runtime, TensorRT, OpenVINO, and future accelerators), and
+a task domain layer that currently starts with computer vision workloads.
+
 The platform is organized around explicit boundaries between task semantics,
 backend execution, local application flow, and serving operations. Modern C++
 and service patterns are mapped in `modern-patterns.md`.
@@ -32,25 +37,19 @@ System: neuriplo-platform
   v
 System boundary: neuriplo inference ecosystem
   |
-  |- neuriplo-tasks: task contract, preprocess, postprocess, result type
-  |- neuriplo: backend abstraction, backend execution
+  |- neuriplo-tasks: task contract, preprocess, postprocess, result type (CV tasks as first domain)
+  |- neuriplo: GPU-first backend abstraction, execution, GPU capability reporting
   |- neuriplo-infer: embedded local app and KServe V2 client wiring
   |- neuriplo-kserve-client: backend-agnostic KServe V2 protocol client (HTTP/gRPC)
-  |- neuriplo-kserve-runtime: KServe V2 server backed by neuriplo
-  '- videocapture: image and video source handling
+  |- neuriplo-kserve-runtime: KServe V2 server with dynamic batching, scheduling, multi-GPU placement
+  '- videocapture: image and video source handling (optional, for CV task domain)
 
 External systems:
   |- model artifacts and labels
-  |- container runtime and GPU or CPU backend packages
+  |- container runtime and GPU backend packages (CUDA, TensorRT, oneAPI)
   |- KServe-compatible serving endpoints
-  '- secondary consumers such as neuriplo-ros, tritonic, and ghostgrid
-     (agentic framework; OpenAI-compatible generative path and KServe V2
-     predictive tools, see ADR 0006 and ADR 0007)
+  '- AI datacenter infrastructure (GPU fleets, model registries, node orchestration)
 ```
-
-Secondary consumers named above: [neuriplo-ros](https://github.com/olibartfast/neuriplo-ros),
-[tritonic](https://github.com/olibartfast/tritonic), and
-[ghostgrid](https://github.com/olibartfast/ghostgrid) (ADR 0007).
 
 ## Repository Responsibilities
 
@@ -63,6 +62,11 @@ Owns:
 - Postprocessing
 - Result types
 - Model-specific task logic
+
+The first task domain is computer vision (detection, segmentation, pose, depth,
+classification, open-vocabulary). Additional domains (NLP embeddings, audio
+transcription, tabular inference) are natural extensions that fit the same
+preprocess/execute/postprocess contract.
 
 Likely patterns:
 
@@ -78,9 +82,10 @@ Likely patterns:
 
 Owns:
 
-- Backend abstractions
-- Backend execution
-- Runtime compatibility
+- GPU-first backend abstractions (CUDA, TensorRT, ONNX Runtime, OpenVINO, future accelerators)
+- Backend execution and session lifecycle
+- GPU capability discovery and reporting (device count, memory, compute capability)
+- Runtime compatibility and mixed-precision policy
 
 Likely patterns:
 
@@ -133,12 +138,13 @@ Likely patterns:
 
 Owns:
 
-- KServe V2 protocol
-- Request admission
-- Scheduling
-- Dynamic batching
-- Model lifecycle
-- Operational endpoints
+- KServe V2 / Open Inference Protocol server
+- Request admission and validation
+- Scheduling and dynamic batching
+- Multi-GPU model placement and scheduling policy
+- Model lifecycle and version management
+- GPU health and utilization reporting
+- Operational endpoints (health, readiness, metrics)
 
 Likely patterns:
 

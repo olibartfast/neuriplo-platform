@@ -1,7 +1,8 @@
 # Inference Modes
 
-`neuriplo-infer` supports two architecture modes. The dependency boundary depends
-on which mode is being built and deployed.
+`neuriplo-infer` supports two architecture modes for GPU-accelerated and CPU
+inference. The dependency boundary depends on which mode is being built and
+deployed.
 
 ## Embedded Local Mode
 
@@ -11,18 +12,18 @@ CLI/config
   v
 neuriplo-infer
   |
-  |- neuriplo-tasks: task preprocess and postprocess
-  |- neuriplo: backend abstraction and execution
-  '- videocapture: local image or video source handling
+  |- neuriplo-tasks: task preprocess and postprocess (CV tasks as first domain)
+  |- neuriplo: GPU-first backend abstraction and execution (CUDA, TensorRT, ONNX Runtime, OpenVINO)
+  '- videocapture: local image or video source handling (optional, CV-domain only)
 ```
 
 In this mode `neuriplo-infer` is built with direct dependencies on
-`neuriplo-tasks`, `neuriplo`, and `videocapture`. It is the composition root for
-local inference and runs on the same machine as the backend runtime and model
-artifacts.
+`neuriplo-tasks`, `neuriplo`, and optionally `videocapture`. It is the composition
+root for local inference and runs on the same machine as the GPU backend runtime
+and model artifacts.
 
-Use this mode when the goal is a local executable, local model access, and direct
-backend execution without a client/server boundary.
+Use this mode when the goal is a local executable, direct GPU backend access,
+and direct backend execution without a client/server boundary.
 
 ## Remote KServe Client Mode
 
@@ -46,8 +47,8 @@ In this mode `neuriplo-infer` is coupled to the KServe V2 client protocol, not t
 `neuriplo` backend internals. The wire protocol itself is implemented in the
 standalone `neuriplo-kserve-client` library (consumed via FetchContent); only the
 `KserveEngine` adapter that maps protocol bytes to the neuriplo inference contract
-lives in `neuriplo-infer`. The server owns model loading, task/backend wiring,
-queueing, scheduling, batching, and operational behavior.
+lives in `neuriplo-infer`. The server owns model loading, GPU placement, task/backend wiring, queueing,
+scheduling, batching, GPU health reporting, and operational behavior.
 
 `neuriplo-kserve-runtime` is one compatible server implementation. The same
 client path should also be usable with other KServe-compatible endpoints, such as

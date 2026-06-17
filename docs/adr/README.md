@@ -16,5 +16,4 @@ Use [0000-template.md](0000-template.md) for new records.
 - [0004 Rename vision-core and vision-inference to neuriplo-tasks and neuriplo-infer](0004-rename-vision-repos-to-neuriplo-tasks-infer.md)
 - [0005 Create a dedicated neuriplo-ui repository for the Qt UI](0005-create-neuriplo-ui-repo.md)
 - [0006 Serve generative tasks over OpenAI-compatible endpoints, keep predictive tasks on KServe V2](0006-generative-serving-over-openai-protocol.md)
-- [0007 Register ghostgrid as a secondary agentic consumer](0007-register-ghostgrid-as-secondary-consumer.md)
-- [0008 Publish result events from neuriplo-infer, renderer as first consumer](0008-publish-result-events-renderer-first-consumer.md)
+- [0009 Evolve platform focus to AI Infrastructure and GPU-first serving](0009-evolve-to-ai-infrastructure-gpu-serving-platform.md)

@@ -44,14 +44,6 @@ Idempotent Consumer.
 Recommendation: update the architecture overview or add a dedicated pattern
 guide under `docs/architecture/`.
 
-### Medium: `tritonic` is a known consumer but not first-class in platform metadata
-
-`neuriplo-tasks` metadata lists `tritonic` as a consumer, but `tritonic` is not in
-`versions.yaml` or the main ownership map.
-
-Recommendation: either add `tritonic` as a tracked repository or remove it from
-consumer metadata if it is outside the platform control-plane scope.
-
 ### Low: Serving runtime branch policy differs from the rest
 
 Most implementation repositories expose `develop` as the integration branch.
@@ -70,12 +62,10 @@ reliability patterns.
 
 Status: `docs/architecture/modern-patterns.md` now covers the taxonomy from the
 source article and links from `docs/architecture/overview.md`. Remaining work is
-policy: decide whether `tritonic` is tracked in the platform matrix and reconcile
-`neuriplo-kserve-runtime` branch metadata.
+policy: reconcile `neuriplo-kserve-runtime` branch metadata.
 
 ## Recommended Next Actions
 
 1. Add a modern-pattern architecture page based on the supplied pattern document.
-2. Decide whether `tritonic` is part of the platform compatibility matrix.
-3. Reconcile `neuriplo-kserve-runtime` branch metadata with the actual remote
+2. Reconcile `neuriplo-kserve-runtime` branch metadata with the actual remote
    branch structure.

@@ -3,11 +3,9 @@
 Owner: `neuriplo-platform` (envelope), `neuriplo-tasks` (result payload
 semantics via the result contract)
 
-Producer: `neuriplo-infer` (event publisher sink, see ADR 0008)
+Producer: `neuriplo-infer` (event publisher sink)
 
-Consumers: renderer (first consumer),
-[`ghostgrid`](https://github.com/olibartfast/ghostgrid) (ADR 0007), recorders,
-alerting, dashboards, other observers
+Consumers: renderer, recorders, alerting, dashboards, other observers
 
 Status: Draft
 
