@@ -263,36 +263,78 @@ Consequences:
 - Agent-loop economics improve on the OpenAI path: vLLM prefix caching
   amortizes re-sent prompts, which the V2 tensor path cannot do.
 
-### 12. Secondary Consumers: Agentic Frameworks
+### 12. GPU optimization and multi-GPU scheduling
 
-`ghostgrid` (multi-provider LLM/VLM agentic workflow framework) is a
-registered secondary consumer alongside `neuriplo-ros` and `tritonic`.
-Two integration paths map onto the two protocol tracks:
+GPU compute dominates inference serving cost and latency. The platform must make
+GPU behavior explicit so operators can reason about throughput, utilization, and
+cost:
 
 ```text
-generative path:  ghostgrid consumes neuriplo-ecosystem LLM/VLM output
-                  through OpenAI-compatible endpoints using its existing
-                  openai provider with a custom URL; no new client code
-
-predictive path:  ghostgrid ReAct tools (detect, count, read_text,
-                  open-vocab queries) are backed by neuriplo models over
-                  the V2 Open Inference Protocol, replacing prompt-only
-                  vision tools with grounded typed results
+GPU memory management (peak working set, arena/pool allocation, fragmentation)
+multi-GPU scheduling (model-to-GPU affinity, round-robin vs. NUMA-aware placement)
+GPU utilization metrics (SM occupancy, memory bandwidth, power)
+CUDA stream and concurrency model (stream-per-model, stream-per-request)
+mixed-precision policy (FP16/INT8/FP8 per backend, per-model override)
+GPU health signals (ECC errors, temperature, clock throttling, NVLink status)
 ```
 
-Status: ADR 0007 registered ghostgrid as a secondary consumer. ADR 0008
-published result events from neuriplo-infer with renderer as first consumer.
-Pending work: end-to-end integration smoke test that validates the ghostgrid
-provider -> neuriplo inference chain.
+`neuriplo` owns the backend-facing GPU abstraction. `neuriplo-kserve-runtime`
+owns the multi-GPU scheduling policy. The platform contract
+`contracts/gpu-capability-contract.md` defines the reported surface.
 
-Boundary rules for agentic consumers:
+### 13. AI datacenter deployment
 
-- Consume the V2 wire format and the result contract; do not re-implement
-  task preprocessing or postprocessing outside neuriplo-tasks.
-- Infrastructure routing (rate limits, model placement, gateway concerns)
-  belongs to the serving and gateway layer, not the agent framework.
-- Registration as a secondary consumer requires an ADR and an entry in the
-  ecosystem map in `docs/architecture/overview.md`.
+The platform must describe deployment at AI-datacenter scale, not just single-node
+Docker:
+
+```text
+multi-node topology (control-plane + worker nodes, model placement)
+GPU fleet management (node pools by GPU generation, capacity planning)
+model distribution and caching (model registry, lazy-pull, tiered storage)
+node failure and draining (cordon, drain, rebalance inference load)
+inter-node networking (RoCE/InfiniBand assumptions, tensor-parallel communication)
+power and cooling awareness (throttling vs. throughput tradeoffs)
+```
+
+This section defines platform expectations and deployment architecture. Runtime
+implementation, Helm charts, and node agents stay in owning repos.
+
+### 14. Benchmarking contract and performance regression
+
+Inference throughput and latency are the platform's primary quality signals.
+`contracts/benchmarking-contract.md` exists in Draft so every compatibility set
+ships with reproducible performance baselines. It defines:
+
+```text
+benchmark scenarios (single-stream, batched, max-throughput)
+metric definitions (P50/P95/P99 latency, tokens/sec, images/sec, GPU utilization)
+reproducibility requirements (fixed model, fixed input shape, fixed GPU)
+regression thresholds (X% latency increase = breaking for that compatibility set)
+reporting format (JSON schema, human-readable summary)
+```
+
+Remaining work: wire baselines into a `versions.yaml` compatibility set and an
+optional CI performance gate.
+
+Benchmarks are owned by each implementation repo. The platform contract defines
+expectations and the regression gating rule. CI may optionally enforce a
+performance gate on pinned compatibility sets.
+
+### 15. GPU hardware architecture considerations
+
+Add `docs/architecture/gpu-hardware-considerations.md` covering:
+
+```text
+GPU device discovery and topology (PCIe, NVLink, NUMA)
+memory allocation strategies (CUDA malloc, unified memory, peer access)
+kernel launch and stream concurrency patterns
+mixed-precision and quantization surface (per-backend, per-model)
+accelerator portability (CUDA vs. ROCm vs. oneAPI boundaries)
+GPU health and telemetry signals
+```
+
+The document describes platform-level expectations. Backend-specific
+implementation details remain in `neuriplo`.
 
 ## Definition Of Done
 
@@ -309,6 +351,9 @@ Production architecture is ready when:
 - the predictive/generative protocol split is implemented (ADR 0006 adopted,
   remote KServe V2 client path operational in neuriplo-infer v0.5.0; generative
   smoke test still pending)
-- secondary consumers, including agentic frameworks, are registered with
-  explicit contract boundaries (ADRs 0007, 0008 accepted; integration smoke
-  test pending)
+- GPU capability reporting is a public contract and backends report it
+  (gpu-capability-contract.md)
+- each compatibility set ships reproducible throughput/latency baselines with
+  regression thresholds (benchmarking-contract.md)
+- multi-GPU scheduling and AI-datacenter deployment expectations are documented
+  with explicit owner boundaries

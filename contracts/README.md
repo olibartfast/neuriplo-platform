@@ -18,6 +18,12 @@ interface used across repositories.
   expectations across local and serving flows.
 - [Event contract](event-contract.md): broker-published result event envelope
   produced by `neuriplo-infer` and observed by out-of-process consumers.
+- [GPU capability contract](gpu-capability-contract.md): GPU device discovery,
+  memory, compute capability, and topology surface reported by `neuriplo`
+  backends.
+- [Benchmarking contract](benchmarking-contract.md): throughput/latency
+  benchmark expectations, reproducibility rules, and performance regression
+  thresholds for compatibility sets.
 
 ## Contract Template
 

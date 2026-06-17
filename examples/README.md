@@ -30,4 +30,4 @@ Repo-local examples should stay in implementation repos when they primarily show
   optional `videocapture`.
 - [OpenAI-compatible generative serving E2E](openai-generative-serving/README.md):
   generative-track scenario (ADR 0006) serving a GGUF model via `llama-server`
-  and consuming it with curl and `ghostgrid` (ADR 0007).
+  and consuming it with curl.

@@ -6,8 +6,7 @@ Version set: `initial-architecture-baseline` from `versions.yaml`
 
 Cross-repo scenario for the generative track defined in ADR 0006: a GGUF
 model from the neuriplo ecosystem is served through an OpenAI-compatible
-endpoint and consumed by external clients, including an agentic secondary
-consumer (ADR 0007), with no custom protocol code.
+endpoint and consumed by external clients, with no custom protocol code.
 
 ## Repositories Involved
 
@@ -17,7 +16,6 @@ consumer (ADR 0007), with no custom protocol code.
   (unchanged by this example; shown only as the local-mode counterpart).
 - `llama.cpp` (`llama-server`): third-party OpenAI-compatible server,
   a deployment dependency per ADR 0006, not a version-matrix member.
-- `ghostgrid`: agentic secondary consumer (ADR 0007), generative path.
 
 ## Scenario
 
@@ -30,8 +28,8 @@ llama-server --model <model.gguf> [--mmproj <mmproj.gguf>] --port 8080
         v
 OpenAI-compatible endpoint: http://localhost:8080/v1/chat/completions
         |
-        |- curl / any OpenAI SDK
-        '- ghostgrid (provider "openai", custom URL)
+        v
+        curl / any OpenAI SDK
 ```
 
 The KServe V2 protocol is not involved. The float-cast-bytes text encoding
@@ -64,19 +62,6 @@ curl -s http://localhost:8080/v1/chat/completions \
       }'
 ```
 
-## Consume: ghostgrid (agentic consumer)
-
-```bash
-OPENAI_API_KEY=EMPTY ghostgrid run --workflow sequential \
-  --prompt "Summarize what the neuriplo ecosystem does in two sentences." \
-  --model local \
-  --provider openai \
-  --url http://localhost:8080/v1/chat/completions
-```
-
-No ghostgrid changes are required; this is the existing `openai` provider
-with a custom URL, which is the point of ADR 0006.
-
 ## Expected Contract-Level Output
 
 - The endpoint returns an OpenAI chat-completions JSON body with
@@ -89,5 +74,4 @@ with a custom URL, which is the point of ADR 0006.
 ## Validation Status
 
 Not yet validated end to end. Validation evidence to attach when run:
-server startup log, one non-streaming curl response, one ghostgrid
-sequential run output.
+server startup log, one non-streaming curl response.
