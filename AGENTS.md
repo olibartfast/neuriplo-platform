@@ -39,6 +39,27 @@ Python scripts should be small, dependency-light, executable, and compatible wit
 
 Run `scripts/check_platform.py` before every commit. If integration-test metadata or smoke behavior changes, also run `integration-tests/local-inference-smoke/run.py`. Do not add model downloads, generated artifacts, or GPU-dependent checks without documenting requirements in the test README.
 
+## Agent Commit Signing
+
+Every commit produced by an AI agent MUST include a `Co-authored-by` trailer
+that identifies the agent, the LLM model used, and the agent vendor. This makes
+agent contributions visible in GitHub's contribution graph and `git shortlog`.
+
+Format: `Co-Authored-By: <Agent> <Model> <<vendor-email>>`
+
+| Agent | Vendor email | Example trailer |
+|-------|-------------|-----------------|
+| Cursor | `cursoragent@cursor.com` | `Co-authored-by: Cursor <cursoragent@cursor.com>` |
+| Claude Code | `noreply@anthropic.com` | `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>` |
+| Opencode | `agent@opencode.ai` | `Co-Authored-By: Opencode via DeepSeek V4 Pro <agent@opencode.ai>` |
+
+The model name MUST match the LLM the agent is powered by (check the system
+prompt). If the model changes across sessions, the trailer must reflect the
+model used for that specific commit.
+
+Place the trailer in the commit body (after the subject line and blank line),
+not the subject.
+
 ## Commit & Pull Request Guidelines
 
 Use concise imperative commit subjects, matching existing history, for example `Add local inference smoke integration test`. Keep platform-only changes on `main`.
