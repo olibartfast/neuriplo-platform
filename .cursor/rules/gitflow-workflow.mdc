@@ -45,6 +45,12 @@ not apply there.
 3. **Hotfixes**: branch from `master`; merge into both `master` and `develop`
    when complete; tag on `master`.
 
+## Agent Commit Signing
+
+Every commit by an AI agent MUST include a `Co-authored-by` trailer with the
+agent name, LLM model, and vendor email. See `AGENTS.md` "Agent Commit Signing"
+for the full table of agents and format.
+
 ## Before Commit, Push, or PR
 
 ### Coding repos (mandatory)
@@ -57,6 +63,7 @@ not apply there.
 4. Never force-push to `master`.
 5. Run owning-repo validation (build/tests) before commit.
 6. Only commit or push when the user explicitly asks.
+7. Include `Co-Authored-By` agent/model trailer in commit body (see Agent Commit Signing above).
 
 ### neuriplo-platform (orchestrator)
 
@@ -65,6 +72,7 @@ not apply there.
 3. Run `scripts/check_platform.py` before commit.
 4. Never force-push to `main`.
 5. Only commit or push when the user explicitly asks.
+6. Include `Co-Authored-By` agent/model trailer in commit body (see Agent Commit Signing above).
 
 ## Default Commands (coding repo feature work)
 
