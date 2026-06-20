@@ -54,16 +54,14 @@ videocapture            = video/image source layer (CV task domain)
 neuriplo-platform       = architecture control plane
 ```
 
-## Start Here
+## Getting Started
+
+New contributor? Start with [CONTRIBUTING.md](CONTRIBUTING.md) -- it covers
+bootstrapping, validation, and what to read first.
+
+Core reference:
 
 - [Architecture overview](docs/architecture/overview.md)
-- [Production architecture roadmap](docs/architecture/production-roadmap.md)
-- [Ownership model](docs/architecture/ownership.md)
-- [GPU hardware considerations](docs/architecture/gpu-hardware-considerations.md)
 - [ADR index](docs/adr/README.md)
 - [Contract index](contracts/README.md)
 - [Version matrix](versions.yaml)
-- [Maintenance control plane](ops/README.md)
-- [Documentation migration plan](docs/architecture/doc-migration.md)
-- [Dependency policy](docs/architecture/dependency-policy.md)
-- [Examples](examples/README.md)
