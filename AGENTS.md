@@ -30,7 +30,11 @@ integration-tests/local-inference-smoke/run.py
 Prefer Markdown and YAML with short, explicit sections. Keep files ASCII-only.
 Hyperlink component and repository names to their GitHub repository on first
 mention in a document (outside code blocks); a reader must not need prior
-context to know what `neuriplo-kserve-client` or `neuriplo-tasks` refers to. The root `README.md`
+context to know what `neuriplo-kserve-client` or `neuriplo-tasks` refers to.
+
+When editing any documentation with hyperlinks, verify all relative links resolve to
+existing files and absolute GitHub URLs are reachable. Prefer absolute GitHub blob/tree
+URLs over fragile cross-repo relative paths (e.g. `../../../neuriplo/docs/foo.md`). The root `README.md`
 is the canonical linked registry. Use lowercase kebab-case for docs and directories, for example `dependency-policy.md` and `local-inference-smoke/`. ADRs use zero-padded numeric prefixes: `0003-keep-runners-in-owning-repos.md`.
 
 Python scripts should be small, dependency-light, executable, and compatible with Python 3.12. Use clear error messages and nonzero exits for validation failures.
