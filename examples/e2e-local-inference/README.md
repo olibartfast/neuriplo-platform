@@ -39,6 +39,7 @@ Representative local inference scenarios:
 | `yoloseg` | instance segmentation | ONNX Runtime or TensorRT | mask result semantics |
 | `raft` | optical flow | ONNX Runtime | dense output shape and visualization path |
 | `vitpose` | pose estimation | ONNX Runtime | keypoint result semantics |
+| `rfdetr_keypoint` | pose estimation | ONNX Runtime | RF-DETR keypoint with covariance uncertainty |
 | `depth_anything_v2` | depth estimation | ONNX Runtime | depth result normalization |
 | `videomae` | video classification | ONNX Runtime | video source sampling and classification result semantics |
 | `gemma4` | image understanding | llama.cpp | multimodal task tensor contract |
