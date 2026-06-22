@@ -33,7 +33,8 @@ object_detection:       yolo26, yolov8, yolov10, yolov11, rtdetr, rtdetrv2,
                         yolonas, yolo-nas, yolov4, yolov5, yolov6, yolov7,
                         yolov7e2e, yolov9, yolov12
 instance_segmentation:  yolo26seg, yolov10seg, yoloseg, rfdetrseg, ecseg
-pose_estimation:        yolo26pose, yolov8pose, yolov11pose, vitpose, ecpose
+pose_estimation:        yolo26pose, yolov8pose, yolov11pose, vitpose, ecpose,
+                        rfdetr_keypoint, rfdetr_kpt
 classification:         resnet50, resnet101, vitclassifier, torchvisionclassifier,
                         tensorflowclassifier
 depth_estimation:       depthanythingv2
