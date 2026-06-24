@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Real local KServe runtime E2E for EdgeCrafter detection across backends.
 
-Mirrors the YOLO ``kserve-runtime-e2e`` runner but exercises the EdgeCrafter
+Mirrors the YOLO ``kserve-runtime-yolo-e2e`` runner but exercises the EdgeCrafter
 ``ecdet`` dual-input contract (``images`` FP32 + ``orig_target_sizes`` INT64 ->
 ``labels`` INT64, ``boxes``/``scores`` FP32). It also asserts the advertised
 datatypes, which is the regression guard for the metadata dtype-propagation fix:

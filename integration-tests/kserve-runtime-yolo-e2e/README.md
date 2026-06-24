@@ -1,4 +1,4 @@
-# KServe Runtime E2E Test
+# YOLO KServe Runtime E2E Test
 
 Validation status: Real local E2E
 
@@ -37,13 +37,13 @@ Default paths assume sibling checkouts next to `neuriplo-platform`:
 From `neuriplo-platform`:
 
 ```bash
-integration-tests/kserve-runtime-e2e/run.py
+integration-tests/kserve-runtime-yolo-e2e/run.py
 ```
 
 Override paths when using different build directories or model locations:
 
 ```bash
-integration-tests/kserve-runtime-e2e/run.py   --runtime-bin ../neuriplo-kserve-runtime/build/real-onnx/neuriplo-kserve-runtime   --infer-build-dir ../neuriplo-infer/build-kserve-codex   --model ../neuriplo-infer/yolo26s.onnx
+integration-tests/kserve-runtime-yolo-e2e/run.py   --runtime-bin ../neuriplo-kserve-runtime/build/real-onnx/neuriplo-kserve-runtime   --infer-build-dir ../neuriplo-infer/build-kserve-codex   --model ../neuriplo-infer/yolo26s.onnx
 ```
 
 ## What It Checks

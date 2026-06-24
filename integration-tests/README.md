@@ -30,9 +30,9 @@ Each integration test should document:
 
 - [Local inference smoke](local-inference-smoke/README.md): validates local sibling
   checkouts, pinned refs, and the app-owned E2E runner dry-run path.
-- [KServe runtime E2E](kserve-runtime-e2e/README.md): starts the real serving
-  runtime, runs the app-layer KServe HTTP client against it, verifies rendered
-  output, and checks metrics.
+- [YOLO KServe runtime E2E](kserve-runtime-yolo-e2e/README.md): starts the real serving
+  runtime with a YOLO model, runs the app-layer KServe HTTP client against it,
+  verifies rendered output, and checks metrics.
 - [EdgeCrafter KServe runtime E2E](kserve-runtime-edgecrafter-e2e/README.md):
   exercises the EdgeCrafter `ecdet` dual-input INT64 contract across the
   `onnx_runtime`, `tensorrt`, `openvino`, and `executorch` backends, asserting the advertised
