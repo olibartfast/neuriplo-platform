@@ -37,7 +37,7 @@ matrix before running expensive model export or inference work.
 - real inference execution
 - numerical or visual output correctness
 
-Use `../kserve-runtime-e2e/run.py` for the real local KServe runtime release
+Use `../kserve-runtime-yolo-e2e/run.py` for the real local KServe runtime release
 validation path.
 
 ## Integration Test Plan
