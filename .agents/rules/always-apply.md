@@ -1,0 +1,81 @@
+# Gitflow Workflow
+
+Follow the Gitflow model from Atlassian's Gitflow tutorial for **coding
+implementation repositories** only. Map branch names using `ops/policies.yaml`.
+
+Reference: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
+
+## Scope
+
+**Mandatory Gitflow** applies to coding components:
+
+- `neuriplo-tasks`
+- `neuriplo`
+- `neuriplo-infer`
+- `neuriplo-kserve-client`
+- `neuriplo-kserve-runtime`
+- `videocapture`
+
+**Not mandatory** for `neuriplo-platform`. It is the document and architecture
+orchestrator (control plane), not a coding/runtime repo. Platform work normally
+lands on `main`; Gitflow `develop` / `master` / release / hotfix branches do
+not apply there.
+
+## Branch Roles (coding repos only)
+
+| Gitflow role | Branch |
+|--------------|--------|
+| Production / release history | `master` |
+| Integration | `develop` |
+| Feature work | `feat/*`, `feature/*` from `develop` |
+| Release prep | `release/*` from `develop` |
+| Production hotfix | `hotfix/*` from `master` |
+
+## Required Flow (coding repos)
+
+1. **Features**: branch from `develop`, merge back to `develop` only. Never merge
+   feature work directly into `master`.
+2. **Releases**: branch `release/*` from `develop`; when ready, merge into both
+   `master` and `develop`; tag the release on `master`.
+3. **Hotfixes**: branch from `master`; merge into both `master` and `develop`
+   when complete; tag on `master`.
+
+## Agent Commit Signing
+
+Every commit by an AI agent MUST include a `Co-authored-by` trailer with the
+agent name, LLM model, and vendor email. See `AGENTS.md` "Agent Commit Signing"
+for the full table of agents and format.
+
+## Before Commit, Push, or PR
+
+### Coding repos (mandatory)
+
+1. Confirm the current branch matches the change type (feature / release / hotfix).
+2. Confirm the target branch is allowed:
+   - normal work -> `develop` (or `feat/*` / `feature/*`)
+   - release / hotfix -> `master` via release/hotfix flow only
+3. Never push normal development work directly to `master`.
+4. Never force-push to `master`.
+5. Run owning-repo validation (build/tests) before commit.
+6. Only commit or push when the user explicitly asks.
+7. Include `Co-Authored-By` agent/model trailer in commit body (see Agent Commit Signing above).
+
+### neuriplo-platform (orchestrator)
+
+1. Normal work targets `main` (direct commit or short-lived branch -> PR to `main`).
+2. Do not apply sibling Gitflow branch naming or `develop`/`master` rules here.
+3. Run `scripts/check_platform.py` before commit.
+4. Never force-push to `main`.
+5. Only commit or push when the user explicitly asks.
+6. Include `Co-Authored-By` agent/model trailer in commit body (see Agent Commit Signing above).
+
+## Default Commands (coding repo feature work)
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feat/short-description
+# work, validate, commit
+git push -u origin feat/short-description
+# open PR -> develop
+```
