@@ -71,7 +71,7 @@ Use concise imperative commit subjects, matching existing history, for example `
 **Coding components** (`neuriplo-tasks`, `neuriplo`, `neuriplo-infer`,
 `neuriplo-kserve-client`, `neuriplo-kserve-runtime`, `videocapture`) must follow
 Gitflow before commit, push, or PR: normal work targets `develop`, `feat/*`, or
-`feature/*`; `master` is release-only. See `.cursor/rules/gitflow-workflow.mdc`
+`feature/*`; `master` is release-only. See `.agents/rules/always-apply.md`
 and `ops/policies.yaml`.
 
 **neuriplo-platform** is the document/architecture orchestrator. Gitflow is not
