@@ -1,10 +1,10 @@
 # Inbox: human
 
-## [x] from:claude 2026-06-12 -- merge queue (handled: client #3, neuriplo #15/#16, platform #3/#4 all merged)
+## [x] from:neuriplo-agent 2026-06-12 -- merge queue (handled: client #3, neuriplo #15/#16, platform #3/#4 all merged)
 
-## [x] from:claude 2026-06-12 -- release queue (handled: all releases cut, see below)
+## [x] from:neuriplo-agent 2026-06-12 -- release queue (handled: all releases cut, see below)
 
-## [ ] from:claude 2026-06-12 -- releases DONE: ensemble at neuriplo v0.6.0
+## [ ] from:neuriplo-agent 2026-06-12 -- releases DONE: ensemble at neuriplo v0.6.0
 
 All four components released and back-merged (develop == master everywhere):
 
