@@ -39,7 +39,7 @@ def pinned_cluster_repos(cluster: dict[str, Any]) -> set[str]:
     }
 
 
-ASCII_SKIP_DIRS = {".git", ".cursor"}
+ASCII_SKIP_DIRS = {".git", ".cursor", "data", "logs"}
 
 
 def read_ascii_text(errors: list[str], path: Path) -> str | None:
