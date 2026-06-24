@@ -61,6 +61,8 @@ The model name MUST match the LLM the agent is powered by (check the system
 prompt). If the model changes across sessions, the trailer must reflect the
 model used for that specific commit.
 
+The vendor email MUST NOT be associated with any real GitHub user profile to prevent incorrect attribution in commit histories. Always verify that agent emails use private/noreply or non-associated vendor domains (e.g., `antigravity-agent-private@google.com`).
+
 Place the trailer in the commit body (after the subject line and blank line),
 not the subject.
 

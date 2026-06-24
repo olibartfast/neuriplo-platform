@@ -44,7 +44,8 @@ not apply there.
 
 Every commit by an AI agent MUST include a `Co-authored-by` trailer with the
 agent name, LLM model, and vendor email. See `AGENTS.md` "Agent Commit Signing"
-for the full table of agents and format.
+for the full table of agents and format. The vendor email MUST NOT be associated
+with any real GitHub user profile.
 
 ## Before Commit, Push, or PR
 
