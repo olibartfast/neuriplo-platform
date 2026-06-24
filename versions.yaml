@@ -10,8 +10,8 @@ repositories:
   neuriplo-tasks:
     owner: domain-task-layer
     visibility: public
-    version: v0.4.0
-    ref: 24083b195415285e16009e20371d26f9bcf5b8dc
+    version: v0.4.1
+    ref: 65e1c7a5e73a9c91d35a333ca16bb030aaead69b
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
@@ -20,8 +20,8 @@ repositories:
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.6.2
-    ref: ce2575a0e7854823d63616022ce632084d5ba78c
+    version: v0.7.0
+    ref: 7e545572278048b42424dc067e1b0c6abc007aaf
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public
@@ -47,9 +47,9 @@ compatibility_sets:
       - neuriplo-infer documents the ecdet TFLite limitation and keeps the LiteRT warning in the E2E helper.
       - kserve client and runtime docs clarify GitFlow branch cleanup rules used during release maintenance.
     repositories:
-      neuriplo-tasks: v0.4.0
+      neuriplo-tasks: v0.4.1
       neuriplo: v0.7.0
-      neuriplo-infer: v0.6.2
+      neuriplo-infer: v0.7.0
       neuriplo-kserve-client: v0.3.0
       videocapture: v0.3.0
       neuriplo-kserve-runtime: v0.2.0
