@@ -10,28 +10,28 @@ repositories:
   neuriplo-tasks:
     owner: domain-task-layer
     visibility: public
-    version: v0.4.1
-    ref: 65e1c7a5e73a9c91d35a333ca16bb030aaead69b
+    version: v0.5.0
+    ref: 7b7fbfbd4c0b695b8428958e796ba369c39638dd
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
-    version: v0.7.0
-    ref: 056a4dda777ecda43674aeaa9e77c1b0de530ff4
+    version: v0.8.0
+    ref: add7bd9c2b7a0e311c153d4f7a4057765e07e28f
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.7.0
-    ref: 7e545572278048b42424dc067e1b0c6abc007aaf
+    version: v0.8.0
+    ref: fcdff274a4a2e20d9022a86e753a169a7169fc18
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public
-    version: v0.3.0
-    ref: 638702469b154cc3031d007e37e9c80e1e8eb757
+    version: v0.4.0
+    ref: e741f4286de61bf82b9d6925d2ce5da3a2ede5a7
   neuriplo-kserve-runtime:
     owner: serving-runtime-layer
     visibility: public
-    version: v0.2.0
-    ref: 86773e4f8300b50577dee6ca3d725961e09e9405
+    version: v0.3.2
+    ref: 2f3b960a3e48ca57f60c4ac045533fcb9b77fc22
   videocapture:
     owner: video-io
     visibility: public
@@ -39,6 +39,20 @@ repositories:
     ref: fb94bd4f371fa741f8ad0e9a61e7ec2d991359b7
 
 compatibility_sets:
+  - name: rfdetr-keypoint-pose-followup
+    status: active
+    notes:
+      - neuriplo-tasks v0.5.0 adds the RfDetrPose task family (RF-DETR keypoint pose) and batch support across postprocessors; public header changes are additive only (new RfDetrPosePostprocessor header, Keypoint visibility/covariance fields, and a private enum enumerator).
+      - neuriplo-infer v0.8.0 routes the new rfdetrpose/rfdetrkeypoint/rfdetrkpt type strings to PoseEstimation and defaults the KServe remote-runtime client to gRPC.
+      - Validated by a full release build of neuriplo-infer v0.8.0 against the pinned sibling tags fetched from GitHub (local backends plus KServe gRPC, OpenCV-DNN backend): 29 of 29 app tests pass.
+      - neuriplo-kserve-runtime v0.3.2 is unchanged since its tag and was not rebuilt; compatibility with neuriplo-tasks v0.5.0 follows from the additive, pose-only contract change the runtime does not consume.
+    repositories:
+      neuriplo-tasks: v0.5.0
+      neuriplo: v0.8.0
+      neuriplo-infer: v0.8.0
+      neuriplo-kserve-client: v0.4.0
+      neuriplo-kserve-runtime: v0.3.2
+      videocapture: v0.3.0
   - name: ecdet-kserve-litert-followup
     status: draft
     notes:
@@ -46,10 +60,11 @@ compatibility_sets:
       - neuriplo adds LiteRT custom kernels needed by the converted ecdet graph, but ecdet TFLite remains excluded because ONNX-to-TFLite conversion fidelity is known bad.
       - neuriplo-infer documents the ecdet TFLite limitation and keeps the LiteRT warning in the E2E helper.
       - kserve client and runtime docs clarify GitFlow branch cleanup rules used during release maintenance.
+      - Carried forward to the current repository versions; pending re-validation at this snapshot.
     repositories:
-      neuriplo-tasks: v0.4.1
-      neuriplo: v0.7.0
-      neuriplo-infer: v0.7.0
-      neuriplo-kserve-client: v0.3.0
+      neuriplo-tasks: v0.5.0
+      neuriplo: v0.8.0
+      neuriplo-infer: v0.8.0
+      neuriplo-kserve-client: v0.4.0
+      neuriplo-kserve-runtime: v0.3.2
       videocapture: v0.3.0
-      neuriplo-kserve-runtime: v0.2.0
