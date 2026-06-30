@@ -17,3 +17,4 @@ Use [0000-template.md](0000-template.md) for new records.
 - [0005 Create a dedicated neuriplo-ui repository for the Qt UI](0005-create-neuriplo-ui-repo.md)
 - [0006 Serve generative tasks over OpenAI-compatible endpoints, keep predictive tasks on KServe V2](0006-generative-serving-over-openai-protocol.md)
 - [0009 Evolve platform focus to AI Infrastructure and GPU-first serving](0009-evolve-to-ai-infrastructure-gpu-serving-platform.md)
+- [0010 Generalize task domains beyond computer vision](0010-generalize-task-domains.md)
