@@ -8,13 +8,16 @@ Status: Draft
 
 ## Purpose
 
-Define the domain-level interface for a vision task independent of the backend
-used to execute inference.
+Define the domain-level interface for a task independent of the backend used to
+execute inference. Computer vision is the first implemented task domain; ADR
+0010 reserves additional domains for NLP, audio, tabular, multimodal, and
+reinforcement-learning workloads.
 
 ## Responsibilities
 
 `neuriplo-tasks` owns:
 
+- Task domain identity.
 - Task identity and supported task types.
 - Input normalization requirements.
 - Preprocessing behavior.
@@ -35,12 +38,54 @@ Consumers must not:
 - Depend on private model internals.
 - Treat backend-specific tensors as the public task result.
 
+## Task Domains
+
+Status by domain:
+
+```text
+cv          implemented first domain
+nlp         reserved; first preferred pilot is embeddings
+audio       reserved
+tabular     reserved
+multimodal  reserved
+rl          tracked; out of scope for serving v1
+```
+
+Every shipped domain must define:
+
+```text
+task_type strings
+input contract
+result contract
+serving protocol
+batching semantics
+streaming support
+backend expectations
+example configuration
+```
+
+## Serving Track
+
+Predictive tensor tasks use KServe V2 / Open Inference Protocol for remote
+serving. Current CV task families are on this track.
+
+Generative chat/text tasks use OpenAI-compatible endpoints for remote serving.
+`image_understanding` remains an embedded local task in `neuriplo-infer`; remote
+serving delegates to an OpenAI-compatible server per ADR 0006.
+
+Implementation-specific encodings inside embedded local mode are not public
+serving contracts.
+
 ## Compatibility Rules
 
 - Adding optional task metadata is backward compatible.
 - Adding a new task type is backward compatible when existing task identifiers
   are unchanged.
+- Adding a new task domain is backward compatible when existing domains are
+  unchanged.
 - Renaming task identifiers is breaking.
+- Moving an existing task type to a different serving protocol is breaking
+  unless covered by a versioned compatibility window.
 - Changing result semantics for an existing result field is breaking.
 - Adding required input fields is breaking unless guarded by a new contract
   version.
