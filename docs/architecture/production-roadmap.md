@@ -162,13 +162,13 @@ ADR changes that boundary.
 
 ### 8. Failure-Mode Documentation
 
-Create:
+`docs/architecture/failure-modes.md`,
+`contracts/error-contract.md`, and
+`integration-tests/failure-modes/` now define the platform-owned failure
+matrix. Current coverage is metadata-only; executable negative-path tests remain
+in the owning repositories.
 
-```text
-docs/architecture/failure-modes.md
-```
-
-Cover at least:
+The required cases are:
 
 ```text
 model not found
@@ -182,8 +182,10 @@ unsupported dtype
 version mismatch
 ```
 
-Each failure mode should define owner, expected error contract, observability
-signals, retry behavior, and runbook link.
+Each failure mode defines owner, expected error contract, observability signals,
+retry behavior, and runbook link. Remaining work: attach executable runtime and
+client evidence for the public serving failures before marking this roadmap item
+production-ready.
 
 ### 9. Architecture Fitness Tests
 

@@ -1,0 +1,9 @@
+# Python bytecode caches (created by importing repo-local scripts such as
+# check_benchmark from generate_compat_report.py). Never commit these; the
+# platform's ASCII-only content scan also skips this directory.
+__pycache__/
+*.pyc
+
+# Local integration-test outputs.
+data/
+logs/
