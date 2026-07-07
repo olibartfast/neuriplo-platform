@@ -30,3 +30,6 @@ jobs:
 
       - name: Validate failure-mode contract matrix
         run: integration-tests/failure-modes/run.py
+
+      - name: Validate OpenAI generative serving smoke metadata
+        run: integration-tests/openai-generative-serving/run.py

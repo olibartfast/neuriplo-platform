@@ -34,6 +34,9 @@ Each integration test should document:
 - [Failure mode contract](failure-modes/README.md): validates the
   platform-owned failure-mode matrix, error codes, retry policy, owner
   assignment, transport statuses, observability fields, and runbook links.
+- [OpenAI-compatible generative serving](openai-generative-serving/README.md):
+  validates the ADR 0006 generative-track metadata for `/v1/chat/completions`
+  and keeps the path separate from KServe V2 tensor serving.
 - [Local inference smoke](local-inference-smoke/README.md): validates local sibling
   checkouts, pinned refs, and the app-owned E2E runner dry-run path.
 - [YOLO KServe runtime E2E](kserve-runtime-yolo-e2e/README.md): starts the real serving
