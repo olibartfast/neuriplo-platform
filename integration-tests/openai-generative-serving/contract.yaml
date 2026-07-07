@@ -1,0 +1,19 @@
+schema_version: 1
+compatibility_set: rfdetr-keypoint-pose-followup
+track: generative
+protocol: openai-compatible
+endpoint: /v1/chat/completions
+example: examples/openai-generative-serving/README.md
+serving_dependency:
+  name: llama-server
+  source: llama.cpp
+  version_matrix_member: false
+required_response_fields:
+  non_streaming:
+    - choices[0].message.content
+  streaming:
+    - choices[0].delta.content
+forbidden_protocols:
+  - kserve-v2-tensor
+  - float-cast-bytes
+validation_status: metadata_only
