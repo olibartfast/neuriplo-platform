@@ -1,0 +1,93 @@
+schema_version: 1
+compatibility_set: rfdetr-keypoint-pose-followup
+cases:
+  - id: model-not-found
+    code: MODEL_NOT_FOUND
+    owner: neuriplo-kserve-runtime
+    retryable: false
+    http_status: 404
+    grpc_status: NOT_FOUND
+    observability:
+      required_fields: [request_id, model, error_code]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only
+  - id: model-load-failure
+    code: MODEL_LOAD_FAILED
+    owner: neuriplo-kserve-runtime
+    retryable: false
+    http_status: 500
+    grpc_status: INTERNAL
+    observability:
+      required_fields: [request_id, model, error_code, backend]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only
+  - id: backend-unavailable
+    code: BACKEND_UNAVAILABLE
+    owner: neuriplo
+    retryable: true
+    http_status: 503
+    grpc_status: UNAVAILABLE
+    observability:
+      required_fields: [request_id, model, error_code, backend]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only
+  - id: invalid-tensor-shape
+    code: INVALID_TENSOR_SHAPE
+    owner: neuriplo-kserve-runtime
+    retryable: false
+    http_status: 400
+    grpc_status: INVALID_ARGUMENT
+    observability:
+      required_fields: [request_id, model, error_code, tensor_name]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only
+  - id: queue-full
+    code: QUEUE_FULL
+    owner: neuriplo-kserve-runtime
+    retryable: true
+    http_status: 429
+    grpc_status: RESOURCE_EXHAUSTED
+    observability:
+      required_fields: [request_id, model, error_code, queue_depth]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only
+  - id: request-timeout
+    code: REQUEST_TIMEOUT
+    owner: neuriplo-kserve-runtime
+    retryable: true
+    http_status: 504
+    grpc_status: DEADLINE_EXCEEDED
+    observability:
+      required_fields: [request_id, model, error_code, deadline_ms]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only
+  - id: gpu-oom
+    code: GPU_OOM
+    owner: neuriplo
+    retryable: true
+    http_status: 503
+    grpc_status: RESOURCE_EXHAUSTED
+    observability:
+      required_fields: [request_id, model, error_code, device_id, memory_requested_mib]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only
+  - id: unsupported-dtype
+    code: UNSUPPORTED_DTYPE
+    owner: neuriplo
+    retryable: false
+    http_status: 400
+    grpc_status: INVALID_ARGUMENT
+    observability:
+      required_fields: [request_id, model, error_code, tensor_name, dtype]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only
+  - id: version-mismatch
+    code: VERSION_MISMATCH
+    owner: neuriplo-platform
+    retryable: false
+    http_status: 409
+    grpc_status: FAILED_PRECONDITION
+    observability:
+      required_fields: [request_id, model, error_code, compatibility_set]
+    runbook: ops/runbooks/debug-serving-failure.md
+    validation_status: metadata_only

@@ -94,12 +94,13 @@ establish the baseline.
 
 ## Reporting Format
 
-Benchmarks produce a JSON artifact:
+Benchmarks produce a JSON artifact. A file can contain one measured scenario or
+several related runs in the `results` array:
 
 ```json
 {
   "benchmark_version": "1.0",
-  "compatibility_set": "ecdset-kserve-litert-followup",
+  "compatibility_set": "rfdetr-keypoint-pose-followup",
   "timestamp": "2026-06-18T12:00:00Z",
   "hardware": {
     "device_name": "NVIDIA L40S",
@@ -107,25 +108,31 @@ Benchmarks produce a JSON artifact:
     "memory_mib": 46068
   },
   "backend": {
-    "name": "tensorrt",
-    "version": "10.7.0"
+    "name": "kserve-grpc",
+    "version": "0.3.2"
   },
   "model": {
-    "name": "ecdet-resnet18",
+    "name": "rfdetr-pose",
     "sha256": "abc123..."
   },
-  "scenario": "batched_throughput",
-  "batch_size": 8,
-  "warmup_iterations": 20,
-  "measurement_iterations": 200,
-  "metrics": {
-    "requests_per_second": 142.3,
-    "latency_p50_ms": 54.2,
-    "latency_p95_ms": 68.7,
-    "latency_p99_ms": 82.1,
-    "gpu_utilization_pct": 87.4,
-    "gpu_memory_used_mib": 3421
-  }
+  "results": [
+    {
+      "scenario": "rfdetr-pose-kserve-grpc",
+      "category": "single_stream",
+      "transport": "grpc-binary",
+      "batch_size": 1,
+      "warmup_iterations": 50,
+      "measurement_iterations": 200,
+      "metrics": {
+        "requests_per_second": 52.1,
+        "latency_p50_ms": 18.4,
+        "latency_p95_ms": 24.7,
+        "latency_p99_ms": 31.2,
+        "gpu_utilization_pct": 87.4,
+        "gpu_memory_used_mib": 3421
+      }
+    }
+  ]
 }
 ```
 
@@ -134,9 +141,11 @@ Benchmarks produce a JSON artifact:
 A result file carries one or more measured runs in a `results` array (so a single
 session can report several transport paths or batch sizes). Required top-level
 fields: `benchmark_version`, `compatibility_set`, `timestamp`, `hardware`,
-`backend`, `model`, `results`. Each entry in `results` requires `scenario`
-(`single_stream` | `batched_throughput` | `max_throughput`), `batch_size`, and a
-`metrics` object carrying the metric keys above.
+`backend`, `model`, `results`. Each entry in `results` requires `scenario`, `batch_size`, and a `metrics`
+object carrying the metric keys above. `scenario` is a stable scenario id such
+as `rfdetr-pose-local` or `rfdetr-pose-kserve-grpc`. `category` is optional and,
+when present, must be one of `single_stream`, `batched_throughput`, or
+`max_throughput`.
 
 Unmeasured fields must be present with a `null` value rather than omitted, so
 consumers can rely on the shape. `scripts/check_benchmark.py` enforces this and
@@ -150,6 +159,8 @@ binary vs gRPC) is recorded in
 
 - Structural validation: `scripts/check_benchmark.py` validates result files
   against the conformance shape above.
+- Baseline reference validation: `scripts/check_benchmark_baseline.py` validates
+  that `versions.yaml` baseline references are present and repository-local.
 - Each implementation repo owns benchmark scripts and CI gating rules.
 - Platform CI may optionally run benchmarks on pinned compatibility sets when GPU
   hardware is available.

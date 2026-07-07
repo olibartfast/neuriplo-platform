@@ -39,7 +39,7 @@ def pinned_cluster_repos(cluster: dict[str, Any]) -> set[str]:
     }
 
 
-ASCII_SKIP_DIRS = {".git", ".cursor", "data", "logs"}
+ASCII_SKIP_DIRS = {".git", ".cursor", "data", "logs", "__pycache__"}
 
 
 def read_ascii_text(errors: list[str], path: Path) -> str | None:
@@ -83,17 +83,53 @@ def validate_versions(errors: list[str]) -> None:
                 fail(errors, f"{name}: released repository ref must be a 40-char commit SHA")
 
     for compat in compat_sets:
+        compat_name = compat.get("name")
         compat_repos = compat.get("repositories", {})
         for name, value in compat_repos.items():
             if name not in repos:
-                fail(errors, f"compatibility set {compat.get('name')}: unknown repo {name}")
+                fail(errors, f"compatibility set {compat_name}: unknown repo {name}")
                 continue
             declared = str(repos[name].get("version"))
             if declared == "wip":
                 if not SHA_RE.match(str(value)):
-                    fail(errors, f"compatibility set {compat.get('name')}: WIP {name} must use commit SHA")
+                    fail(errors, f"compatibility set {compat_name}: WIP {name} must use commit SHA")
             elif value != declared:
-                fail(errors, f"compatibility set {compat.get('name')}: {name} uses {value}, expected {declared}")
+                fail(errors, f"compatibility set {compat_name}: {name} uses {value}, expected {declared}")
+
+        baselines = compat.get("benchmark_baselines", [])
+        if not isinstance(baselines, list):
+            fail(errors, f"compatibility set {compat_name}: benchmark_baselines must be a list")
+            continue
+        for index, baseline in enumerate(baselines):
+            if not isinstance(baseline, dict):
+                fail(errors, f"compatibility set {compat_name}: benchmark_baselines[{index}] must be an object")
+                continue
+            scenario = baseline.get("scenario")
+            file_name = baseline.get("file")
+            if not scenario:
+                fail(errors, f"compatibility set {compat_name}: benchmark_baselines[{index}] missing scenario")
+            if not file_name:
+                fail(errors, f"compatibility set {compat_name}: benchmark_baselines[{index}] missing file")
+                continue
+            baseline_path = ROOT / str(file_name)
+            try:
+                baseline_path.resolve().relative_to(ROOT)
+            except ValueError:
+                fail(errors, f"compatibility set {compat_name}: benchmark baseline file escapes repository: {file_name}")
+            else:
+                if not baseline_path.is_file():
+                    fail(errors, f"compatibility set {compat_name}: benchmark baseline file not found: {file_name}")
+
+        evidence = compat.get("evidence")
+        if evidence:
+            evidence_path = ROOT / str(evidence)
+            try:
+                evidence_path.resolve().relative_to(ROOT)
+            except ValueError:
+                fail(errors, f"compatibility set {compat_name}: evidence file escapes repository: {evidence}")
+            else:
+                if not evidence_path.is_file():
+                    fail(errors, f"compatibility set {compat_name}: evidence file not found: {evidence}")
 
 
 def validate_policies(errors: list[str]) -> None:

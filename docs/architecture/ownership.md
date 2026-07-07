@@ -18,9 +18,9 @@ Examples:
 - Model-family task adapters
 - Task registry and factory behavior
 
-The first task domain is computer vision. Additional domains (NLP embeddings,
-audio transcription, tabular models, generative VLM output postprocessing) are
-natural extensions under the same contract.
+The first task domain is computer vision. ADR 0010 reserves NLP, audio,
+tabular, multimodal, and reinforcement-learning domains as future extensions
+under the same contract discipline.
 
 ### Backend Execution
 

@@ -25,6 +25,9 @@ Repo-local examples should stay in implementation repos when they primarily show
 
 ## Current Examples
 
+- [RF-DETR pose local-vs-KServe](rfdetr-pose-local-vs-kserve/README.md):
+  golden-path scenario comparing local embedded inference against KServe gRPC
+  for the pinned RF-DETR keypoint pose compatibility set.
 - [Local inference E2E](e2e-local-inference/README.md): cross-repo local
   inference scenario using `neuriplo-infer`, `neuriplo-tasks`, `neuriplo`, and
   optional `videocapture`.

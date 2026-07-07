@@ -5,6 +5,10 @@
 
 platform:
   schema_version: 1
+  # Canonical GitHub organization for the ecosystem repositories. The
+  # compatibility report generator and ref-integrity CI resolve pinned refs
+  # against https://github.com/{github_org}/{repository}.
+  github_org: olibartfast
 
 repositories:
   neuriplo-tasks:
@@ -41,6 +45,11 @@ repositories:
 compatibility_sets:
   - name: rfdetr-keypoint-pose-followup
     status: active
+    # Structured, human-attested evidence for the GPU/C++ checks that platform
+    # metadata CI cannot run (configure, build, unit tests, inference smoke).
+    # The report generator validates this file and renders it; it does not
+    # re-execute the attested checks.
+    evidence: integration-tests/rfdetr-pose-local-vs-kserve/evidence.yaml
     notes:
       - neuriplo-tasks v0.5.0 adds the RfDetrPose task family (RF-DETR keypoint pose) and batch support across postprocessors; public header changes are additive only (new RfDetrPosePostprocessor header, Keypoint visibility/covariance fields, and a private enum enumerator).
       - neuriplo-infer v0.8.0 routes the new rfdetrpose/rfdetrkeypoint/rfdetrkpt type strings to PoseEstimation and defaults the KServe remote-runtime client to gRPC.
@@ -53,6 +62,11 @@ compatibility_sets:
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
       videocapture: v0.3.0
+    benchmark_baselines:
+      - scenario: rfdetr-pose-local
+        file: integration-tests/rfdetr-pose-local-vs-kserve/baselines/local.json
+      - scenario: rfdetr-pose-kserve-grpc
+        file: integration-tests/rfdetr-pose-local-vs-kserve/baselines/kserve-grpc.json
   - name: ecdet-kserve-litert-followup
     status: draft
     notes:
@@ -68,3 +82,6 @@ compatibility_sets:
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
       videocapture: v0.3.0
+    benchmark_baselines:
+      - scenario: ecdet-kserve-http
+        file: integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json

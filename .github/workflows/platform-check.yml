@@ -21,3 +21,15 @@ jobs:
 
       - name: Validate platform metadata
         run: scripts/check_platform.py
+
+      - name: Validate benchmark baseline references
+        run: scripts/check_benchmark_baseline.py versions.yaml
+
+      - name: Verify compatibility report is up to date
+        run: scripts/generate_compat_report.py --check
+
+      - name: Validate failure-mode contract matrix
+        run: integration-tests/failure-modes/run.py
+
+      - name: Validate OpenAI generative serving smoke metadata
+        run: integration-tests/openai-generative-serving/run.py
