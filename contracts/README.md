@@ -18,6 +18,9 @@ interface used across repositories.
   expectations across local and serving flows.
 - [Event contract](event-contract.md): broker-published result event envelope
   produced by `neuriplo-infer` and observed by out-of-process consumers.
+- [Error contract](error-contract.md): stable failure classification, owner
+  assignment, retry policy, and transport status mapping for local and remote
+  inference flows.
 - [GPU capability contract](gpu-capability-contract.md): GPU device discovery,
   memory, compute capability, and topology surface reported by `neuriplo`
   backends.

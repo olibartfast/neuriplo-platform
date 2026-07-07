@@ -162,13 +162,13 @@ ADR changes that boundary.
 
 ### 8. Failure-Mode Documentation
 
-Create:
+`docs/architecture/failure-modes.md`,
+`contracts/error-contract.md`, and
+`integration-tests/failure-modes/` now define the platform-owned failure
+matrix. Current coverage is metadata-only; executable negative-path tests remain
+in the owning repositories.
 
-```text
-docs/architecture/failure-modes.md
-```
-
-Cover at least:
+The required cases are:
 
 ```text
 model not found
@@ -182,8 +182,10 @@ unsupported dtype
 version mismatch
 ```
 
-Each failure mode should define owner, expected error contract, observability
-signals, retry behavior, and runbook link.
+Each failure mode defines owner, expected error contract, observability signals,
+retry behavior, and runbook link. Remaining work: attach executable runtime and
+client evidence for the public serving failures before marking this roadmap item
+production-ready.
 
 ### 9. Architecture Fitness Tests
 
@@ -251,8 +253,9 @@ differentiation stays on the predictive track
 
 Status: ADR decided. The remote KServe V2 client path is implemented
 (neuriplo-infer v0.5.0 + neuriplo-kserve-client v0.2.0). The OpenAI-compatible
-generative path is documented but not yet plumbed through a platform integration
-test. Remaining work: generative serving smoke test in integration-tests/.
+generative path is documented and has a metadata smoke scaffold in
+`integration-tests/openai-generative-serving/`. Remaining work: attach live
+`llama-server` or vLLM-backed serving evidence.
 
 Consequences:
 
@@ -350,7 +353,7 @@ Production architecture is ready when:
   evidence
 - the predictive/generative protocol split is implemented (ADR 0006 adopted,
   remote KServe V2 client path operational in neuriplo-infer v0.5.0; generative
-  smoke test still pending)
+  metadata smoke scaffold added, live serving evidence still pending)
 - GPU capability reporting is a public contract and backends report it
   (gpu-capability-contract.md)
 - each compatibility set ships reproducible throughput/latency baselines with

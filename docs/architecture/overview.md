@@ -186,6 +186,8 @@ Does not own:
   taxonomy for repository boundaries, serving reliability, and change review.
 - `docs/architecture/inference-modes.md`: embedded local and remote KServe
   client/server dependency modes for `neuriplo-infer`.
+- `docs/architecture/failure-modes.md`: production failure-mode expectations,
+  owner boundaries, retry policy, and validation status.
 - `docs/architecture/production-roadmap.md`: production-readiness roadmap for
   contracts, compatibility CI, release policy, observability, reliability,
   security, deployment, failure modes, fitness tests, and runbooks.

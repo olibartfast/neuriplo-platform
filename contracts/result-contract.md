@@ -32,6 +32,17 @@ Consumers must not:
 - Infer semantics from positional tuple ordering when named fields exist.
 - Change coordinate systems without making that transformation explicit.
 - Treat backend raw outputs as public results.
+- Treat implementation-specific byte encodings as public serving results.
+
+## Generative Text Results
+
+`image_understanding` may use an internal byte encoding in embedded local mode
+to move prompts and generated text across a backend boundary. That encoding is
+owned by the implementing repositories and is not a public serving contract.
+
+Remote generative serving uses OpenAI-compatible response shapes per ADR 0006.
+The platform does not define a KServe V2 tensor result shape for generated
+chat/text output.
 
 ## Compatibility Rules
 
@@ -41,6 +52,8 @@ Consumers must not:
 - Changing score semantics is breaking.
 - Adding a new result type is backward compatible when existing types remain
   stable.
+- Changing a public serialized result shape is breaking unless guarded by a
+  versioned compatibility window.
 
 ## Serialized Detection Results (Draft)
 
