@@ -28,6 +28,12 @@ Each integration test should document:
 - Operational assumptions such as GPU, CPU, memory, or container runtime.
 ## Current Tests
 
+- [RF-DETR pose local-vs-KServe](rfdetr-pose-local-vs-kserve/README.md):
+  tracks the active RF-DETR keypoint pose compatibility set, local-vs-remote
+  benchmark baselines, and the generated report shape.
+- [Failure mode contract](failure-modes/README.md): validates the
+  platform-owned failure-mode matrix, error codes, retry policy, owner
+  assignment, transport statuses, observability fields, and runbook links.
 - [Local inference smoke](local-inference-smoke/README.md): validates local sibling
   checkouts, pinned refs, and the app-owned E2E runner dry-run path.
 - [YOLO KServe runtime E2E](kserve-runtime-yolo-e2e/README.md): starts the real serving

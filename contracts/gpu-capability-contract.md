@@ -1,4 +1,4 @@
-# GPU Capability Contract
+# BackendCapability Contract
 
 Owner: `neuriplo`
 
@@ -9,10 +9,11 @@ Status: Draft
 
 ## Purpose
 
-Define the GPU device capability surface that backends must report so consumers
-can reason about hardware resources without vendor-specific SDK calls. This
-contract sits beneath the backend contract: backends implement it, runtimes and
-applications consume it.
+Define the `BackendCapability` surface that backends must report so consumers
+can reason about hardware resources, precision support, dynamic shape support,
+and placement limits without vendor-specific SDK calls. This contract sits
+beneath the backend contract: backends implement it, runtimes and applications
+consume it.
 
 ## Reported Capabilities
 
@@ -46,6 +47,35 @@ peak_compute_tflops_fp8:  float (per device, sum across devices)
 recommended_batch_size:   uint32 (per device; heuristic, not a hard limit)
 ```
 
+## JSON Shape
+
+A capability report should serialize to a shape equivalent to:
+
+```json
+{
+  "backend": "tensorrt",
+  "devices": [
+    {
+      "name": "NVIDIA RTX 3060 Laptop GPU",
+      "compute_capability": "8.6",
+      "memory_total_mib": 6144,
+      "memory_free_mib": 4096,
+      "supports_fp16": true,
+      "supports_int8": true,
+      "supports_dynamic_shapes": true
+    }
+  ],
+  "supported_precisions": ["fp32", "fp16", "int8"],
+  "supported_input_layouts": ["nchw", "nhwc"],
+  "max_batch_size": 16
+}
+```
+
+The C++ API in `neuriplo` can expose richer typed fields, but JSON evidence
+used by `neuriplo-platform`, `neuriplo-infer`, and `neuriplo-kserve-runtime`
+should preserve these names so CI and reports can compare capabilities across
+backends.
+
 ## Responsibilities
 
 `neuriplo` owns:
@@ -53,6 +83,7 @@ recommended_batch_size:   uint32 (per device; heuristic, not a hard limit)
 - GPU device enumeration and capability query.
 - Normalizing vendor-specific capability fields into the contract shape.
 - Reporting device availability after initialization.
+- Reporting precision, layout, dynamic-shape, and max-batch support.
 - Exposing capability through a stable C++ interface (not through raw CUDA/ROCm
   API types).
 

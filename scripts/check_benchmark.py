@@ -44,7 +44,7 @@ METRICS_REQUIRED = [
     "gpu_memory_used_mib",
 ]
 
-ALLOWED_SCENARIOS = {"single_stream", "batched_throughput", "max_throughput"}
+ALLOWED_CATEGORIES = {"single_stream", "batched_throughput", "max_throughput"}
 
 
 def fail(errors: list[str], message: str) -> None:
@@ -69,11 +69,11 @@ def validate_result(errors: list[str], where: str, result: Any) -> None:
     if not require_keys(errors, where, result, RESULT_REQUIRED):
         return
     scenario = result["scenario"]
-    if scenario not in ALLOWED_SCENARIOS:
-        fail(
-            errors,
-            f"{where}: scenario '{scenario}' not in {sorted(ALLOWED_SCENARIOS)}",
-        )
+    if not isinstance(scenario, str) or not scenario:
+        fail(errors, f"{where}: scenario must be a non-empty string")
+    category = result.get("category")
+    if category is not None and category not in ALLOWED_CATEGORIES:
+        fail(errors, f"{where}: category '{category}' not in {sorted(ALLOWED_CATEGORIES)}")
     batch = result["batch_size"]
     if not isinstance(batch, int) or batch < 1:
         fail(errors, f"{where}: batch_size must be an integer >= 1")
