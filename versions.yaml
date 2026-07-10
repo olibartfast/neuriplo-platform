@@ -87,6 +87,7 @@ compatibility_sets:
         file: integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json
   - name: opencv-boundary-v060
     status: active
+    evidence: integration-tests/opencv-boundary-v060/evidence.yaml
     notes:
       - neuriplo-tasks v0.6.0 moves public task contracts to native vision types and makes OpenCV interop optional through neuriplo-tasks::vision-opencv.
       - neuriplo-infer develop at 021aebd4df3fa066cb6da97a8809e4003656501f was clean-configured against the published tag; all 29 CTest tests passed.
