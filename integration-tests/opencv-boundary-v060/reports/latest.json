@@ -1,0 +1,104 @@
+{
+  "compatibility_set": "opencv-boundary-v060",
+  "status": "active",
+  "last_attested": "2026-07-10",
+  "evidence": "integration-tests/opencv-boundary-v060/evidence.yaml",
+  "checks": [
+    {
+      "check": "Clone pinned refs",
+      "source": "metadata CI",
+      "result": "verified"
+    },
+    {
+      "check": "Configure",
+      "source": "attested",
+      "result": "pass (2026-07-10)",
+      "detail": "Clean FetchContent configurations resolved neuriplo-tasks v0.6.0 for neuriplo-infer, tritonic, and neuriplo-track without local sibling overrides."
+    },
+    {
+      "check": "Build",
+      "source": "attested",
+      "result": "pass (2026-07-10)",
+      "detail": "Clean consumer builds completed against neuriplo-tasks v0.6.0."
+    },
+    {
+      "check": "Unit tests",
+      "source": "attested",
+      "result": "pass (2026-07-10)",
+      "detail": "neuriplo-infer passed 29 CTest tests and tritonic passed 50 CTest tests."
+    },
+    {
+      "check": "Local embedded inference smoke test",
+      "source": "attested",
+      "result": "pass (2026-07-10)",
+      "detail": "neuriplo-track CLI help smoke passed from the clean v0.6.0 build."
+    },
+    {
+      "check": "KServe gRPC inference smoke test",
+      "source": "attested",
+      "result": "pass (2026-07-10)",
+      "detail": "neuriplo-infer KServe HTTP plus gRPC CI completed successfully against the merged develop commit."
+    },
+    {
+      "check": "Result contract validation",
+      "source": "metadata CI",
+      "result": "verified"
+    },
+    {
+      "check": "Benchmark schema validation",
+      "source": "metadata CI",
+      "result": "verified"
+    }
+  ],
+  "repositories": [
+    {
+      "name": "neuriplo-tasks",
+      "version": "v0.6.0",
+      "ref": "ec9a30a6eaa23ce3bacd9e288008e84be668d84b",
+      "url": "https://github.com/olibartfast/neuriplo-tasks",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "neuriplo",
+      "version": "v0.8.0",
+      "ref": "add7bd9c2b7a0e311c153d4f7a4057765e07e28f",
+      "url": "https://github.com/olibartfast/neuriplo",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "neuriplo-infer",
+      "version": "wip",
+      "ref": "021aebd4df3fa066cb6da97a8809e4003656501f",
+      "url": "https://github.com/olibartfast/neuriplo-infer",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "neuriplo-kserve-client",
+      "version": "v0.4.0",
+      "ref": "e741f4286de61bf82b9d6925d2ce5da3a2ede5a7",
+      "url": "https://github.com/olibartfast/neuriplo-kserve-client",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "neuriplo-kserve-runtime",
+      "version": "v0.3.2",
+      "ref": "2f3b960a3e48ca57f60c4ac045533fcb9b77fc22",
+      "url": "https://github.com/olibartfast/neuriplo-kserve-runtime",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "videocapture",
+      "version": "v0.3.0",
+      "ref": "fb94bd4f371fa741f8ad0e9a61e7ec2d991359b7",
+      "url": "https://github.com/olibartfast/videocapture",
+      "tag_resolves_to_ref": "yes"
+    }
+  ],
+  "failures": {
+    "clone": [],
+    "benchmark_schema": [],
+    "result_contract": [],
+    "evidence": []
+  },
+  "benchmark_summary": []
+}

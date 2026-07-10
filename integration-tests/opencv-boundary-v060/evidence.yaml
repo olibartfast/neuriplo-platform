@@ -1,0 +1,35 @@
+# Attested validation evidence for compatibility set
+# opencv-boundary-v060.
+
+compatibility_set: opencv-boundary-v060
+last_attested: 2026-07-10
+attested_by: release-maintainer
+
+checks:
+  configure:
+    status: pass
+    detail: >
+      Clean FetchContent configurations resolved neuriplo-tasks v0.6.0 for
+      neuriplo-infer, tritonic, and neuriplo-track without local sibling overrides.
+    source: https://github.com/olibartfast/neuriplo-tasks/releases/tag/v0.6.0
+  build:
+    status: pass
+    detail: >
+      Clean consumer builds completed against neuriplo-tasks v0.6.0.
+    source: https://github.com/olibartfast/neuriplo-infer/actions/runs/29083700397
+  unit_tests:
+    status: pass
+    detail: >
+      neuriplo-infer passed 29 CTest tests and tritonic passed 50 CTest tests.
+    source: https://github.com/olibartfast/neuriplo-infer/actions/runs/29083700397
+  local_embedded_smoke:
+    status: pass
+    detail: >
+      neuriplo-track CLI help smoke passed from the clean v0.6.0 build.
+    source: ops/runbooks/cross-repo-api-migration.md
+  kserve_grpc_smoke:
+    status: pass
+    detail: >
+      neuriplo-infer KServe HTTP plus gRPC CI completed successfully against
+      the merged develop commit.
+    source: https://github.com/olibartfast/neuriplo-infer/actions/runs/29083700397

@@ -118,6 +118,25 @@ def resolve_tag_commit(url: str, tag: str) -> str | None:
             plain_sha = sha
     return plain_sha
 
+def is_commit_reachable(url: str, commit: str) -> bool:
+    """Return whether a full commit SHA is advertised by any remote ref."""
+    try:
+        completed = subprocess.run(
+            ["git", "ls-remote", url],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=90,
+        )
+    except FileNotFoundError as exc:
+        raise ReachabilityError("git is not installed") from exc
+    except subprocess.CalledProcessError as exc:
+        raise ReachabilityError((exc.stderr or exc.stdout or "").strip() or "git error") from exc
+    except subprocess.TimeoutExpired as exc:
+        raise ReachabilityError("git ls-remote timed out") from exc
+
+    return any(line.split("\t", 1)[0] == commit for line in completed.stdout.splitlines())
+
 
 def choose_target_set(versions: dict[str, Any], requested: str | None) -> dict[str, Any]:
     sets = versions.get("compatibility_sets", [])
@@ -234,27 +253,35 @@ def build_report(
             "tag_ref": "skipped",
             "status": "skipped (offline)",
         }
-        if version != str(set_version):
-            row.update(tag_ref="FAIL", status=f"FAIL: set pins {set_version}, matrix pins {version}")
-            repo_failures.append(f"{name}: set pins {set_version}, matrix pins {version}")
+        expected_value = ref if version == "wip" else version
+        if expected_value != str(set_version):
+            row.update(tag_ref="FAIL", status=f"FAIL: set pins {set_version}, matrix pins {expected_value}")
+            repo_failures.append(f"{name}: set pins {set_version}, matrix pins {expected_value}")
         if not offline:
             try:
-                commit = resolve_tag_commit(url, version)
+                if version == "wip":
+                    reachable = is_commit_reachable(url, ref)
+                    if not reachable:
+                        row.update(tag_ref="missing", status=f"FAIL: commit {ref[:SHA_SHORT]} not reachable")
+                        repo_failures.append(f"{name}: commit {ref} not reachable")
+                    else:
+                        row.update(tag_ref="yes", status="verified")
+                else:
+                    commit = resolve_tag_commit(url, version)
+                    if commit is None:
+                        row.update(tag_ref="missing", status=f"FAIL: tag {version} not found")
+                        repo_failures.append(f"{name}: tag {version} not found")
+                    elif commit != ref:
+                        row.update(
+                            tag_ref="mismatch",
+                            status=f"FAIL: tag resolves to {commit[:SHA_SHORT]}, matrix pins {ref[:SHA_SHORT]}",
+                        )
+                        repo_failures.append(f"{name}: tag {version} resolves to {commit}, matrix pins {ref}")
+                    else:
+                        row.update(tag_ref="yes", status="verified")
             except ReachabilityError as exc:
                 row.update(tag_ref="FAIL", status=f"FAIL: unreachable ({exc})")
                 repo_failures.append(f"{name}: unreachable ({exc})")
-            else:
-                if commit is None:
-                    row.update(tag_ref="missing", status=f"FAIL: tag {version} not found")
-                    repo_failures.append(f"{name}: tag {version} not found")
-                elif commit != ref:
-                    row.update(
-                        tag_ref="mismatch",
-                        status=f"FAIL: tag resolves to {commit[:SHA_SHORT]}, matrix pins {ref[:SHA_SHORT]}",
-                    )
-                    repo_failures.append(f"{name}: tag {version} resolves to {commit}, matrix pins {ref}")
-                else:
-                    row.update(tag_ref="yes", status="verified")
         repo_rows.append(row)
 
     clone_status = "verified"
