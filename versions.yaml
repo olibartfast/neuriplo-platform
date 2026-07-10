@@ -14,8 +14,8 @@ repositories:
   neuriplo-tasks:
     owner: domain-task-layer
     visibility: public
-    version: v0.5.0
-    ref: 7b7fbfbd4c0b695b8428958e796ba369c39638dd
+    version: v0.6.0
+    ref: ec9a30a6eaa23ce3bacd9e288008e84be668d84b
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
@@ -24,8 +24,8 @@ repositories:
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.8.0
-    ref: fcdff274a4a2e20d9022a86e753a169a7169fc18
+    version: wip
+    ref: 021aebd4df3fa066cb6da97a8809e4003656501f
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public
@@ -44,21 +44,21 @@ repositories:
 
 compatibility_sets:
   - name: rfdetr-keypoint-pose-followup
-    status: active
+    status: superseded
     # Structured, human-attested evidence for the GPU/C++ checks that platform
     # metadata CI cannot run (configure, build, unit tests, inference smoke).
     # The report generator validates this file and renders it; it does not
     # re-execute the attested checks.
     evidence: integration-tests/rfdetr-pose-local-vs-kserve/evidence.yaml
     notes:
-      - neuriplo-tasks v0.5.0 adds the RfDetrPose task family (RF-DETR keypoint pose) and batch support across postprocessors; public header changes are additive only (new RfDetrPosePostprocessor header, Keypoint visibility/covariance fields, and a private enum enumerator).
-      - neuriplo-infer v0.8.0 routes the new rfdetrpose/rfdetrkeypoint/rfdetrkpt type strings to PoseEstimation and defaults the KServe remote-runtime client to gRPC.
-      - Validated by a full release build of neuriplo-infer v0.8.0 against the pinned sibling tags fetched from GitHub (local backends plus KServe gRPC, OpenCV-DNN backend): 29 of 29 app tests pass.
-      - neuriplo-kserve-runtime v0.3.2 is unchanged since its tag and was not rebuilt; compatibility with neuriplo-tasks v0.5.0 follows from the additive, pose-only contract change the runtime does not consume.
+      - "Historical evidence: neuriplo-tasks v0.5.0 adds the RfDetrPose task family (RF-DETR keypoint pose) and batch support across postprocessors; public header changes are additive only (new RfDetrPosePostprocessor header, Keypoint visibility/covariance fields, and a private enum enumerator)."
+      - "Historical evidence: neuriplo-infer v0.8.0 routes the new rfdetrpose/rfdetrkeypoint/rfdetrkpt type strings to PoseEstimation and defaults the KServe remote-runtime client to gRPC."
+      - "Historical evidence: validated by a full release build of neuriplo-infer v0.8.0 against the pinned sibling tags fetched from GitHub (local backends plus KServe gRPC, OpenCV-DNN backend): 29 of 29 app tests pass."
+      - "Historical evidence: neuriplo-kserve-runtime v0.3.2 is unchanged since its tag and was not rebuilt; compatibility with neuriplo-tasks v0.5.0 follows from the additive, pose-only contract change the runtime does not consume."
     repositories:
-      neuriplo-tasks: v0.5.0
+      neuriplo-tasks: v0.6.0
       neuriplo: v0.8.0
-      neuriplo-infer: v0.8.0
+      neuriplo-infer: 021aebd4df3fa066cb6da97a8809e4003656501f
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
       videocapture: v0.3.0
@@ -76,12 +76,26 @@ compatibility_sets:
       - kserve client and runtime docs clarify GitFlow branch cleanup rules used during release maintenance.
       - Carried forward to the current repository versions; pending re-validation at this snapshot.
     repositories:
-      neuriplo-tasks: v0.5.0
+      neuriplo-tasks: v0.6.0
       neuriplo: v0.8.0
-      neuriplo-infer: v0.8.0
+      neuriplo-infer: 021aebd4df3fa066cb6da97a8809e4003656501f
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
       videocapture: v0.3.0
     benchmark_baselines:
       - scenario: ecdet-kserve-http
         file: integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json
+  - name: opencv-boundary-v060
+    status: active
+    notes:
+      - neuriplo-tasks v0.6.0 moves public task contracts to native vision types and makes OpenCV interop optional through neuriplo-tasks::vision-opencv.
+      - neuriplo-infer develop at 021aebd4df3fa066cb6da97a8809e4003656501f was clean-configured against the published tag; all 29 CTest tests passed.
+      - tritonic develop at 6a4fdd91a207324d8164d76ce7c4f26ce80aa9ad was clean-configured against the published tag; all 50 CTest tests passed.
+      - neuriplo-track master at dde8e5a0d500cef09bd153161e9cfaa21889b532 was clean-configured against the published tag; its CLI help smoke passed.
+    repositories:
+      neuriplo-tasks: v0.6.0
+      neuriplo: v0.8.0
+      neuriplo-infer: 021aebd4df3fa066cb6da97a8809e4003656501f
+      neuriplo-kserve-client: v0.4.0
+      neuriplo-kserve-runtime: v0.3.2
+      videocapture: v0.3.0
