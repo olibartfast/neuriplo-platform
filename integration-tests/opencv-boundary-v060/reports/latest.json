@@ -67,8 +67,8 @@
     },
     {
       "name": "neuriplo-infer",
-      "version": "wip",
-      "ref": "021aebd4df3fa066cb6da97a8809e4003656501f",
+      "version": "v0.9.0",
+      "ref": "a21292b3d80c7b1be704a65950743308270acd14",
       "url": "https://github.com/olibartfast/neuriplo-infer",
       "tag_resolves_to_ref": "yes"
     },
