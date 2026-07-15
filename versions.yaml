@@ -24,8 +24,8 @@ repositories:
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: wip
-    ref: 021aebd4df3fa066cb6da97a8809e4003656501f
+    version: v0.9.0
+    ref: a21292b3d80c7b1be704a65950743308270acd14
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public
@@ -58,7 +58,7 @@ compatibility_sets:
     repositories:
       neuriplo-tasks: v0.6.0
       neuriplo: v0.8.0
-      neuriplo-infer: 021aebd4df3fa066cb6da97a8809e4003656501f
+      neuriplo-infer: v0.9.0
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
       videocapture: v0.3.0
@@ -78,7 +78,7 @@ compatibility_sets:
     repositories:
       neuriplo-tasks: v0.6.0
       neuriplo: v0.8.0
-      neuriplo-infer: 021aebd4df3fa066cb6da97a8809e4003656501f
+      neuriplo-infer: v0.9.0
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
       videocapture: v0.3.0
@@ -90,13 +90,13 @@ compatibility_sets:
     evidence: integration-tests/opencv-boundary-v060/evidence.yaml
     notes:
       - neuriplo-tasks v0.6.0 moves public task contracts to native vision types and makes OpenCV interop optional through neuriplo-tasks::vision-opencv.
-      - neuriplo-infer develop at 021aebd4df3fa066cb6da97a8809e4003656501f was clean-configured against the published tag; all 29 CTest tests passed.
-      - tritonic develop at 6a4fdd91a207324d8164d76ce7c4f26ce80aa9ad was clean-configured against the published tag; all 50 CTest tests passed.
+      - neuriplo-infer v0.9.0 contains the validated OpenCV-boundary migration; all 29 CTest tests passed against the published neuriplo-tasks tag.
+      - tritonic v0.3.0 contains the validated OpenCV-boundary migration; all 50 CTest tests passed against the published neuriplo-tasks tag.
       - neuriplo-track master at dde8e5a0d500cef09bd153161e9cfaa21889b532 was clean-configured against the published tag; its CLI help smoke passed.
     repositories:
       neuriplo-tasks: v0.6.0
       neuriplo: v0.8.0
-      neuriplo-infer: 021aebd4df3fa066cb6da97a8809e4003656501f
+      neuriplo-infer: v0.9.0
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
       videocapture: v0.3.0
