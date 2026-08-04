@@ -42,6 +42,10 @@ Each integration test should document:
 - [YOLO KServe runtime E2E](kserve-runtime-yolo-e2e/README.md): starts the real serving
   runtime with a YOLO model, runs the app-layer KServe HTTP client against it,
   verifies rendered output, and checks metrics.
+- [KServe ensemble agreement](kserve-ensemble/README.md): checks that a
+  server-side ensemble reports the contracted encoded-image surface, and (once
+  the runtime and adapter land) that it produces the same detections as the
+  client-preprocessed path for the same image.
 - [EdgeCrafter KServe runtime E2E](kserve-runtime-edgecrafter-e2e/README.md):
   exercises the EdgeCrafter `ecdet` dual-input INT64 contract across the
   `onnx_runtime`, `tensorrt`, `openvino`, and `executorch` backends, asserting the advertised

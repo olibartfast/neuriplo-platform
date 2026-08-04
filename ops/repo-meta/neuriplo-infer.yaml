@@ -41,6 +41,10 @@ api_surface:
     - min_confidence
     - nms_threshold
     - mask_threshold
+    - segmentation_output
+    - input_mode
+    - task_model
+    - postprocess_mode
     - batch
     - input_sizes
     - use-gpu

@@ -21,6 +21,9 @@ coupled to the KServe V2 protocol surface; the concrete server may be
 - Request validation and admission.
 - Scheduling and dynamic batching.
 - Model lifecycle.
+- Pipeline (ensemble) models: a graph of preprocess, model, and postprocess
+  steps served as one model. See [ensemble-contract.md](ensemble-contract.md)
+  for the wire surface and ADR 0011 for the decision.
 - Health and readiness endpoints.
 - Metrics and operational status.
 
@@ -43,6 +46,9 @@ Consumers must not:
 ## Compatibility Rules
 
 - Adding optional endpoints or metadata is backward compatible.
+- Adding a model kind (for example `pipeline`) is backward compatible; existing
+  single-model behavior must not change.
+- Pipeline models never batch: `max_batch_size` is 1 by contract.
 - Changing documented request or response shape is breaking.
 - Changing admission failure semantics is breaking when clients can observe the
   difference.
