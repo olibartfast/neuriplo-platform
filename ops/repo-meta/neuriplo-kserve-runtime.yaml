@@ -7,6 +7,9 @@ default_branches:
 status: wip
 
 dependencies:
+  # Pipeline (ensemble) preprocess/postprocess steps only, gated by
+  # NEURIPLO_RUNTIME_WITH_TASKS. The tensor-in/tensor-out serving path does not
+  # link it. See ADR 0011.
   - neuriplo-tasks
   - neuriplo
 
@@ -25,6 +28,7 @@ api_surface:
     - health and readiness endpoints
     - scheduling and batching configuration
     - metrics and operational status
+    - pipeline (ensemble) model kind and its encoded-image surface
 
 constraints:
   preserve_kserve_wire_compatibility: true

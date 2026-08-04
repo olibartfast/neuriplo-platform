@@ -38,6 +38,14 @@ Consumers must not:
 - Depend on private model internals.
 - Treat backend-specific tensors as the public task result.
 
+A server-side ensemble is the one sanctioned way to obtain results without
+running `neuriplo-tasks` preprocessing and postprocessing in the consumer: the
+work still happens in this task layer, just inside the serving runtime, and it
+reaches the consumer through the envelope in
+[ensemble-contract.md](ensemble-contract.md). Decoding that envelope must
+produce the same typed results as the local path -- it is a transport for task
+results, not a second definition of them.
+
 ## Task Domains
 
 Status by domain:

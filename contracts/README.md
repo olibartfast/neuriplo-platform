@@ -14,6 +14,9 @@ interface used across repositories.
   tasks and rendered by applications.
 - [Runtime contract](runtime-contract.md): KServe V2 request/response behavior
   for `neuriplo-kserve-runtime`.
+- [Ensemble contract](ensemble-contract.md): encoded-image input and decoded
+  result envelope for server-side ensembles, shared by
+  `neuriplo-kserve-runtime` and Triton deployments.
 - [Configuration contract](configuration-contract.md): shared configuration
   expectations across local and serving flows.
 - [Event contract](event-contract.md): broker-published result event envelope

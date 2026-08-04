@@ -37,7 +37,8 @@ pose_estimation:        yolo26pose, yolov8pose, yolov11pose, vitpose, ecpose,
                         rfdetr_keypoint, rfdetr_kpt
 classification:         resnet50, resnet101, vitclassifier, torchvisionclassifier,
                         tensorflowclassifier
-depth_estimation:       depthanythingv2
+depth_estimation:       depthanythingv2, yolo-depth, yolo26n-depth (any
+                        YOLO-prefixed model type containing `depth`)
 optical_flow:           raft
 open_vocab_detection:   owlv2, owlvit, groundingdino
 video_classification:   videomae, vivit, timesformer
@@ -142,6 +143,40 @@ grpc_port:         uint16 (when gRPC transport is enabled)
 ```
 
 These fields are serving-only and must not affect embedded local mode behavior.
+
+## Pipeline (Ensemble) Models
+
+A pipeline model is declared by a JSON graph rather than a single model
+artifact. It is loaded under `backend: ensemble` and its graph is supplied
+through the model path or inline in the admin load body.
+
+```text
+steps:  ordered list; each step is
+        kind:           model | preprocess | postprocess
+        name:           unique step name within the graph
+        model_name:     referenced registry model (kind: model)
+        model_version:  optional; defaults to the model's default version
+        input_map:      graph tensor name -> step input name
+        output_map:     step output name -> graph tensor name
+        params:         step-specific options (task_type, letterbox rule,
+                        thresholds, envelope variant)
+```
+
+Rules:
+
+- Every tensor a step consumes is produced by an earlier step or is the
+  ensemble input. Graphs are validated at load time, not at first request.
+- `model` steps resolve against the runtime's registry at inference time. A
+  referenced model that is missing or not ready yields `MODEL_NOT_READY`;
+  pipelines do not pin referenced models alive.
+- `preprocess` and `postprocess` steps require the runtime to be built with
+  its task-layer dependency enabled. Without it they must fail at load time
+  with an explicit message, never silently degrade.
+- Composed metadata is the first step's inputs and the last step's outputs.
+- Dynamic batching configuration is rejected for pipeline models.
+
+The input and output shape of the composed model is owned by
+[ensemble-contract.md](ensemble-contract.md), not by this document.
 
 ## Output Handling
 

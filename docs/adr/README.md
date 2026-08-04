@@ -18,3 +18,4 @@ Use [0000-template.md](0000-template.md) for new records.
 - [0006 Serve generative tasks over OpenAI-compatible endpoints, keep predictive tasks on KServe V2](0006-generative-serving-over-openai-protocol.md)
 - [0009 Evolve platform focus to AI Infrastructure and GPU-first serving](0009-evolve-to-ai-infrastructure-gpu-serving-platform.md)
 - [0010 Generalize task domains beyond computer vision](0010-generalize-task-domains.md)
+- [0011 Serve ensembles as a native runtime pipeline model kind](0011-ensemble-pipeline-serving.md)
