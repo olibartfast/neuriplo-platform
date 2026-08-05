@@ -48,31 +48,49 @@ confidence 0.5. An earlier one-directional measurement reported only the 91.4%
 figure; it hid the precision side, where DALI produces 38 more detections than
 the reference. DALI preprocessing is NOT yet a validated drop-in.
 
-Latency, YOLO26m-seg at 640x640, TensorRT FP16, HTTP binary tensor extension,
-server-side pipeline median over 20 requests:
+Latency, YOLO26m-seg at 640x640, TensorRT FP16, HTTP binary tensor extension.
+Same machine, same frames, one session, A/B against a binary built from the
+parent commit:
 
-| Configuration | server | client | vs CPU |
-|---|---|---|---|
-| CPU pre + CPU post | 150.8 ms | 155.0 ms | 1.00x |
-| DALI GPU pre + CPU post | 160.4 ms | 164.8 ms | 0.94x |
-| DALI GPU pre + GPU post | 69.8 ms | 74.0 ms | 2.16x |
+| Configuration | server before | server after | client after | vs CPU |
+|---|---|---|---|---|
+| CPU pre + CPU post | 150.8 ms | 121.5 ms | 123.5 ms | 1.00x |
+| DALI GPU pre + CPU post | 160.4 ms | 76.8 ms | 78.7 ms | 1.58x |
+| DALI GPU pre + GPU post | 69.8 ms | 23.9 ms | 26.8 ms | 5.08x |
 
-GPU preprocessing alone is a net LOSS: the preprocessed tensor round-trips to
-host, costing more than the GPU decode saves. It pays only when postprocessing
-is also on GPU, which collapses a 3.3 MB prototype tensor into a small
-envelope. The win is as much about transfer volume as compute.
+The "after" column is neuriplo PR #21. `TRTInfer` had never overridden
+`get_infer_results_raw()`, so every TensorRT inference fell back to the base
+implementation, which builds one 16-byte `std::variant` per output scalar and
+flattens it back to bytes -- ~42 MB of variant vector per frame for this
+engine, built and walked twice. Copying device-to-host straight into the
+destination byte buffer removed it. Detections were bit-identical: the 50-frame
+agreement run reproduced the recorded baseline exactly (701/739/641).
+
+This also corrects the earlier reading. GPU preprocessing alone was reported as
+a net loss and blamed on the preprocessed tensor round-tripping to host; it was
+the variant cost, which scales with element count and so fell hardest on the
+configurations moving the largest tensors. GPU preprocessing alone is now a
+clear win.
 
 Transport measured three ways, client median: JSON 303.8 / 276.7 / 244.6 ms,
 HTTP binary 155.0 / 164.8 / 74.0, gRPC 153.5 / 163.4 / 72.5. JSON is the
 outlier; binary and gRPC agree within ~1.5 ms, so transport is not the
 bottleneck once the tensor is not spelled out as JSON numbers.
 
-Per-stage against tritonic on the same model and GPU: DALI preprocess 7.66 ms
-vs 0.03, TensorRT 29.48 vs 24.48, GPU postprocess 2.58 vs 2.59 -- the
-postprocess compute is identical (same CUDA plugin). The whole gap is host
-round-trips, because the DALI backend copies outputs device->host and the next
-step re-uploads them. Device-side tensor handoff is the outstanding
-optimization.
+Per-stage against tritonic on the same model and GPU, before PR #21: DALI
+preprocess 7.66 ms vs 0.03, TensorRT 29.48 vs 24.48, GPU postprocess 2.58 vs
+2.59 -- postprocess compute identical (same CUDA plugin). That decomposition
+was read as "the whole gap is host round-trips" and a device-side handoff was
+designed on it. The attribution was wrong: the gap was host work inside the
+TensorRT stage, and removing it put GPU pre+post at 23.9 ms server-side against
+tritonic's 27.04 ms ensemble.
+
+Device-side tensor handoff is kept as a design (in
+`baselines/preprocessing-latency.json`) but deprioritized. It would still
+remove ~24 MB/frame of PCIe traffic, and it now buys an increment against a
+competitive baseline rather than closing a gap -- while carrying a real risk,
+since a partially-correct device path corrupts tensors silently instead of
+failing.
 
 Runtime fixes landed en route: scheduler error propagation centralized on
 SchedulerResult::adopt (failures were redacted to "internal error"),
@@ -99,6 +117,23 @@ versions.yaml compatibility sets get entries once the siblings tag.
 
 ## Known issues / debt
 
+- **Heap corruption in the GPU-postprocess ensemble.** The runtime aborts with
+  `malloc(): corrupted top size` (or `double free or corruption`) on the first
+  JSON-transport request to `yolo26seg_gpu` after a binary-transport benchmark
+  run. Pre-existing: reproduces identically on a binary built before the
+  TensorRT change. Already ruled out -- DALI overrunning its output buffer
+  (64-byte redzone on every `daliOutputCopy`, never trips), a DALI external
+  input whose declared shape outruns its buffer (checked, never trips), and
+  `RealNeuriploAdapter::infer`, which is where gdb catches the abort but only
+  because it is the next large allocation. Full repro and backtrace under
+  `known_bug` in
+  `integration-tests/kserve-ensemble/baselines/preprocessing-latency.json`.
+  Next step is ASAN or `MALLOC_CHECK_=3` to catch the write rather than the
+  detection.
+- Five neuriplo backends still inherit the slow default
+  `get_infer_results_raw()` -- libtensorflow, libtorch, litert, migraphx, tvm.
+  Same per-scalar variant cost TensorRT was paying; see
+  `coordination/inbox/neuriplo.md`.
 - neuriplo TensorRT metadata test disabled due to crash
   (`backends/tensorrt/test/TensorRTInferTest.cpp:119`) -- top roadmap item.
 - Uncommitted agent WIP in neuriplo tree (ROADMAP + CI docs paths-ignore)
