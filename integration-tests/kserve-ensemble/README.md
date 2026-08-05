@@ -77,3 +77,39 @@ Pending, with the neuriplo-infer adapter:
   not observe.
 - Requires a running server and a loaded model repository; it neither builds
   binaries nor downloads models.
+
+## Preprocessing comparison and benchmark
+
+Two runnable artifacts compare ensembles that differ only in where
+preprocessing runs (same inference model on both sides, so preprocessing is the
+only variable):
+
+```bash
+# Symmetric one-to-one detection matching, JSON report
+integration-tests/kserve-ensemble/compare_preprocessing.py \
+  --reference-model yolo26seg_cpu --candidate-model yolo26seg_dali \
+  --frames 'frames/*.jpg' --stride 8 --limit 50 \
+  --report integration-tests/kserve-ensemble/baselines/dali-vs-cpu.json
+
+# Interleaved latency benchmark
+integration-tests/kserve-ensemble/benchmark_preprocessing.py \
+  --models yolo26seg_cpu yolo26seg_dali \
+  --labels cpu-preprocess dali-gpu-preprocess \
+  --frames 'frames/*.jpg' --iterations 30
+```
+
+The comparison reports **both** directions. Recall alone (how many reference
+detections the candidate found) hides the opposite failure: a path that invents
+detections scores just as well as one that reproduces them. `--min-match-rate`
+turns the check into a gate once a target is agreed.
+
+Recorded baselines live in `baselines/`, each carrying full model provenance
+(variant, input shape, engine sha256 prefix, builder version, GPU) -- a latency
+number without them is not comparable. Measurements below use YOLO26m-seg
+(medium) at 640x640 as a TensorRT FP16 engine on an RTX 3060 Laptop.
+
+As of 2026-08-05, DALI GPU
+preprocessing reaches 91.4% recall but only 86.7% precision against the CPU
+path, with high-confidence misses in both directions, so it is not yet a
+validated drop-in.
+

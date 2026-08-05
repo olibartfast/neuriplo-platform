@@ -1,0 +1,66 @@
+{
+  "endpoint": "http://127.0.0.1:8080",
+  "frames": 404,
+  "iterations": 30,
+  "warmup": 3,
+  "results": {
+    "cpu-preprocess": {
+      "count": 30,
+      "mean_ms": 243.5,
+      "median_ms": 247.1,
+      "p95_ms": 264.2,
+      "min_ms": 201.8,
+      "max_ms": 268.4,
+      "fps": 4.11
+    },
+    "dali-gpu-preprocess": {
+      "count": 30,
+      "mean_ms": 227.8,
+      "median_ms": 231.7,
+      "p95_ms": 247.7,
+      "min_ms": 186.9,
+      "max_ms": 262.4,
+      "fps": 4.39,
+      "speedup_vs_cpu-preprocess": 1.07
+    }
+  },
+  "server_side_pipeline_ms": {
+    "note": "Parsed from the runtime's structured logs (span: infer, infer_latency_ns), which exclude HTTP transport and JSON encoding. The client-observed numbers above are dominated by JSON: an encoded image is sent as a JSON array of ~98k numbers, which costs more than the preprocessing being compared. Use the binary tensor extension to close that gap.",
+    "cpu-preprocess": {
+      "mean_ms": 115.4,
+      "median_ms": 116.3,
+      "min_ms": 98.0,
+      "max_ms": 126.3
+    },
+    "dali-gpu-preprocess": {
+      "mean_ms": 96.6,
+      "median_ms": 97.7,
+      "min_ms": 80.5,
+      "max_ms": 109.0
+    },
+    "speedup": 1.19
+  },
+  "caveats": [
+    "Postprocessing runs on the CPU in BOTH ensembles: this stack has no GPU postprocess step, so this measures preprocessing placement only, not end-to-end GPU pre+post.",
+    "Inference is TensorRT FP16 on GPU in both, and identical between them."
+  ],
+  "model": {
+    "model_family": "YOLO26",
+    "variant": "m (medium), instance segmentation",
+    "input": "1x3x640x640 FP32",
+    "source_onnx": {
+      "path": "/home/oli/model_repository/yolo26m_seg_onnx/1/model.onnx",
+      "bytes": 94615718,
+      "sha256_prefix": "31072fe5b24e7eeb"
+    },
+    "tensorrt_engine": {
+      "path": "/home/oli/model_repository/yolo26m_seg_trt/1/model.engine",
+      "bytes": 53424372,
+      "sha256_prefix": "a5d825751f260417",
+      "precision": "FP16",
+      "builder": "TensorRT 10.13.3.9",
+      "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU"
+    },
+    "note": "Engine is TensorRT-version and GPU specific; rebuild before comparing numbers on other hardware."
+  }
+}

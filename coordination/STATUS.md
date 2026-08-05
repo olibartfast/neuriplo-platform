@@ -18,22 +18,48 @@ Sequencing is runtime -> client -> infer adapter, per the wire-contract rule.
 | Step | Repo | State |
 |---|---|---|
 | Spec: ADR 0011 + `contracts/ensemble-contract.md` | neuriplo-platform | Written, unreviewed |
-| Pipeline model kind | neuriplo-kserve-runtime | Merged to develop (284/281 tests, tasks on/off), incl. DALI chaining, GPU serving, scheduler/validation fixes |
+| Pipeline model kind | neuriplo-kserve-runtime | Merged to develop (286/281 tests, tasks on/off), incl. DALI chaining, GPU serving, scheduler/validation fixes |
 | `decodeImage` from memory | neuriplo-tasks | Merged to develop; 28/28 tests |
 | Conformance leg | neuriplo-kserve-client | Merged to develop; 48/48 tests. Live ensemble leg still to be run against a served ensemble |
-| Encoded-image + envelope adapter | neuriplo-infer | Merged to develop with the v0.8.0 alignment; 52/52 tests |
-| Cross-repo agreement test | neuriplo-platform | Metadata leg implemented and passing against a live ensemble; agreement leg still pending (needs machine-readable detections out of neuriplo-infer) |
+| Encoded-image + envelope adapter | neuriplo-infer | Merged to develop with the v0.8.0 alignment; 52/52 tests, -DWERROR=ON and cppcheck clean |
+| Cross-repo agreement test | neuriplo-platform | Metadata leg passing live. Server-to-server preprocessing comparison implemented (compare_preprocessing.py, symmetric, JSON output). A client-path agreement gate still needs machine-readable detections out of neuriplo-infer |
 
-DALI/TensorRT lane (2026-08-05): neuriplo gained a DALI backend
-(`feat/dali-backend`) hosting serialized pipelines through the DALI C API, pure
-C++ at inference time. The runtime serves it as a `dali` model chained ahead of
-a TensorRT FP16 engine in an ensemble. Live parity vs the CPU-preprocess path
-over the same engine, 50 frames: 91.4% of detections matched at IoU>=0.5, 96.2%
-at confidence>=0.5, misses concentrated at the 0.30 threshold margin; ~8
-high-confidence residual mismatches remain uninvestigated (suspected NMS
-flips). Three runtime fixes landed en route: scheduler error propagation
-(failures were redacted to "internal error"), dynamic-axis input validation in
-NeuriploExecutor, and batch-dimension reconciliation between pipeline steps.
+DALI/TensorRT lane (2026-08-05): neuriplo gained a DALI backend hosting
+serialized pipelines through the DALI C API, pure C++ at inference time, with
+the full docs/ADDING_BACKEND.md checklist closed (registry entry, tests, setup
+script, validation, Readme). The runtime serves it as a `dali` model chained
+ahead of a TensorRT FP16 engine.
+
+Preprocessing-placement measurements are reproducible artifacts, not prose:
+`integration-tests/kserve-ensemble/compare_preprocessing.py` and
+`benchmark_preprocessing.py`, with results under `baselines/`.
+
+Parity, 50 frames of 1280x720 video, YOLO26m-seg (medium) at 640x640 served
+as a TensorRT FP16 engine -- the same engine on both sides -- with symmetric
+one-to-one matching at IoU>=0.5:
+
+| Direction | Rate |
+|---|---|
+| CPU detections found by DALI (recall) | 641/701 = 91.4% |
+| DALI detections present in CPU (precision) | 641/739 = 86.7% |
+
+19 unmatched CPU detections and 13 unmatched DALI detections are above
+confidence 0.5. An earlier one-directional measurement reported only the 91.4%
+figure; it hid the precision side, where DALI produces 38 more detections than
+the reference. DALI preprocessing is NOT yet a validated drop-in.
+
+Latency, YOLO26m-seg, server-side pipeline only (transport excluded), 30
+iterations:
+CPU preprocess 115.4 ms mean, DALI GPU preprocess 96.6 ms mean -- 1.19x.
+Client-observed round trips are ~230-245 ms for both, dominated by sending the
+encoded image as a JSON number array; the binary tensor extension would close
+that. Postprocessing is CPU in both ensembles: this stack has no GPU
+postprocess step, so no end-to-end GPU pre+post figure exists.
+
+Runtime fixes landed en route: scheduler error propagation centralized on
+SchedulerResult::adopt (failures were redacted to "internal error"),
+dynamic-axis input validation, batch-dimension reconciliation restricted to
+leading unit dimensions, and GPU serving via --use-gpu.
 
 Validated end to end on 2026-08-04: a 404-frame 1280x720 video through
 neuriplo-infer -> neuriplo-kserve-client -> neuriplo-kserve-runtime, serving a
