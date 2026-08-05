@@ -1,0 +1,251 @@
+{
+  "endpoint": "http://127.0.0.1:8080",
+  "reference_model": "yolo26seg_cpu",
+  "candidate_model": "yolo26seg_dali",
+  "frames": 50,
+  "frames_failed": 0,
+  "iou_threshold": 0.5,
+  "high_confidence_threshold": 0.5,
+  "detections": {
+    "reference": 701,
+    "candidate": 739,
+    "matched": 641
+  },
+  "reference_matched_rate": 0.9144,
+  "candidate_matched_rate": 0.8674,
+  "unmatched_reference": {
+    "count": 60,
+    "high_confidence_count": 19,
+    "score_min": 0.3025,
+    "score_max": 0.9014,
+    "high_confidence_examples": [
+      {
+        "class": 0,
+        "score": 0.9014,
+        "box": [
+          365.0,
+          286.0,
+          149.0,
+          292.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.7559,
+        "box": [
+          429.0,
+          155.0,
+          286.0,
+          558.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.7285,
+        "box": [
+          847.0,
+          258.0,
+          120.0,
+          357.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.6714,
+        "box": [
+          1179.0,
+          262.0,
+          101.0,
+          326.0
+        ]
+      },
+      {
+        "class": 26,
+        "score": 0.626,
+        "box": [
+          626.0,
+          319.0,
+          45.0,
+          86.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.6206,
+        "box": [
+          712.0,
+          298.0,
+          46.0,
+          196.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.6113,
+        "box": [
+          500.0,
+          362.0,
+          43.0,
+          103.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.6094,
+        "box": [
+          1201.0,
+          359.0,
+          78.0,
+          263.0
+        ]
+      },
+      {
+        "class": 24,
+        "score": 0.6074,
+        "box": [
+          581.0,
+          326.0,
+          68.0,
+          92.0
+        ]
+      },
+      {
+        "class": 26,
+        "score": 0.604,
+        "box": [
+          197.0,
+          470.0,
+          63.0,
+          120.0
+        ]
+      }
+    ]
+  },
+  "unmatched_candidate": {
+    "count": 98,
+    "high_confidence_count": 13,
+    "score_min": 0.304,
+    "score_max": 0.8862,
+    "high_confidence_examples": [
+      {
+        "class": 0,
+        "score": 0.8862,
+        "box": [
+          543.0,
+          278.0,
+          96.0,
+          333.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.7656,
+        "box": [
+          0.0,
+          259.0,
+          95.0,
+          349.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.7363,
+        "box": [
+          153.0,
+          285.0,
+          108.0,
+          367.0
+        ]
+      },
+      {
+        "class": 26,
+        "score": 0.644,
+        "box": [
+          518.0,
+          460.0,
+          40.0,
+          97.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.5757,
+        "box": [
+          91.0,
+          251.0,
+          102.0,
+          372.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.5547,
+        "box": [
+          769.0,
+          319.0,
+          42.0,
+          175.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.5508,
+        "box": [
+          0.0,
+          360.0,
+          98.0,
+          172.0
+        ]
+      },
+      {
+        "class": 0,
+        "score": 0.5469,
+        "box": [
+          960.0,
+          282.0,
+          61.0,
+          229.0
+        ]
+      },
+      {
+        "class": 26,
+        "score": 0.5391,
+        "box": [
+          899.0,
+          426.0,
+          51.0,
+          84.0
+        ]
+      },
+      {
+        "class": 26,
+        "score": 0.5391,
+        "box": [
+          506.0,
+          503.0,
+          111.0,
+          215.0
+        ]
+      }
+    ]
+  },
+  "model": {
+    "model_family": "YOLO26",
+    "variant": "m (medium), instance segmentation",
+    "input": "1x3x640x640 FP32",
+    "source_onnx": {
+      "path": "/home/oli/model_repository/yolo26m_seg_onnx/1/model.onnx",
+      "bytes": 94615718,
+      "sha256_prefix": "31072fe5b24e7eeb"
+    },
+    "tensorrt_engine": {
+      "path": "/home/oli/model_repository/yolo26m_seg_trt/1/model.engine",
+      "bytes": 53424372,
+      "sha256_prefix": "a5d825751f260417",
+      "precision": "FP16",
+      "builder": "TensorRT 10.13.3.9",
+      "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU"
+    },
+    "note": "Engine is TensorRT-version and GPU specific; rebuild before comparing numbers on other hardware."
+  }
+}
