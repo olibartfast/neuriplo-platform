@@ -48,13 +48,23 @@ confidence 0.5. An earlier one-directional measurement reported only the 91.4%
 figure; it hid the precision side, where DALI produces 38 more detections than
 the reference. DALI preprocessing is NOT yet a validated drop-in.
 
-Latency, YOLO26m-seg, server-side pipeline only (transport excluded), 30
-iterations:
-CPU preprocess 115.4 ms mean, DALI GPU preprocess 96.6 ms mean -- 1.19x.
-Client-observed round trips are ~230-245 ms for both, dominated by sending the
-encoded image as a JSON number array; the binary tensor extension would close
-that. Postprocessing is CPU in both ensembles: this stack has no GPU
-postprocess step, so no end-to-end GPU pre+post figure exists.
+Latency, YOLO26m-seg at 640x640, TensorRT FP16, server-side pipeline only
+(transport excluded), 30 iterations, median:
+
+| Configuration | median | vs CPU |
+|---|---|---|
+| CPU pre + CPU post | 144.5 ms | 1.00x |
+| DALI GPU pre + CPU post | 119.8 ms | 1.21x |
+| DALI GPU pre + GPU post | 69.9 ms | 2.07x |
+
+GPU postprocessing uses a custom CUDA DALI operator plugin; pipelines are
+serialized in the NVIDIA container (export/dali/generate_pipelines.sh), never
+from a host virtualenv, because a plugin and a serialized pipeline are tied to
+one DALI version.
+
+Remaining headroom: the DALI backend copies its outputs device->host and the
+next step re-uploads them, two full-tensor copies per frame. Writing straight
+into the downstream device buffer is the next optimization.
 
 Runtime fixes landed en route: scheduler error propagation centralized on
 SchedulerResult::adopt (failures were redacted to "internal error"),
