@@ -62,10 +62,10 @@ host, costing more than the GPU decode saves. It pays only when postprocessing
 is also on GPU, which collapses a 3.3 MB prototype tensor into a small
 envelope. The win is as much about transfer volume as compute.
 
-Transport matters enormously and earlier figures overstated everything: with
-JSON `data` arrays the same three configurations measured 303.8 / 276.7 /
-244.6 ms client-side. gRPC has NOT been measured -- this build has
-NEURIPLO_RUNTIME_ENABLE_GRPC=OFF.
+Transport measured three ways, client median: JSON 303.8 / 276.7 / 244.6 ms,
+HTTP binary 155.0 / 164.8 / 74.0, gRPC 153.5 / 163.4 / 72.5. JSON is the
+outlier; binary and gRPC agree within ~1.5 ms, so transport is not the
+bottleneck once the tensor is not spelled out as JSON numbers.
 
 Per-stage against tritonic on the same model and GPU: DALI preprocess 7.66 ms
 vs 0.03, TensorRT 29.48 vs 24.48, GPU postprocess 2.58 vs 2.59 -- the
