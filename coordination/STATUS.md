@@ -117,6 +117,14 @@ versions.yaml compatibility sets get entries once the siblings tag.
 
 ## Known issues / debt
 
+- **neuriplo Windows CI is broken at configure time**, independent of any code
+  change: `could not find any instance of Visual Studio` from the
+  `Visual Studio 17 2022` generator. The workflow last ran successfully in
+  April 2026 on `feature/windows-support`; the hosted runner image has moved
+  since. It fails before compiling anything, so it blocks every PR's rollup
+  without indicating a real defect. Note there is already uncommitted
+  `windows-build.yml` WIP in the neuriplo tree, so whoever owns that branch
+  should land it rather than a second fix landing on top.
 - **Heap corruption in the GPU-postprocess ensemble.** The runtime aborts with
   `malloc(): corrupted top size` (or `double free or corruption`) on the first
   JSON-transport request to `yolo26seg_gpu` after a binary-transport benchmark
