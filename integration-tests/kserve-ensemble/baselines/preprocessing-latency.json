@@ -4,63 +4,62 @@
   "iterations": 30,
   "warmup": 3,
   "results": {
-    "cpu-preprocess": {
+    "cpu-pre + cpu-post": {
       "count": 30,
-      "mean_ms": 243.5,
-      "median_ms": 247.1,
-      "p95_ms": 264.2,
-      "min_ms": 201.8,
-      "max_ms": 268.4,
-      "fps": 4.11
+      "mean_ms": 297.4,
+      "median_ms": 303.8,
+      "p95_ms": 336.6,
+      "min_ms": 232.4,
+      "max_ms": 350.5,
+      "fps": 3.36
     },
-    "dali-gpu-preprocess": {
+    "gpu-pre + cpu-post": {
       "count": 30,
-      "mean_ms": 227.8,
-      "median_ms": 231.7,
-      "p95_ms": 247.7,
-      "min_ms": 186.9,
-      "max_ms": 262.4,
-      "fps": 4.39,
-      "speedup_vs_cpu-preprocess": 1.07
+      "mean_ms": 271.1,
+      "median_ms": 276.7,
+      "p95_ms": 299.4,
+      "min_ms": 214.3,
+      "max_ms": 309.2,
+      "fps": 3.69,
+      "speedup_vs_cpu-pre_+_cpu-post": 1.1
+    },
+    "gpu-pre + gpu-post": {
+      "count": 30,
+      "mean_ms": 246.2,
+      "median_ms": 244.6,
+      "p95_ms": 263.0,
+      "min_ms": 219.3,
+      "max_ms": 282.3,
+      "fps": 4.06,
+      "speedup_vs_cpu-pre_+_cpu-post": 1.21
     }
   },
   "server_side_pipeline_ms": {
-    "note": "Parsed from the runtime's structured logs (span: infer, infer_latency_ns), which exclude HTTP transport and JSON encoding. The client-observed numbers above are dominated by JSON: an encoded image is sent as a JSON array of ~98k numbers, which costs more than the preprocessing being compared. Use the binary tensor extension to close that gap.",
-    "cpu-preprocess": {
-      "mean_ms": 115.4,
-      "median_ms": 116.3,
-      "min_ms": 98.0,
-      "max_ms": 126.3
+    "note": "Parsed from the runtime's structured logs (span: infer, infer_latency_ns), excluding HTTP transport and JSON encoding. Client round trips above are dominated by sending the encoded image as a JSON number array; the binary tensor extension would close that gap.",
+    "cpu-pre + cpu-post": {
+      "mean_ms": 147.7,
+      "median_ms": 144.5,
+      "min_ms": 123.4
     },
-    "dali-gpu-preprocess": {
-      "mean_ms": 96.6,
-      "median_ms": 97.7,
-      "min_ms": 80.5,
-      "max_ms": 109.0
+    "gpu-pre + cpu-post": {
+      "mean_ms": 121.3,
+      "median_ms": 119.8,
+      "min_ms": 107.9
     },
-    "speedup": 1.19
+    "gpu-pre + gpu-post": {
+      "mean_ms": 70.0,
+      "median_ms": 69.9,
+      "min_ms": 67.0
+    },
+    "speedup_gpu_pre_post_vs_cpu": 2.07,
+    "speedup_gpu_pre_only_vs_cpu": 1.22
+  },
+  "model": {
+    "gpu_postprocess_plugin": "libyolo26_seg_dali.so (custom CUDA DALI operator, DALI 1.51.2)"
   },
   "caveats": [
-    "Postprocessing runs on the CPU in BOTH ensembles: this stack has no GPU postprocess step, so this measures preprocessing placement only, not end-to-end GPU pre+post.",
-    "Inference is TensorRT FP16 on GPU in both, and identical between them."
-  ],
-  "model": {
-    "model_family": "YOLO26",
-    "variant": "m (medium), instance segmentation",
-    "input": "1x3x640x640 FP32",
-    "source_onnx": {
-      "path": "/home/oli/model_repository/yolo26m_seg_onnx/1/model.onnx",
-      "bytes": 94615718,
-      "sha256_prefix": "31072fe5b24e7eeb"
-    },
-    "tensorrt_engine": {
-      "path": "/home/oli/model_repository/yolo26m_seg_trt/1/model.engine",
-      "bytes": 53424372,
-      "sha256_prefix": "a5d825751f260417",
-      "precision": "FP16",
-      "builder": "TensorRT 10.13.3.9",
-      "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU"
-    },
-    "note": "Engine is TensorRT-version and GPU specific; rebuild before comparing numbers on other hardware."
-  }
+    "Inference is TensorRT FP16 on GPU in all three configurations and identical between them.",
+    "GPU postprocessing uses a custom CUDA DALI operator plugin; the plugin and the serialized pipeline are tied to one DALI version (1.51.2 here).",
+    "DALI outputs are copied device->host by the backend and re-uploaded by the next step. Writing straight into the downstream device buffer would remove two full-tensor copies per frame."
+  ]
 }
