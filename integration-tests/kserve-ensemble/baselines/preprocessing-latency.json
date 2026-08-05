@@ -101,5 +101,36 @@
     },
     "finding": "GPU postprocessing compute is identical (2.58 vs 2.59 ms) -- same CUDA plugin. The entire remaining gap is host round-trips: DALI copies its output device->host and the next step re-uploads it. Preprocessing pays 7.6 ms for a 4.9 MB tensor that tritonic never moves off the device."
   },
-  "key_finding": "GPU preprocessing ALONE is a net loss under binary transport (160.4 ms vs 150.8 ms for CPU preprocessing): the preprocessed tensor round-trips to host, which costs more than the GPU decode saves. It only pays when postprocessing is also on GPU, where it collapses a 3.3 MB prototype tensor into a small envelope -- 69.8 ms, 2.16x faster than the all-CPU path. The win is as much about transfer volume as about compute."
+  "key_finding": "GPU preprocessing ALONE is a net loss under binary transport (160.4 ms vs 150.8 ms for CPU preprocessing): the preprocessed tensor round-trips to host, which costs more than the GPU decode saves. It only pays when postprocessing is also on GPU, where it collapses a 3.3 MB prototype tensor into a small envelope -- 69.8 ms, 2.16x faster than the all-CPU path. The win is as much about transfer volume as about compute.",
+  "transport_comparison_client_median_ms": {
+    "note": "Same server, same models, three transports. JSON is the outlier; HTTP binary and gRPC agree within ~1.5 ms, which means transport is not the bottleneck once the tensor is not being spelled out as JSON numbers. The remaining time is server-side pipeline work.",
+    "http_json": {
+      "cpu-pre + cpu-post": 303.8,
+      "gpu-pre + cpu-post": 276.7,
+      "gpu-pre + gpu-post": 244.6
+    },
+    "http_binary": {
+      "cpu-pre + cpu-post": 155.0,
+      "gpu-pre + cpu-post": 164.8,
+      "gpu-pre + gpu-post": 74.0
+    },
+    "grpc": {
+      "cpu-pre + cpu-post": 153.5,
+      "gpu-pre + cpu-post": 163.4,
+      "gpu-pre + gpu-post": 72.5
+    }
+  },
+  "outstanding_optimization": {
+    "title": "Device-side tensor handoff between pipeline steps",
+    "why": "Per-stage measurement puts the whole neuriplo-vs-tritonic gap in host round-trips: GPU postprocess compute is identical (2.58 vs 2.59 ms, same CUDA plugin), while DALI preprocess costs 7.66 ms against 0.03 ms because tritonic's DALI writes straight into the TensorRT input binding and never moves the 4.9 MB tensor off the device.",
+    "feasibility": "Both halves verified. TRTInfer already cudaMallocs its own buffers_ and binds them with setInputTensorAddress, so an input buffer pointer can be exposed. daliOutputCopy accepts device_type_t::GPU, so DALI can write device-to-device into that pointer. No inline-inference operator exists in DALI 1.51.2, so fusing the whole chain into one pipeline is not an option.",
+    "design": [
+      "InferenceInterface: optional input_device_buffer(index) and copy_output_to_device(index, dst, bytes), defaulting to unsupported so no existing backend changes.",
+      "TRTInfer: return buffers_[index]; skip the host-to-device copy for inputs a caller has already filled.",
+      "DALIInfer: implement copy_output_to_device via daliOutputCopy with a GPU destination.",
+      "Pipeline executor: when a producing step supports device output and the consuming step accepts device input, hand over the pointer instead of host bytes."
+    ],
+    "expected": "Removes ~7.6 ms on the preprocess hop and part of the 5 ms TensorRT delta; the TRT->postprocess hop moves a further 3.3 MB.",
+    "risk": "A partially-correct device path silently corrupts tensors rather than failing, so it needs per-hop verification against the host path."
+  }
 }
