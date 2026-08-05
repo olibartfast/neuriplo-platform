@@ -101,7 +101,7 @@
     },
     "finding": "GPU postprocessing compute is identical (2.58 vs 2.59 ms) -- same CUDA plugin. The entire remaining gap is host round-trips: DALI copies its output device->host and the next step re-uploads it. Preprocessing pays 7.6 ms for a 4.9 MB tensor that tritonic never moves off the device."
   },
-  "key_finding": "GPU preprocessing ALONE is a net loss under binary transport (160.4 ms vs 150.8 ms for CPU preprocessing): the preprocessed tensor round-trips to host, which costs more than the GPU decode saves. It only pays when postprocessing is also on GPU, where it collapses a 3.3 MB prototype tensor into a small envelope -- 69.8 ms, 2.16x faster than the all-CPU path. The win is as much about transfer volume as about compute.",
+  "key_finding": "GPU preprocessing alone is now a clear win (78.7 ms vs 123.5 ms for CPU preprocessing), and GPU pre + GPU post is 4.6x the all-CPU path at 26.8 ms. Before the TensorRT raw-output fix, GPU preprocessing alone measured as a net LOSS, which was misread as PCIe transfer cost; it was actually the variant round-trip scaling with tensor element count, which hurt the GPU-preprocessed path most because it moves the largest tensors.",
   "transport_comparison_client_median_ms": {
     "note": "Same server, same models, three transports. JSON is the outlier; HTTP binary and gRPC agree within ~1.5 ms, which means transport is not the bottleneck once the tensor is not being spelled out as JSON numbers. The remaining time is server-side pipeline work.",
     "http_json": {
@@ -131,6 +131,48 @@
       "Pipeline executor: when a producing step supports device output and the consuming step accepts device input, hand over the pointer instead of host bytes."
     ],
     "expected": "Removes ~7.6 ms on the preprocess hop and part of the 5 ms TensorRT delta; the TRT->postprocess hop moves a further 3.3 MB.",
-    "risk": "A partially-correct device path silently corrupts tensors rather than failing, so it needs per-hop verification against the host path."
+    "risk": "A partially-correct device path silently corrupts tensors rather than failing, so it needs per-hop verification against the host path.",
+    "status": "Deprioritised, not done. The premise -- that the whole gap was host round-trips -- was only half right: removing the per-scalar variant round-trip closed it entirely and put neuriplo at/below tritonic. True device-to-device handoff would still remove ~24MB/frame of PCIe traffic and remains the next lever, but it is now an incremental optimisation against a competitive baseline rather than a gap-closer, and it carries the silent-corruption risk noted below."
+  },
+  "trt_raw_output_path_ab": {
+    "note": "A/B on one machine in one session: binaries built from the same tree, differing only in whether TRTInfer overrides get_infer_results_raw(). Client medians over the HTTP binary tensor extension, 30 iterations after 3 warmup, interleaved across the three ensembles.",
+    "change": "TRTInfer implements get_infer_results_raw(), copying device output buffers straight into contiguous host bytes. Previously it inherited the default, which routes through get_infer_results() and materialises one 16-byte std::variant per output scalar (~2.6M scalars for yolo26m-seg, ~42MB of variant vector) before re-serialising it.",
+    "client_median_ms": {
+      "cpu-pre + cpu-post": {
+        "before": 148.0,
+        "after": 123.5,
+        "speedup": 1.2
+      },
+      "gpu-pre + cpu-post": {
+        "before": 123.6,
+        "after": 78.7,
+        "speedup": 1.57
+      },
+      "gpu-pre + gpu-post": {
+        "before": 70.9,
+        "after": 26.8,
+        "speedup": 2.65
+      }
+    },
+    "server_median_ms_after": {
+      "cpu-pre + cpu-post": 121.5,
+      "gpu-pre + cpu-post": 76.8,
+      "gpu-pre + gpu-post": 23.9
+    },
+    "correctness": "The 50-frame CPU-vs-DALI agreement run reproduced the recorded baseline exactly (701 reference, 739 candidate, 641 matched, 0.9144/0.8674), so the raw path emits identical tensors -- this is a pure overhead removal, not a behaviour change.",
+    "vs_tritonic": "tritonic's measured ensemble for the same model and GPU is 27.04 ms. neuriplo's GPU pre+post is now 23.9 ms server-side / 26.8 ms client-observed, so the gap this file previously attributed to host round-trips is closed. Most of it was never PCIe traffic at all -- it was per-scalar variant construction on the host."
+  },
+  "known_bug": {
+    "title": "Heap corruption in the GPU-postprocess ensemble, pre-existing",
+    "severity": "Server aborts (SIGABRT). Reproducible, but the aborting allocation varies.",
+    "repro": "Load yolo26seg (tensorrt), yolo_pre and yolo_post (dali), and the three ensembles. Run the HTTP binary-transport benchmark across all three ensembles, then issue a JSON-transport request to yolo26seg_gpu. It aborts on the first such request with 'malloc(): corrupted top size' or 'double free or corruption (!prev)'.",
+    "not_caused_by": "The TensorRT raw-output change. Verified by reproducing it identically on a binary built from the parent commit.",
+    "ruled_out": [
+      "DALI overrunning its output buffer: a 64-byte redzone around every daliOutputCopy destination never trips.",
+      "A DALI external input whose declared shape outruns its buffer: checked explicitly before daliSetExternalInput, never trips.",
+      "RealNeuriploAdapter::infer, which is where gdb caught the abort -- it resizes and memcpys exactly raw.bytes.size(). It is the first large allocation after the damage, not the writer."
+    ],
+    "evidence": "gdb backtrace: abort in _int_malloc for a 564495-byte request from RealNeuriploAdapter::infer on a ModelScheduler thread, in a non-main arena (av=0x7ffef8000030). The corrupting write happened earlier in that arena.",
+    "next_step": "Run the runtime under ASAN with the DALI and TensorRT backends, or set MALLOC_CHECK_=3, to catch the write rather than the detection."
   }
 }

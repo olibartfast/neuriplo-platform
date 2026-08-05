@@ -91,12 +91,22 @@ integration-tests/kserve-ensemble/compare_preprocessing.py \
   --frames 'frames/*.jpg' --stride 8 --limit 50 \
   --report integration-tests/kserve-ensemble/baselines/dali-vs-cpu.json
 
-# Interleaved latency benchmark
+# Interleaved latency benchmark, JSON transport
 integration-tests/kserve-ensemble/benchmark_preprocessing.py \
   --models yolo26seg_cpu yolo26seg_dali \
   --labels cpu-preprocess dali-gpu-preprocess \
   --frames 'frames/*.jpg' --iterations 30
+
+# Same, over the HTTP binary tensor extension
+integration-tests/kserve-ensemble/benchmark_binary_transport.py \
+  --models yolo26seg_cpu yolo26seg_dali yolo26seg_gpu \
+  --labels cpu-pre+cpu-post gpu-pre+cpu-post gpu-pre+gpu-post \
+  --frames 'frames/*.jpg' --iterations 30
 ```
+
+Prefer the binary one for anything comparing pipeline placement. Sending a
+98 KB JPEG as a JSON number array costs more per request than the work being
+measured, and it inflates every configuration by a different amount.
 
 The comparison reports **both** directions. Recall alone (how many reference
 detections the candidate found) hides the opposite failure: a path that invents
@@ -112,4 +122,36 @@ As of 2026-08-05, DALI GPU
 preprocessing reaches 91.4% recall but only 86.7% precision against the CPU
 path, with high-confidence misses in both directions, so it is not yet a
 validated drop-in.
+
+### Where the time actually went
+
+The first round of measurements attributed the neuriplo-vs-tritonic latency gap
+to host round-trips between pipeline steps, on the reasoning that GPU
+postprocess compute was identical (same CUDA plugin, 2.58 vs 2.59 ms) while
+preprocessing cost 7.66 ms against 0.03 ms. That reading also made GPU
+preprocessing look like a net loss on its own, which was blamed on PCIe traffic.
+
+It was mostly wrong. `TRTInfer` had never overridden
+`get_infer_results_raw()`, so every TensorRT inference fell back to the base
+implementation, which builds one 16-byte `std::variant` per output scalar and
+then flattens it back to bytes -- about 42 MB of variant vector per frame for a
+YOLO26m-seg engine, constructed and walked twice. That cost scales with tensor
+element count, so it fell hardest on exactly the configurations moving the
+largest tensors, which is why it read as a transfer cost.
+
+Copying device-to-host straight into the destination byte buffer
+([neuriplo#21](https://github.com/olibartfast/neuriplo/pull/21)) took GPU
+pre+post from 70.9 ms to 26.8 ms in a same-session A/B, against tritonic's
+27.04 ms for the same model and GPU, and made GPU preprocessing alone a clear
+win rather than a loss. Detections were bit-identical across the change.
+
+The lesson worth keeping: a per-stage decomposition attributed the gap to the
+one mechanism nobody had measured directly (PCIe), and the real cause was
+uninstrumented host work inside a stage. `baselines/preprocessing-latency.json`
+carries both the old and new numbers so the correction stays visible.
+
+**Known bug, pre-existing:** the GPU-postprocess ensemble can abort the server
+with heap corruption. Repro, backtrace, and what has been ruled out are under
+`known_bug` in `baselines/preprocessing-latency.json`. It reproduces on builds
+from before the TensorRT change, so it is not a regression from it.
 
