@@ -48,23 +48,31 @@ confidence 0.5. An earlier one-directional measurement reported only the 91.4%
 figure; it hid the precision side, where DALI produces 38 more detections than
 the reference. DALI preprocessing is NOT yet a validated drop-in.
 
-Latency, YOLO26m-seg at 640x640, TensorRT FP16, server-side pipeline only
-(transport excluded), 30 iterations, median:
+Latency, YOLO26m-seg at 640x640, TensorRT FP16, HTTP binary tensor extension,
+server-side pipeline median over 20 requests:
 
-| Configuration | median | vs CPU |
-|---|---|---|
-| CPU pre + CPU post | 144.5 ms | 1.00x |
-| DALI GPU pre + CPU post | 119.8 ms | 1.21x |
-| DALI GPU pre + GPU post | 69.9 ms | 2.07x |
+| Configuration | server | client | vs CPU |
+|---|---|---|---|
+| CPU pre + CPU post | 150.8 ms | 155.0 ms | 1.00x |
+| DALI GPU pre + CPU post | 160.4 ms | 164.8 ms | 0.94x |
+| DALI GPU pre + GPU post | 69.8 ms | 74.0 ms | 2.16x |
 
-GPU postprocessing uses a custom CUDA DALI operator plugin; pipelines are
-serialized in the NVIDIA container (export/dali/generate_pipelines.sh), never
-from a host virtualenv, because a plugin and a serialized pipeline are tied to
-one DALI version.
+GPU preprocessing alone is a net LOSS: the preprocessed tensor round-trips to
+host, costing more than the GPU decode saves. It pays only when postprocessing
+is also on GPU, which collapses a 3.3 MB prototype tensor into a small
+envelope. The win is as much about transfer volume as compute.
 
-Remaining headroom: the DALI backend copies its outputs device->host and the
-next step re-uploads them, two full-tensor copies per frame. Writing straight
-into the downstream device buffer is the next optimization.
+Transport matters enormously and earlier figures overstated everything: with
+JSON `data` arrays the same three configurations measured 303.8 / 276.7 /
+244.6 ms client-side. gRPC has NOT been measured -- this build has
+NEURIPLO_RUNTIME_ENABLE_GRPC=OFF.
+
+Per-stage against tritonic on the same model and GPU: DALI preprocess 7.66 ms
+vs 0.03, TensorRT 29.48 vs 24.48, GPU postprocess 2.58 vs 2.59 -- the
+postprocess compute is identical (same CUDA plugin). The whole gap is host
+round-trips, because the DALI backend copies outputs device->host and the next
+step re-uploads them. Device-side tensor handoff is the outstanding
+optimization.
 
 Runtime fixes landed en route: scheduler error propagation centralized on
 SchedulerResult::adopt (failures were redacted to "internal error"),

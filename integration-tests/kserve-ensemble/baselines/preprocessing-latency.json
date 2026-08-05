@@ -61,5 +61,45 @@
     "Inference is TensorRT FP16 on GPU in all three configurations and identical between them.",
     "GPU postprocessing uses a custom CUDA DALI operator plugin; the plugin and the serialized pipeline are tied to one DALI version (1.51.2 here).",
     "DALI outputs are copied device->host by the backend and re-uploaded by the next step. Writing straight into the downstream device buffer would remove two full-tensor copies per frame."
-  ]
+  ],
+  "transport_note": "All figures below use the HTTP binary tensor extension. An earlier run used JSON 'data' arrays, which for a 98 KB encoded image and multi-MB float tensors dominated the measurement: client medians were 303.8 / 276.7 / 244.6 ms for the three configurations versus 155.0 / 164.8 / 74.0 ms here. gRPC was NOT used; this build has NEURIPLO_RUNTIME_ENABLE_GRPC=OFF, and a gRPC comparison remains unmeasured.",
+  "results_binary_transport": {
+    "cpu-pre + cpu-post": {
+      "client_median_ms": 155.0,
+      "server_median_ms": 150.8
+    },
+    "gpu-pre + cpu-post": {
+      "client_median_ms": 164.8,
+      "server_median_ms": 160.4
+    },
+    "gpu-pre + gpu-post": {
+      "client_median_ms": 74.0,
+      "server_median_ms": 69.8
+    }
+  },
+  "stage_decomposition_ms": {
+    "note": "Each model measured in isolation, server-side. Compared against tritonic's published per-stage medians for the same model and GPU.",
+    "dali_gpu_preprocess": {
+      "neuriplo": 7.66,
+      "tritonic": 0.03
+    },
+    "tensorrt_infer": {
+      "neuriplo": 29.48,
+      "tritonic": 24.48
+    },
+    "dali_gpu_postprocess": {
+      "neuriplo": 2.58,
+      "tritonic": 2.59
+    },
+    "sum_of_parts": {
+      "neuriplo": 39.72,
+      "tritonic": 27.1
+    },
+    "measured_ensemble": {
+      "neuriplo": 44.3,
+      "tritonic": 27.04
+    },
+    "finding": "GPU postprocessing compute is identical (2.58 vs 2.59 ms) -- same CUDA plugin. The entire remaining gap is host round-trips: DALI copies its output device->host and the next step re-uploads it. Preprocessing pays 7.6 ms for a 4.9 MB tensor that tritonic never moves off the device."
+  },
+  "key_finding": "GPU preprocessing ALONE is a net loss under binary transport (160.4 ms vs 150.8 ms for CPU preprocessing): the preprocessed tensor round-trips to host, which costs more than the GPU decode saves. It only pays when postprocessing is also on GPU, where it collapses a 3.3 MB prototype tensor into a small envelope -- 69.8 ms, 2.16x faster than the all-CPU path. The win is as much about transfer volume as about compute."
 }
