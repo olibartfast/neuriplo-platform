@@ -6,6 +6,12 @@
 
 - `docs/architecture/`: architecture notes and migration policy.
 - `docs/adr/`: Architecture Decision Records; use `0000-template.md` for new decisions.
+- `specs/`: one dated directory per milestone (`YYYY-MM-DD-milestone-name/`)
+  holding `requirements.md` (the contract of work), `plan.md` (independently
+  verifiable task groups), and `validation.md` (the evidence that closes it).
+  Write `validation.md` before implementing, and update the packet in the same
+  branch as the change it describes. An ADR records a decision, a contract
+  records an interface, a spec packet records one unit of work.
 - `contracts/`: cross-repository task, backend, result, runtime, and configuration contracts.
 - `ops/`: cluster map, repo metadata, policies, runbooks, and PR evidence templates.
 - `examples/`: platform-level scenario docs, not large model files.
