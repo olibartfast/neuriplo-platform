@@ -32,6 +32,7 @@ neuriplo-platform/
 |- docs/
 |   |- architecture/
 |   `- adr/
+|- specs/
 |- contracts/
 |- examples/
 |- integration-tests/
