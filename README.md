@@ -70,6 +70,7 @@ bootstrapping, validation, and what to read first.
 
 Core reference:
 
+- [Mission](specs/mission.md), [tech stack](specs/tech-stack.md), and [roadmap](specs/roadmap.md)
 - [Architecture overview](docs/architecture/overview.md)
 - [ADR index](docs/adr/README.md)
 - [Contract index](contracts/README.md)

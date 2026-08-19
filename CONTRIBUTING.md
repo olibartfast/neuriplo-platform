@@ -49,12 +49,15 @@ workspace/
 
 If you're new, read these in order:
 
-1. [Architecture overview](docs/architecture/overview.md) -- ecosystem map and repo responsibilities
-2. [Dependency policy](docs/architecture/dependency-policy.md) -- cross-repo change rules
-3. [ADR index](docs/adr/README.md) -- design decisions (scan the titles, read the latest)
-4. [Contract index](contracts/README.md) -- cross-repo API contracts
+1. [Mission](specs/mission.md) -- why this repository exists, what it owns, and what it refuses to own
+2. [Architecture overview](docs/architecture/overview.md) -- ecosystem map and repo responsibilities
+3. [Dependency policy](docs/architecture/dependency-policy.md) -- cross-repo change rules
+4. [ADR index](docs/adr/README.md) -- design decisions (scan the titles, read the latest)
+5. [Contract index](contracts/README.md) -- cross-repo API contracts
+6. [Roadmap](specs/roadmap.md) -- what is in flight and what comes next
 
 The remaining docs ([ownership](docs/architecture/ownership.md),
+[tech stack](specs/tech-stack.md),
 [production roadmap](docs/architecture/production-roadmap.md),
 [GPU considerations](docs/architecture/gpu-hardware-considerations.md)) are
 reference material for specific topics.
