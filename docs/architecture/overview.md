@@ -7,11 +7,15 @@ a task domain layer that currently starts with computer vision workloads.
 
 The platform is organized around explicit boundaries between task semantics,
 backend execution, local application flow, and serving operations. Modern C++
-and service patterns are mapped in `modern-patterns.md`.
+and service patterns are mapped in `modern-patterns.md`. A browser operator
+layer sits above the application boundary without linking runtime libraries.
 
 ## Ecosystem Map
 
 ```text
+operator workflow:
+  neuriplo-ui browser -> neuriplo-ui local adapter -> neuriplo-infer
+
 embedded local mode:
   neuriplo-infer -> neuriplo-tasks + neuriplo + videocapture
 
@@ -40,6 +44,7 @@ System boundary: neuriplo inference ecosystem
   |- neuriplo-tasks: task contract, preprocess, postprocess, result type (CV tasks as first domain)
   |- neuriplo: GPU-first backend abstraction, execution, GPU capability reporting
   |- neuriplo-infer: embedded local app and KServe V2 client wiring
+  |- neuriplo-ui: browser operator app, local process adapter, and browser E2E
   |- neuriplo-kserve-client: backend-agnostic KServe V2 protocol client (HTTP/gRPC)
   |- neuriplo-kserve-runtime: KServe V2 server with dynamic batching, scheduling, multi-GPU placement
   '- videocapture: image and video source handling (optional, for CV task domain)
@@ -107,6 +112,7 @@ Owns:
 - KServe V2 client wiring for remote inference
 - Visualization
 - End-to-end local and remote application flow
+- Machine-readable, build-specific capability discovery
 
 Likely patterns:
 
@@ -114,6 +120,27 @@ Likely patterns:
 - Pipeline
 - Facade
 - Builder
+- Command
+
+### [neuriplo-ui](https://github.com/olibartfast/neuriplo-ui)
+
+Owns:
+
+- React and TypeScript browser presentation
+- Node.js and Fastify local API adapter
+- Capability-driven task, model, workflow, source, and parameter configuration
+- Playwright browser end-to-end coverage
+
+Depends on `neuriplo-infer` through a process API. It does not link
+`neuriplo-tasks`, `neuriplo`, `videocapture`, `neuriplo-kserve-client`, or
+`neuriplo-kserve-runtime` directly.
+
+Likely patterns:
+
+- Backend for Frontend
+- Adapter
+- Facade
+- Dependency Injection
 - Command
 
 ### [neuriplo-kserve-client](https://github.com/olibartfast/neuriplo-kserve-client)

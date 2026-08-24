@@ -137,6 +137,8 @@ def validate_policies(errors: list[str]) -> None:
     branch_policy = policies.get("branch_policy", {})
     normal_targets = set(branch_policy.get("normal_work_targets", []))
     release_targets = set(branch_policy.get("release_work_targets", []))
+    sibling_repos = set(branch_policy.get("sibling_repositories", []))
+    non_gitflow_repos = branch_policy.get("non_gitflow_sibling_repositories", {})
     sibling_rules = branch_policy.get("sibling_rules", {})
 
     expected_normal = {"develop", "feat/*", "feature/*"}
@@ -148,6 +150,18 @@ def validate_policies(errors: list[str]) -> None:
         fail(errors, "sibling_rules.master_is_release_only must be true")
     if sibling_rules.get("direct_master_changes_allowed"):
         fail(errors, "sibling_rules.direct_master_changes_allowed must be false")
+
+    overlap = sibling_repos & set(non_gitflow_repos)
+    if overlap:
+        fail(errors, f"repositories cannot be both Gitflow and non-Gitflow siblings: {', '.join(sorted(overlap))}")
+
+    for repo, meta in non_gitflow_repos.items():
+        default_branch = meta.get("default_branch")
+        allowed_targets = set(meta.get("normal_changes_must_target", []))
+        if not default_branch:
+            fail(errors, f"{repo}: non-Gitflow policy requires default_branch")
+        if default_branch not in allowed_targets:
+            fail(errors, f"{repo}: default branch {default_branch} must be an allowed normal target")
 
 
 def validate_required_docs(errors: list[str]) -> None:
@@ -200,6 +214,7 @@ def validate_repo_meta(errors: list[str]) -> None:
     cluster = load_yaml(ROOT / "ops" / "CLUSTER_MAP.yaml")
     policies = load_yaml(ROOT / "ops" / "policies.yaml")
     sibling_repos = set(policies["branch_policy"].get("sibling_repositories", []))
+    non_gitflow_repos = policies["branch_policy"].get("non_gitflow_sibling_repositories", {})
     cluster_repos = cluster_repo_names(cluster)
 
     for repo in sorted(cluster_repos):
@@ -219,6 +234,11 @@ def validate_repo_meta(errors: list[str]) -> None:
                 fail(errors, f"{repo}: integration branch must be develop")
             if branches.get("release") != "master":
                 fail(errors, f"{repo}: release branch must be master")
+        if repo in non_gitflow_repos:
+            expected_default = non_gitflow_repos[repo].get("default_branch")
+            actual_default = meta.get("default_branches", {}).get("default")
+            if actual_default != expected_default:
+                fail(errors, f"{repo}: default branch must be {expected_default}")
 
     extra_meta = {
         path.stem for path in (ROOT / "ops" / "repo-meta").glob("*.yaml")

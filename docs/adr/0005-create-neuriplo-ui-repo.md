@@ -2,7 +2,11 @@
 
 Date: 2026-06-08
 
-Status: Proposed
+Status: Superseded by ADR 0012
+
+The repository boundary proposed here was retained, but the Qt and in-process
+native transport decision was not implemented. ADR 0012 records the accepted
+browser application architecture.
 
 ## Problem
 

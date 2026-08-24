@@ -27,6 +27,7 @@ entrypoints:
 
 api_surface:
   cli_flags:
+    - capabilities
     - type
     - source
     - weights
@@ -44,6 +45,7 @@ api_surface:
     - segmentation_output
     - input_mode
     - task_model
+    - task_model_version
     - postprocess_mode
     - batch
     - input_sizes
@@ -55,6 +57,7 @@ api_surface:
     - VisionApp
     - CommandLineParser
     - AppConfig
+    - Capabilities schema version 1
 
 constraints:
   preserve_cli_compatibility: true
@@ -85,6 +88,13 @@ cross_repo_contracts:
     - kserve::IClient protocol contract
     - raw little-endian tensor byte payloads
     - KSERVE_CLIENT_WITH_GRPC transport-availability define
+  provides_to_neuriplo_ui:
+    - build-specific capabilities schema version 1
+    - local and client_server workflow availability
+    - task, model, source, and parameter identifiers
+
+consumers:
+  - neuriplo-ui
 
 automation_rules:
   allowed_change_classes:

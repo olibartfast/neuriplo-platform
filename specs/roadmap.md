@@ -6,7 +6,7 @@ production-readiness gaps lives in
 [`docs/architecture/production-roadmap.md`](../docs/architecture/production-roadmap.md),
 and this file only says which of those gaps are being cut into packets next.
 
-Last updated: 2026-08-19
+Last updated: 2026-08-24
 
 ## How To Read This
 
@@ -26,6 +26,7 @@ advance what evidence closes it.
 
 | Packet | State |
 |---|---|
+| [2026-08-24-register-neuriplo-ui](2026-08-24-register-neuriplo-ui/requirements.md) | Complete. Registers the browser operator interface and its capability-discovery boundary. |
 | [2026-08-17-control-plane-validation-hardening](2026-08-17-control-plane-validation-hardening/requirements.md) | Specified, not implemented. `scripts/check_all.py` does not exist yet. |
 
 The thesis of the current packet is that this repository declares more checks

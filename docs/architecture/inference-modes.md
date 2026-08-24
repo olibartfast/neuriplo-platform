@@ -4,6 +4,16 @@
 inference. The dependency boundary depends on which mode is being built and
 deployed.
 
+`neuriplo-ui` sits above both modes through the same process boundary:
+
+```text
+browser -> neuriplo-ui local adapter -> neuriplo-infer
+```
+
+The UI first selects `local` or `client_server` from the binary's capability
+payload. A local backend is selected only inside the `local` workflow. KServe
+V2 is a protocol choice inside `client_server`, never a local backend.
+
 ## Embedded Local Mode
 
 ```text
@@ -70,3 +80,5 @@ server deployment, or compatibility with non-Neuriplo KServe endpoints.
   metadata, not by the concrete server implementation.
 - Platform tests should cover both paths when a compatibility set claims support
   for both local and remote inference.
+- `neuriplo-ui` must discover workflow/backend/protocol availability from
+  `neuriplo-infer`; it must not maintain a parallel registry.

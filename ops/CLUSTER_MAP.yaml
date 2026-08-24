@@ -7,6 +7,7 @@ cluster:
     task_contracts: neuriplo-tasks
     backend_abstraction: neuriplo
     local_application_flow: neuriplo-infer
+    operator_interface: neuriplo-ui
     serving_runtime: neuriplo-kserve-runtime
     remote_inference_protocol: kserve-v2
     kserve_protocol_client: neuriplo-kserve-client
@@ -16,6 +17,7 @@ cluster:
     neuriplo-tasks: ../neuriplo-tasks
     neuriplo: ../neuriplo
     neuriplo-infer: ../neuriplo-infer
+    neuriplo-ui: ../neuriplo-ui
     neuriplo-kserve-client: ../neuriplo-kserve-client
     neuriplo-kserve-runtime: ../neuriplo-kserve-runtime
     videocapture: ../videocapture
@@ -90,11 +92,31 @@ repos:
         - kserve-v2-protocol
     provides:
       - cli
+      - capabilities_contract
       - app_config
       - runtime_wiring
       - visualization
       - local_e2e_execution
       - kserve_v2_client
+    automation_scope:
+      - ci-triage
+      - downstream-api-migration
+      - docs-sync
+      - test-fix
+    consumed_by:
+      - neuriplo-ui
+
+  neuriplo-ui:
+    repo_root: ../neuriplo-ui
+    role: operator-ui-layer
+    primary_role: ui-agent
+    depends_on:
+      - neuriplo-infer
+    provides:
+      - browser_application
+      - local_api_adapter
+      - capability_discovery
+      - browser_e2e_harness
     automation_scope:
       - ci-triage
       - downstream-api-migration
@@ -159,6 +181,14 @@ repos:
       - docs-sync
 
 dependency_edges:
+  - from: neuriplo-ui
+    to: neuriplo-infer
+    type: process_api
+    critical_contracts:
+      - capabilities schema version
+      - task, model, source, and parameter identifiers
+      - local and client_server workflow separation
+      - compiled backend, protocol, and transport availability
   - from: neuriplo-infer
     to: neuriplo-tasks
     type: api
@@ -240,6 +270,7 @@ agents:
     - neuriplo-tasks-worker
     - neuriplo-worker
     - neuriplo-infer-worker
+    - neuriplo-ui-worker
     - neuriplo-kserve-client-worker
     - neuriplo-kserve-runtime-worker
     - videocapture-worker
@@ -261,4 +292,5 @@ agents:
     neuriplo-kserve-client: client-agent
     neuriplo-kserve-runtime: runtime-infer-agent
     neuriplo-infer: runtime-infer-agent
+    neuriplo-ui: ui-agent
     merges_and_releases: human

@@ -3,7 +3,7 @@
 This is the architecture control plane for the neuriplo AI infrastructure and
 GPU-first serving platform. It contains no runtime code -- it coordinates
 contracts, decisions, version compatibility, integration tests, and examples
-across 6 sibling implementation repositories.
+across 7 sibling implementation repositories.
 
 ## Quick Start
 
@@ -19,9 +19,10 @@ python3 scripts/bootstrap.py
 python3 scripts/check_platform.py
 ```
 
-The bootstrap script clones all 6 sibling repos into the parent directory and
+The bootstrap script clones all 7 sibling repos into the parent directory and
 checks out the exact commits pinned in [versions.yaml](versions.yaml). After
-bootstrap your directory layout looks like this:
+bootstrap your directory layout looks like this. Access to the private
+`neuriplo-ui` repository requires authenticated GitHub credentials.
 
 ```text
 workspace/
@@ -29,6 +30,7 @@ workspace/
 |- neuriplo-tasks/             # domain/task layer
 |- neuriplo/                   # GPU-first backend abstraction
 |- neuriplo-infer/             # local application layer
+|- neuriplo-ui/                # browser operator interface and local API adapter
 |- neuriplo-kserve-client/     # KServe V2 protocol client
 |- neuriplo-kserve-runtime/    # serving runtime
 `- videocapture/               # video/image source layer
@@ -41,6 +43,7 @@ workspace/
 | neuriplo-tasks | Domain/task contracts, pre/post-processing | `cmake -S . -B build -DBUILD_TESTS=ON` |
 | neuriplo | GPU-first backend abstraction (ONNX, TensorRT, etc.) | `cmake -S . -B build -DDEFAULT_BACKEND=OPENCV_DNN` |
 | neuriplo-infer | CLI, config, E2E wiring (local + remote) | `cmake -S . -B build -DDEFAULT_BACKEND=OPENCV_DNN` |
+| neuriplo-ui | Browser operator interface and local API adapter | `npm install && npm run build` |
 | neuriplo-kserve-client | KServe V2 client (HTTP/gRPC, backend-agnostic) | `cmake -B build -DKSERVE_CLIENT_BUILD_TESTS=ON` |
 | neuriplo-kserve-runtime | KServe V2 server, batching, scheduling | `cmake --preset debug` |
 | videocapture | Video/image I/O sources | `cmake -S . -B build` |
@@ -72,8 +75,10 @@ For every major platform change:
 4. Add tests in the owning repository and integration coverage here.
 5. Update contracts, examples, and the version matrix.
 
-This repo follows a `main`-branch workflow. Sibling repos use Gitflow
-(`develop` for normal work, `master` for releases).
+This repo follows a `main`-branch workflow. The six C++ sibling repos use
+Gitflow (`develop` for normal work, `master` for releases). `neuriplo-ui`
+currently uses `master` for integration and may use short-lived `feat/*` or
+`feature/*` branches.
 
 ## Validation
 
