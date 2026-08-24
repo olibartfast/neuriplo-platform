@@ -19,7 +19,9 @@ behavior changes.
 1. Identify the source of truth.
    - `neuriplo-tasks` for task and result contracts.
    - `neuriplo` for backend execution and runtime compatibility.
-   - `neuriplo-infer` for local CLI and application flow.
+   - `neuriplo-infer` for local CLI, application flow, and machine-readable
+     capabilities.
+   - `neuriplo-ui` for browser presentation and the local API adapter.
    - `neuriplo-kserve-runtime` for serving protocol and lifecycle behavior.
    - `videocapture` for source and video IO contracts.
 
@@ -31,6 +33,7 @@ behavior changes.
    - enums or string identifiers
    - config keys
    - expected output schema
+   - capability schema version and advertised identifiers
    - wire response shape, when serving is involved
 
 4. Reject the task if it changes semantics rather than mechanical usage.

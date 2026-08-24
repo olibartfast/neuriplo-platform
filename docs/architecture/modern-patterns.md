@@ -45,6 +45,8 @@ interfaces:
   engine APIs.
 - `neuriplo-tasks`: task adapters between model tensors and stable result types.
 - `neuriplo-infer`: CLI and video IO adapters around user inputs.
+- `neuriplo-ui`: Backend-for-Frontend adapter from browser HTTP requests to the
+  `neuriplo-infer` process API.
 - `neuriplo-kserve-runtime`: KServe V2 protocol adapter around internal task and
   backend contracts.
 
@@ -160,6 +162,7 @@ patterns.
 | `neuriplo-tasks` | Factory Registry, Strategy, Visitor helpers, type erasure or concepts where useful, Adapter, explicit task contracts |
 | `neuriplo` | Backend Adapter, runtime Factory, State, Decorator for observability, RAII, zero-copy ownership |
 | `neuriplo-infer` | Composition Root, Dependency Injection, Pipeline, Builder, Command, application-boundary logging |
+| `neuriplo-ui` | Backend for Frontend, Adapter, Facade, Dependency Injection, Command, capability-driven presentation |
 | `neuriplo-kserve-client` | Strategy (transport selection), Retry/Backoff/Timeout, Facade, Adapter, pure protocol/codec helpers |
 | `neuriplo-kserve-runtime` | Producer-Consumer, Queue Worker, Dynamic Batching, Timeout, Circuit Breaker, Bulkhead, Health Endpoint |
 | `videocapture` | Adapter, RAII resource ownership, Strategy for capture backends, double buffering when needed |

@@ -5,7 +5,7 @@ governed ecosystem runs on, so a packet does not have to restate either.
 Version pins live in [`versions.yaml`](../versions.yaml); this file records the
 choices, not the numbers.
 
-Last updated: 2026-08-19
+Last updated: 2026-08-24
 
 ## Control-Plane Stack (This Repository)
 
@@ -42,13 +42,15 @@ owning repository; this table is the platform's view of it.
 
 | Concern | Choice | Owner |
 |---|---|---|
-| Implementation language and build | C++ with CMake across all six repos | each owning repo |
+| Native implementation language and build | C++ with CMake across the six runtime and library repos | each owning repo |
+| Operator interface | React and TypeScript with Vite; Node.js and Fastify local adapter; Playwright browser tests | [`neuriplo-ui`](https://github.com/olibartfast/neuriplo-ui) |
 | Backend execution | OpenCV DNN, ONNX Runtime, LibTorch, TensorRT, OpenVINO, LibTensorFlow, GGML, TVM | [`neuriplo`](https://github.com/olibartfast/neuriplo) |
 | Task semantics | preprocess / execute / postprocess contract, computer vision as the first domain | [`neuriplo-tasks`](https://github.com/olibartfast/neuriplo-tasks) |
 | Predictive serving protocol | KServe V2 / Open Inference Protocol, HTTP and gRPC, raw little-endian tensor payloads | [`neuriplo-kserve-client`](https://github.com/olibartfast/neuriplo-kserve-client) and [`neuriplo-kserve-runtime`](https://github.com/olibartfast/neuriplo-kserve-runtime) |
 | Generative serving protocol | OpenAI-compatible endpoints (chat/completions, embeddings, SSE), served by llama-server or a vLLM-backed deployment | outside the ecosystem, per [ADR 0006](../docs/adr/0006-generative-serving-over-openai-protocol.md) |
 | Ensembles | native runtime pipeline model kind, with GPU preprocessing available through a DALI-hosted pipeline | [`neuriplo-kserve-runtime`](https://github.com/olibartfast/neuriplo-kserve-runtime), per [ADR 0011](../docs/adr/0011-ensemble-pipeline-serving.md) |
 | Application wiring | CLI, configuration, pipeline builder, visualization | [`neuriplo-infer`](https://github.com/olibartfast/neuriplo-infer) |
+| Capability-driven UI configuration | Build-specific tasks, models, sources, parameters, workflows, backends, protocols, and transports discovered through the local adapter | [`neuriplo-infer`](https://github.com/olibartfast/neuriplo-infer) owns the contract; [`neuriplo-ui`](https://github.com/olibartfast/neuriplo-ui) consumes it |
 | Video and image sources | OpenCV with optional GStreamer and FFmpeg backends | [`videocapture`](https://github.com/olibartfast/videocapture) |
 | Accelerators | CUDA is the primary target; ROCm (via the ONNX Runtime provider) and oneAPI (via the OpenVINO GPU plugin) are planned, not shipped | [`neuriplo`](https://github.com/olibartfast/neuriplo) |
 

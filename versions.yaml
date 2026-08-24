@@ -26,6 +26,11 @@ repositories:
     visibility: public
     version: v0.9.1
     ref: 388fb891c14200d707ee991060cfd0b3aa4d3747
+  neuriplo-ui:
+    owner: operator-ui-layer
+    visibility: private
+    version: wip
+    ref: 16c50930f18713ea746bc05ffa9ef3b285ab1d76
   neuriplo-kserve-client:
     owner: kserve-protocol-client-layer
     visibility: public

@@ -21,7 +21,11 @@ orchestrator (control plane), not a coding/runtime repo. Platform work normally
 lands on `main`; Gitflow `develop` / `master` / release / hotfix branches do
 not apply there.
 
-## Branch Roles (coding repos only)
+**Not currently mandatory** for `neuriplo-ui`. The browser operator interface
+uses `master` as its integration branch and may use short-lived `feat/*` or
+`feature/*` branches. Its `master` branch is not release-only.
+
+## Branch Roles (C++ Gitflow repos only)
 
 | Gitflow role | Branch |
 |--------------|--------|
@@ -31,7 +35,7 @@ not apply there.
 | Release prep | `release/*` from `develop` |
 | Production hotfix | `hotfix/*` from `master` |
 
-## Required Flow (coding repos)
+## Required Flow (C++ Gitflow repos)
 
 1. **Features**: branch from `develop`, merge back to `develop` only. Never merge
    feature work directly into `master`.
@@ -49,7 +53,7 @@ with any real GitHub user profile.
 
 ## Before Commit, Push, or PR
 
-### Coding repos (mandatory)
+### C++ Gitflow repos (mandatory)
 
 1. Confirm the current branch matches the change type (feature / release / hotfix).
 2. Confirm the target branch is allowed:
@@ -70,7 +74,15 @@ with any real GitHub user profile.
 5. Only commit or push when the user explicitly asks.
 6. Include `Co-Authored-By` agent/model trailer in commit body (see Agent Commit Signing above).
 
-## Default Commands (coding repo feature work)
+### neuriplo-ui (browser coding repo)
+
+1. Normal work targets `master`, `feat/*`, or `feature/*`.
+2. Run the repository's Node.js unit, build, and browser checks before commit.
+3. Never force-push to `master`.
+4. Only commit or push when the user explicitly asks.
+5. Include `Co-Authored-By` agent/model trailer in the commit body.
+
+## Default Commands (C++ Gitflow repo feature work)
 
 ```bash
 git checkout develop

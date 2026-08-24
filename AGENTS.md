@@ -80,11 +80,16 @@ not the subject.
 
 Use concise imperative commit subjects, matching existing history, for example `Add local inference smoke integration test`. Keep platform-only changes on `main`.
 
-**Coding components** (`neuriplo-tasks`, `neuriplo`, `neuriplo-infer`,
+**C++ coding components** (`neuriplo-tasks`, `neuriplo`, `neuriplo-infer`,
 `neuriplo-kserve-client`, `neuriplo-kserve-runtime`, `videocapture`) must follow
 Gitflow before commit, push, or PR: normal work targets `develop`, `feat/*`, or
 `feature/*`; `master` is release-only. See `.agents/rules/always-apply.md`
 and `ops/policies.yaml`.
+
+**Browser coding component** (`neuriplo-ui`) currently uses `master` as its
+integration branch and may use `feat/*` or `feature/*` branches. Its `master`
+branch is not governed by the C++ release-only rule. Validate it with its own
+Node.js and browser test commands before commit, push, or PR.
 
 **neuriplo-platform** is the document/architecture orchestrator. Gitflow is not
 mandatory here; work normally lands on `main`. Do not apply sibling

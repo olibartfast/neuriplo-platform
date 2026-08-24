@@ -30,6 +30,9 @@ interface used across repositories.
 - [Benchmarking contract](benchmarking-contract.md): throughput/latency
   benchmark expectations, reproducibility rules, and performance regression
   thresholds for compatibility sets.
+- [Capability discovery contract](capabilities-contract.md): build-specific
+  tasks, models, parameters, local backends, and client-server workflows
+  produced by `neuriplo-infer` for `neuriplo-ui` and other tools.
 
 ## Contract Template
 

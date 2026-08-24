@@ -14,6 +14,13 @@ branch_policy:
     - neuriplo-kserve-client
     - neuriplo-kserve-runtime
     - videocapture
+  non_gitflow_sibling_repositories:
+    neuriplo-ui:
+      default_branch: master
+      normal_changes_must_target:
+        - master
+        - feat/*
+        - feature/*
   sibling_rules:
     normal_changes_must_target:
       - develop

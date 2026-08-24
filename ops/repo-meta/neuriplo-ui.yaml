@@ -1,0 +1,71 @@
+name: neuriplo-ui
+repo_root: ../neuriplo-ui
+role: operator-ui-layer
+primary_role: ui-agent
+default_branches:
+  default: master
+
+dependencies:
+  - neuriplo-infer
+
+entrypoints:
+  install:
+    - npm install
+  develop:
+    - npm run dev
+  build:
+    - npm run build
+  test_server:
+    - npm run test:server
+  test_browser:
+    - npm run test:e2e
+
+api_surface:
+  http_routes:
+    - GET /api/health
+    - GET /api/capabilities
+    - POST /api/runs
+  environment:
+    - NEURIPLO_INFER_BIN
+    - NEURIPLO_UI_BASE_URL
+    - HOST
+    - PORT
+  consumed_contracts:
+    - neuriplo-infer capabilities schema version 1
+  public_components:
+    - React browser application
+    - Fastify local API adapter
+    - Playwright browser E2E harness
+
+constraints:
+  keep_neuriplo_infer_authoritative: true
+  prohibit_duplicated_capability_registry: true
+  invoke_native_binary_with_argument_array: true
+  keep_browser_native_process_access_out: true
+  separate_local_and_client_server_workflows: true
+
+owned_paths:
+  - apps/web/
+  - apps/server/
+  - e2e/
+  - specs/
+  - package.json
+
+cross_repo_contracts:
+  consumes_from_neuriplo_infer:
+    - capabilities schema version
+    - task, model, source, and parameter identifiers
+    - local backend availability
+    - client-server protocol and transport availability
+
+automation_rules:
+  allowed_change_classes:
+    - ci-triage
+    - test-fix
+    - docs-sync
+    - downstream-api-migration
+  forbidden_change_classes:
+    - inference-logic-change
+    - model-io-change
+    - packaging-release-change
+    - large-refactor

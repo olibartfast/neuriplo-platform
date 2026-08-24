@@ -22,6 +22,8 @@ Implementation-level sources:
   versions, runtime compatibility behavior.
 - `neuriplo-infer`: local CLI, app configuration, runtime wiring,
   visualization, local setup scripts.
+- `neuriplo-ui`: browser presentation, local API adapter, capability-driven
+  configuration, and browser E2E coverage.
 - `neuriplo-kserve-client`: KServe V2 protocol client (HTTP/gRPC), wire
   encode/decode, transport reliability, model repository extension.
   Backend-agnostic; consumed via FetchContent.
@@ -47,6 +49,10 @@ or result schema semantics.
 Local app setup behavior belongs to `neuriplo-infer`. Cross-repository
 compatibility belongs here.
 
+Browser presentation and browser-to-process adaptation belong to
+`neuriplo-ui`. It consumes versioned `neuriplo-infer` process contracts and
+must not redefine their capability identifiers or execution semantics.
+
 Serving runtime dependency behavior belongs to `neuriplo-kserve-runtime` when it
 is about serving mechanics. Shared backend execution compatibility still belongs
 to `neuriplo`.
@@ -60,9 +66,8 @@ For each repository in `versions.yaml`:
 - Compatibility sets must use the declared release tag for released repos.
 - Compatibility sets must use the pinned commit SHA for WIP repos.
 
-The current baseline treats `neuriplo-tasks`, `neuriplo`, `neuriplo-infer`,
-`neuriplo-kserve-client`, and `videocapture` as released repos.
-`neuriplo-kserve-runtime` is WIP and pinned by commit.
+The current baseline treats all six C++ implementation repositories as
+released repos. `neuriplo-ui` is WIP and pinned by commit.
 
 ## Branch Policy
 
@@ -71,6 +76,9 @@ Sibling implementation repositories follow Gitflow:
 - normal work targets `develop`, `feat/*`, or `feature/*`
 - `master` is release-only
 - direct changes to `master` are not allowed
+
+`neuriplo-ui` currently uses `master` as its default integration branch and is
+listed separately from the C++ Gitflow siblings in `ops/policies.yaml`.
 
 `neuriplo-platform` currently uses `main` for platform documentation and metadata.
 
@@ -94,6 +102,7 @@ Do not duplicate these in platform docs:
 - task tensor semantics owned by `neuriplo-tasks`
 - serving implementation details owned by `neuriplo-kserve-runtime`
 - video backend setup matrices owned by `videocapture`
+- UI implementation and browser styling owned by `neuriplo-ui`
 
 Instead, link to the owning repo and document only the cross-repository contract
 or compatibility implication here.

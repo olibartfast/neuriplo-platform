@@ -47,6 +47,20 @@ Examples:
 - Visualization and local output formatting
 - End-to-end local and remote workflows
 
+### Browser Operator Application
+
+Belongs in `neuriplo-ui`.
+
+Examples:
+
+- Browser presentation and interaction
+- Local HTTP adapter around native process invocation
+- Capability-driven task, model, workflow, source, and parameter controls
+- Browser E2E scenarios
+
+The UI consumes `neuriplo-infer` through a process boundary. It must not copy
+task/backend registries or link runtime implementation libraries directly.
+
 ### KServe Protocol Client
 
 Belongs in `neuriplo-kserve-client`.
@@ -94,6 +108,9 @@ If a change is about how inference runs on a backend, put it in `neuriplo`.
 
 If a change is about how a user runs embedded local inference or calls a remote
 KServe endpoint, put it in `neuriplo-infer`.
+
+If a change is about browser presentation, operator interaction, or adapting a
+browser request to the `neuriplo-infer` process API, put it in `neuriplo-ui`.
 
 If a change is about how the KServe V2 wire protocol is spoken on the client side
 (transports, encode/decode, retries, TLS) and must not depend on an inference

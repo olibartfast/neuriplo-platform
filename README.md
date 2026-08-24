@@ -7,6 +7,7 @@ Neuriplo Platform validates cross-repository compatibility between:
 - task contracts
 - backend execution
 - local inference applications
+- browser operator applications and E2E workflows
 - KServe V2 clients
 - KServe-compatible serving runtime
 - video/image source layers
@@ -17,6 +18,7 @@ failure-mode expectations, and architecture decisions across:
 - [`neuriplo-tasks`](https://github.com/olibartfast/neuriplo-tasks): domain and task layer (CV tasks as first domain)
 - [`neuriplo`](https://github.com/olibartfast/neuriplo): GPU-first backend abstraction layer and backend capability reporting
 - [`neuriplo-infer`](https://github.com/olibartfast/neuriplo-infer): local and remote inference application layer, including benchmark scenario execution
+- [`neuriplo-ui`](https://github.com/olibartfast/neuriplo-ui) (private): browser operator application, local API adapter, capability discovery, and browser E2E harness
 - [`neuriplo-kserve-client`](https://github.com/olibartfast/neuriplo-kserve-client): standalone KServe V2 / Open Inference Protocol client library (backend-agnostic HTTP/gRPC client with retry, TLS, auth, model repository extension) consumed by `neuriplo-infer`
 - [`neuriplo-kserve-runtime`](https://github.com/olibartfast/neuriplo-kserve-runtime): serving and runtime layer with dynamic batching, scheduling, and multi-GPU placement
 - [`videocapture`](https://github.com/olibartfast/videocapture): video and image source layer consumed by `neuriplo-infer` (CV task domain only)
@@ -57,6 +59,7 @@ For every major platform change:
 neuriplo-tasks          = domain/task layer (CV tasks as first domain)
 neuriplo                = GPU-first backend abstraction layer
 neuriplo-infer          = local application layer
+neuriplo-ui             = browser operator application and local API adapter
 neuriplo-kserve-client  = standalone KServe V2 / Open Inference Protocol client library (consumed by neuriplo-infer)
 neuriplo-kserve-runtime = serving/runtime layer with dynamic batching, scheduling, multi-GPU placement
 videocapture            = video/image source layer (CV task domain)
