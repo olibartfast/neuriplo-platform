@@ -1,6 +1,6 @@
 # Ensemble status board
 
-Last updated: 2026-08-05
+Last updated: 2026-09-12
 
 ## Lanes
 
@@ -110,6 +110,15 @@ versions.yaml compatibility sets get entries once the siblings tag.
 
 ## Recently landed
 
+- **Release wave 2026-09-12**: neuriplo-tasks v0.8.2 (image inputs typed
+  `UInt8` now receive raw 0-255 pixels; detector-normalization fixes carried
+  from v0.8.1), neuriplo v0.9.1, videocapture v0.5.0. neuriplo-infer `develop`
+  merges the KServe input-datatype propagation (#44, pins tasks v0.8.2) and the
+  plug-and-play README/docs split (#38/#39), and now keys its CI build caches on
+  `versions.env` so a sibling pin bump re-fetches instead of reusing a stale
+  checkout. The `versions.yaml` matrix is refreshed to the current tags; the
+  compatibility sets carry their historical evidence forward with re-attestation
+  noted per set.
 - **Release wave 2026-06-12**: neuriplo v0.6.0 (multi-backend builds, plugin
   C ABI, raw-output API), runtime v0.1.0 (first release), client v0.3.0,
   infer v0.6.0 (pins -> neuriplo v0.6.0 + client v0.3.0, validated). All
