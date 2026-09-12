@@ -53,15 +53,15 @@
   "repositories": [
     {
       "name": "neuriplo-tasks",
-      "version": "v0.6.1",
-      "ref": "a015a592a83d642fb93f1356ec6f6f94cd55204f",
+      "version": "v0.8.2",
+      "ref": "843cdb866826c55b173536b17db1f12583abf9ae",
       "url": "https://github.com/olibartfast/neuriplo-tasks",
       "tag_resolves_to_ref": "yes"
     },
     {
       "name": "neuriplo",
-      "version": "v0.8.0",
-      "ref": "add7bd9c2b7a0e311c153d4f7a4057765e07e28f",
+      "version": "v0.9.1",
+      "ref": "ac23487cd4c60b3fa92e8422b2888e33c3ff7378",
       "url": "https://github.com/olibartfast/neuriplo",
       "tag_resolves_to_ref": "yes"
     },
@@ -88,8 +88,8 @@
     },
     {
       "name": "videocapture",
-      "version": "v0.3.0",
-      "ref": "fb94bd4f371fa741f8ad0e9a61e7ec2d991359b7",
+      "version": "v0.5.0",
+      "ref": "b1cc5c1c6c814ea127c8b261eb040c0ea35d2cd9",
       "url": "https://github.com/olibartfast/videocapture",
       "tag_resolves_to_ref": "yes"
     }
