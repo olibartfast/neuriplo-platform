@@ -19,13 +19,13 @@ repositories:
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
-    version: v0.9.1
-    ref: ac23487cd4c60b3fa92e8422b2888e33c3ff7378
+    version: v0.10.0
+    ref: 1664b4547f905860386213b2aa2adc29ce91369f
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.9.1
-    ref: 388fb891c14200d707ee991060cfd0b3aa4d3747
+    version: v0.10.2
+    ref: 6ed35450916a9c6b1c19279c6a7151ee5dbf83cb
   neuriplo-ui:
     owner: operator-ui-layer
     visibility: private
@@ -44,8 +44,8 @@ repositories:
   videocapture:
     owner: video-io
     visibility: public
-    version: v0.5.0
-    ref: b1cc5c1c6c814ea127c8b261eb040c0ea35d2cd9
+    version: v0.6.0
+    ref: ebc7208d2b3de485d76aa7c06261ac80b0a22eaa
 
 compatibility_sets:
   - name: rfdetr-keypoint-pose-followup
@@ -60,14 +60,14 @@ compatibility_sets:
       - "Historical evidence: neuriplo-infer v0.8.0 routes the new rfdetrpose/rfdetrkeypoint/rfdetrkpt type strings to PoseEstimation and defaults the KServe remote-runtime client to gRPC."
       - "Historical evidence: validated by a full release build of neuriplo-infer v0.8.0 against the pinned sibling tags fetched from GitHub (local backends plus KServe gRPC, OpenCV-DNN backend): 29 of 29 app tests pass."
       - "Historical evidence: neuriplo-kserve-runtime v0.3.2 is unchanged since its tag and was not rebuilt; compatibility with neuriplo-tasks v0.5.0 follows from the additive, pose-only contract change the runtime does not consume."
-      - "The matrix now pins neuriplo-tasks v0.8.2, neuriplo v0.9.1, and videocapture v0.5.0. This superseded set's evidence was attested at the older pins (neuriplo-tasks v0.6.1 / neuriplo v0.8.0) and is retained as history; it is not re-attested against the newer pins."
+      - "The matrix now pins neuriplo v0.10.0, neuriplo-infer v0.10.2, and videocapture v0.6.0 (2026-10-03). This superseded set's evidence was attested at the older pins (neuriplo-tasks v0.6.1 / neuriplo v0.8.0) and is retained as history; it is not re-attested against the newer pins."
     repositories:
       neuriplo-tasks: v0.8.2
-      neuriplo: v0.9.1
-      neuriplo-infer: v0.9.1
+      neuriplo: v0.10.0
+      neuriplo-infer: v0.10.2
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
-      videocapture: v0.5.0
+      videocapture: v0.6.0
     benchmark_baselines:
       - scenario: rfdetr-pose-local
         file: integration-tests/rfdetr-pose-local-vs-kserve/baselines/local.json
@@ -81,14 +81,14 @@ compatibility_sets:
       - neuriplo-infer documents the ecdet TFLite limitation and keeps the LiteRT warning in the E2E helper.
       - kserve client and runtime docs clarify GitFlow branch cleanup rules used during release maintenance.
       - Carried forward to the current repository versions; pending re-validation at this snapshot.
-      - The matrix now pins neuriplo-tasks v0.8.2, neuriplo v0.9.1, and videocapture v0.5.0; this draft's evidence predates those pins and re-validation at this snapshot is still pending.
+      - The matrix now pins neuriplo v0.10.0, neuriplo-infer v0.10.2, and videocapture v0.6.0 (2026-10-03); this draft's evidence predates those pins and re-validation at this snapshot is still pending.
     repositories:
       neuriplo-tasks: v0.8.2
-      neuriplo: v0.9.1
-      neuriplo-infer: v0.9.1
+      neuriplo: v0.10.0
+      neuriplo-infer: v0.10.2
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
-      videocapture: v0.5.0
+      videocapture: v0.6.0
     benchmark_baselines:
       - scenario: ecdet-kserve-http
         file: integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json
@@ -100,11 +100,11 @@ compatibility_sets:
       - neuriplo-infer v0.9.0 contains the validated OpenCV-boundary migration; all 29 CTest tests passed against the published neuriplo-tasks tag.
       - tritonic v0.3.0 contains the validated OpenCV-boundary migration; all 50 CTest tests passed against the published neuriplo-tasks tag.
       - neuriplo-track master at dde8e5a0d500cef09bd153161e9cfaa21889b532 was clean-configured against the published tag; its CLI help smoke passed.
-      - The matrix now pins neuriplo-tasks v0.8.2, neuriplo v0.9.1, and videocapture v0.5.0. The OpenCV-boundary contract is unchanged by those releases (v0.8.2 adds image-input preprocessing behavior, which is outside the boundary), so the v0.6.0/v0.9.0 boundary evidence carries forward; the newer preprocessing behavior is not covered by this set.
+      - The matrix now pins neuriplo-tasks v0.8.2, neuriplo v0.10.0, neuriplo-infer v0.10.2, and videocapture v0.6.0 (2026-10-03). The OpenCV-boundary contract is unchanged by those releases (neuriplo-tasks v0.8.2 adds image-input preprocessing behavior; neuriplo v0.10.0 hardens the plugin loader and adds a consumer C ABI; videocapture v0.6.0 moves encoding onto the writer thread; none touch the task-contract boundary), so the v0.6.0/v0.9.0 boundary evidence carries forward; the newer behavior is not covered by this set.
     repositories:
       neuriplo-tasks: v0.8.2
-      neuriplo: v0.9.1
-      neuriplo-infer: v0.9.1
+      neuriplo: v0.10.0
+      neuriplo-infer: v0.10.2
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.3.2
-      videocapture: v0.5.0
+      videocapture: v0.6.0

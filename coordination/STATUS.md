@@ -1,6 +1,6 @@
 # Ensemble status board
 
-Last updated: 2026-09-12
+Last updated: 2026-10-03
 
 ## Lanes
 
@@ -110,6 +110,17 @@ versions.yaml compatibility sets get entries once the siblings tag.
 
 ## Recently landed
 
+- **Release wave 2026-10-03**: neuriplo v0.10.0 (plugin-loader hardening:
+  malformed plugin metadata and outputs are rejected, outputs are released on
+  every path, descriptor lookup is thread-safe; adds the consumer C ABI
+  `neuriplo_c.h` with install/packaging), videocapture v0.6.0 (writer encodes
+  on its own thread behind a bounded queue; `release()` returns `bool`), and
+  neuriplo-infer v0.10.0 -> v0.10.2 (capabilities schema v2 with the run-report
+  `diagnostics` section, async `--output_video` via videocapture v0.6.0, pins
+  neuriplo v0.10.0). neuriplo-infer stays on the C++ API rather than the C ABI.
+  The `versions.yaml` matrix and the capabilities contract (now version 2) are
+  updated. Open: `--input_mode=encoded-image` against a model with a dynamic
+  input dimension is still rejected by neuriplo-kserve-runtime v0.3.2.
 - **Release wave 2026-09-12**: neuriplo-tasks v0.8.2 (image inputs typed
   `UInt8` now receive raw 0-255 pixels; detector-normalization fixes carried
   from v0.8.1), neuriplo v0.9.1, videocapture v0.5.0. neuriplo-infer `develop`

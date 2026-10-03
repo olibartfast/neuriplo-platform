@@ -5,7 +5,7 @@ Owner: [`neuriplo-infer`](https://github.com/olibartfast/neuriplo-infer)
 Consumers: [`neuriplo-ui`](https://github.com/olibartfast/neuriplo-ui), other
 out-of-process configuration tools
 
-Version: 1
+Version: 2
 
 Status: Draft
 
@@ -17,7 +17,9 @@ registry of tasks, models, sources, parameters, local backends, or remote
 protocols.
 
 The owning JSON Schema is
-[`docs/capabilities.schema.json`](https://github.com/olibartfast/neuriplo-infer/blob/6518e8439d512f6bd1c5dc5d3a5a647e95a27917/docs/capabilities.schema.json).
+[`docs/capabilities.schema.json`](https://github.com/olibartfast/neuriplo-infer/blob/v0.10.2/docs/capabilities.schema.json)
+(version 2). Version 1 is preserved as
+[`docs/capabilities.schema.v1.json`](https://github.com/olibartfast/neuriplo-infer/blob/v0.10.2/docs/capabilities.schema.v1.json).
 This contract defines ownership and compatibility expectations; it does not
 copy that schema.
 
@@ -34,16 +36,22 @@ string composition.
 
 ## Top-Level Surface
 
-Schema version 1 contains:
+Schema version 2 contains:
 
 ```text
 schema_version          integer contract discriminator
 producer                executable name and version
+diagnostics.run_report  run report schema version, path, and stage names
 execution.workflows     workflows compiled into this binary
 source_types            supported source categories and input representation
 parameters              reusable CLI parameter definitions
 tasks                   task, model, source, and parameter selections
 ```
+
+Version 2 added the required `diagnostics` section. Because the schema
+forbids unknown properties, that addition is breaking in both directions, so
+it took a new `schema_version` rather than extending version 1. Version 1
+documents have the same surface without `diagnostics`.
 
 Task, model, workflow, protocol, transport, source, and parameter identifiers
 are machine identifiers. Presentation labels are a consumer concern.
@@ -73,6 +81,21 @@ array.
 A combined binary advertises both workflows. A local-only or client-server-only
 binary advertises only the workflow it can execute. Consumers must not infer a
 missing workflow from the parameter catalog.
+
+## Diagnostics
+
+`diagnostics.run_report` tells a consumer where a run leaves its
+machine-readable run report, so the document name is discovered rather than
+hard-coded:
+
+- `schema_version` is the run report's own version, independent of the
+  capabilities version;
+- `path` is relative to the working directory the run executes in; and
+- `stages` lists the stage names a report may attribute time and failures to.
+
+A consumer that accepts version 1 must treat a version 1 document as a build
+that publishes no run report. A run report whose `schema_version` differs from
+the advertised one must not be interpreted.
 
 ## Parameter References
 
@@ -107,7 +130,9 @@ the combination supports it.
   workflow reporting in unit tests.
 - Local-only, client-server-only, and combined binaries validate their emitted
   JSON against the owning schema.
-- `neuriplo-ui` validates the schema version, required shape, and parameter
-  references before returning capability data to the browser.
+- `neuriplo-ui` accepts schema versions 1 and 2 and validates the required
+  shape and parameter references before returning capability data to the
+  browser. It reads the run report only when its `schema_version` matches the
+  advertised one.
 - Cross-repository smoke coverage must exercise a combined binary and observe
   both `local` and `client_server` through the local adapter.
