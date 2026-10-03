@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: In progress (Phase 0 complete)
+Status: In progress (Phase 1 in review)
 
 Written before implementation. Each check names the requirement it closes. The
 runtime commands run in a scratch worktree of `neuriplo-kserve-runtime` at the
@@ -77,3 +77,66 @@ the platform matrix pins it.
 
   V-4 compares Phase 1 against these counts: they may only grow, with no
   failures.
+
+### Phase 1 replan, 2026-10-03
+
+Review of the first attempt showed that V-1 and V-3, as written, cannot be met
+by tests alone. `HttpIntegrationTest` serves models through `StubExecutor`,
+whose metadata is hard-coded (`src/StubExecutor.cpp`), so an endpoint-level
+test with a `{1, -1}` input needs a `src/` test seam, which Phase 1 forbids.
+The requirements are unchanged; the evidence is located as follows:
+
+- V-1, HTTP: covered at `parseInferenceRequest`, the function the HTTP server
+  calls, for JSON data and the binary extension. gRPC: the codec test shows
+  the concrete shape is carried through `convertInferRequest`; validation is
+  the executor's, covered by the executor tests. Pipeline model: the existing
+  `PipelineTest` `IMAGE UINT8 {1, -1}` case.
+- V-3: checked on the executor's reported metadata after an accepted request,
+  not through the HTTP/gRPC metadata endpoints.
+- Deferred to Phase 4 (end to end): endpoint-level acceptance and metadata over
+  a real served ensemble, which V-7 exercises anyway.
+
+### Run ledger
+
+| Attempt | Role | Model tier | Tokens | Tool calls | Wall-clock | Acceptance | Outcome |
+|---|---|---|---|---|---|---|---|
+| P1 | implementer | mid | 60k | 10 | 98 s | pass (325 / 347) | Rejected by review: three rejection rows passed for the wrong reason (a later count check also names `IMAGE`) |
+| P1 review | reviewer | strongest | 30k | 8 | 66 s | n/a | REJECT, 3 blocking, 4 nits |
+| P1b | implementer (fresh) | mid | 48k | 8 | 54 s | pass (325 / 347) | Specific message per row; `[2,5]` given 10 values |
+| P1b review | reviewer (fresh) | strongest | 31k | 6 | 49 s | n/a | APPROVE, 0 blocking; nit: no row tested the rank check alone |
+| P1c | implementer (fresh) | mid | 44k | 8 | 49 s | pass (325 / 347) | Rank-only rows `[1]` / `{1}`; helpers into one namespace |
+
+Planner interventions: no source repair. The planner ran `clang-format` once,
+a mechanical change to one line in a new table row. The acceptance script
+had no format check, which is a planner gap; acceptance for later phases runs
+`scripts/check-format.sh`.
+
+### Phase 1 result, 2026-10-03
+
+Branch `feature/dynamic-dim-wildcard-tests` at `f5ef1df`,
+[neuriplo-kserve-runtime#17](https://github.com/olibartfast/neuriplo-kserve-runtime/pull/17)
+to `develop`. Tests only; no `src/` change.
+
+- V-1, V-2, V-3 (as scoped by the replan): met. 8 + 1 + 0 new cases in
+  `KServeV2CodecTest`, `NeuriploExecutorTest` and `GrpcV2CodecTest`; every
+  rejection row asserts the message of the check it targets.
+- V-4: `debug` 325 (was 317), `grpc` 347 (was 338), `asan` 325 (was 317), all
+  passing; `scripts/check-format.sh` and the `lint` clang-tidy build pass.
+- Mutation evidence. Each check was disabled alone on the debug build and then
+  restored:
+
+  | Mutation | Caught by |
+  |---|---|
+  | codec: request `-1` | `kserve_v2_codec_dynamic_dim_rejects_bad_requests` |
+  | codec: concrete dimension | that case and `kserve_v2_codec_concrete_dims_stay_strict` |
+  | codec: wildcard removed | the three accept cases and the reject case |
+  | codec: rank | `kserve_v2_codec_dynamic_dim_rejects_bad_requests` |
+  | executor: request `-1` | `neuriplo_executor_dynamic_dim_rejects_bad_requests` |
+  | executor: concrete dimension | that case and `neuriplo_executor_concrete_dims_stay_strict` |
+  | executor: wildcard removed | the accept case, the reject case, and the existing pipeline case |
+  | executor: rank | `neuriplo_executor_dynamic_dim_rejects_bad_requests` |
+
+- For the Phase 2 audit: `src/KServeV2Codec.cpp` runs the `shapeMatches` check
+  twice in a row in `parseInferenceRequest`. It is harmless and redundant.
+
+Phase 1 closes when #17 is merged into `develop`.

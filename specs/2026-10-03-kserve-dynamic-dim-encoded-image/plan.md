@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: In progress (Phase 0 complete)
+Status: In progress (Phase 1 in review)
 
 Phases are thin and in order: each ends in a reviewable, merged state. Roles
 are named by capability tier, not by model, so the model behind a role can
