@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: Specified, not implemented
+Status: In progress (Phase 0 complete)
 
 Phases are thin and in order: each ends in a reviewable, merged state. Roles
 are named by capability tier, not by model, so the model behind a role can
@@ -27,7 +27,7 @@ fresh packet back to the implementer (no silent self-repair).
   `git push origin 9030732:develop`.
 - Record the baseline test count of `origin/develop` on the `debug`, `grpc`,
   and `asan` presets in a scratch worktree.
-- Exit: V-5 precondition prints `0 0`; the baseline is recorded in
+- Exit: V-5 precondition, the right-hand count is `0`; the baseline is recorded in
   `validation.md`.
 
 ## Phase 1: Lock in the wildcard rule (delegated)

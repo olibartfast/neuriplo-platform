@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: Specified, not implemented
+Status: In progress (Phase 0 complete)
 
 Written before implementation. Each check names the requirement it closes. The
 runtime commands run in a scratch worktree of `neuriplo-kserve-runtime` at the
@@ -24,9 +24,9 @@ phase's branch.
 - V-4 (R-1 to R-3): The full suite stays green with no regressions:
   `cmake --preset debug && cmake --build --preset debug && ctest --preset debug`,
   plus the `grpc` and `asan` presets. Baseline count recorded before Phase 1.
-- V-5 (R-4): Before and after the release,
-  `git rev-list --left-right --count origin/develop...origin/master` prints
-  `0 0`. The tag resolves to the `master` merge commit, and the runtime's
+- V-5 (R-4): `git rev-list --left-right --count origin/develop...origin/master`
+  has a right-hand count of `0` before the release (`master` holds nothing
+  `develop` lacks) and prints `0 0` after the back-merge. The tag resolves to the `master` merge commit, and the runtime's
   release CI passes on the tag.
 - V-6 (R-6): `scripts/check_platform.py` and
   `scripts/generate_compat_report.py --check` pass with the new runtime pin, and
@@ -58,4 +58,22 @@ the platform matrix pins it.
 
 ## Results
 
-Not run yet.
+### Phase 0, 2026-10-03
+
+- GitFlow reconcile: the content-neutral back-merge `9030732` (`v0.3.2` merge
+  reachable from `develop`) was pushed to `origin/develop` as a fast-forward
+  (`f4e4bff..9030732`).
+  `git rev-list --left-right --count origin/develop...origin/master` prints
+  `12 0`. V-5 precondition met.
+- Baseline at `origin/develop` `9030732`, scratch worktree. CTest registers 3
+  entries (`unit`, `version`, `help`); the `unit` binary
+  `neuriplo-kserve-runtime-tests` holds the cases:
+
+  | Preset | CTest | Unit cases |
+  |---|---|---|
+  | `debug` | 3/3 pass | 317 pass |
+  | `grpc` | 3/3 pass | 338 pass |
+  | `asan` | 3/3 pass | 317 pass |
+
+  V-4 compares Phase 1 against these counts: they may only grow, with no
+  failures.
