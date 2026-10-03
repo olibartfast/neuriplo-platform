@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: Specified, not implemented
+Status: In progress (Phase 0 complete)
 
 ## Problem
 
