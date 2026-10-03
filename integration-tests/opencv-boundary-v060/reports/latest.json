@@ -60,15 +60,15 @@
     },
     {
       "name": "neuriplo",
-      "version": "v0.9.1",
-      "ref": "ac23487cd4c60b3fa92e8422b2888e33c3ff7378",
+      "version": "v0.10.0",
+      "ref": "1664b4547f905860386213b2aa2adc29ce91369f",
       "url": "https://github.com/olibartfast/neuriplo",
       "tag_resolves_to_ref": "yes"
     },
     {
       "name": "neuriplo-infer",
-      "version": "v0.9.1",
-      "ref": "388fb891c14200d707ee991060cfd0b3aa4d3747",
+      "version": "v0.10.2",
+      "ref": "6ed35450916a9c6b1c19279c6a7151ee5dbf83cb",
       "url": "https://github.com/olibartfast/neuriplo-infer",
       "tag_resolves_to_ref": "yes"
     },
@@ -88,8 +88,8 @@
     },
     {
       "name": "videocapture",
-      "version": "v0.5.0",
-      "ref": "b1cc5c1c6c814ea127c8b261eb040c0ea35d2cd9",
+      "version": "v0.6.0",
+      "ref": "ebc7208d2b3de485d76aa7c06261ac80b0a22eaa",
       "url": "https://github.com/olibartfast/videocapture",
       "tag_resolves_to_ref": "yes"
     }
