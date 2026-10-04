@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: In progress (Phase 1 complete; Phase 2 audit running)
+Status: In progress (Phase 2 fix batch running)
 
 ## Problem
 
