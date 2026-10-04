@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: In progress (Phase 1 complete; Phase 2 audit running)
+Status: In progress (Phase 2 fix batch running)
 
 Written before implementation. Each check names the requirement it closes. The
 runtime commands run in a scratch worktree of `neuriplo-kserve-runtime` at the
@@ -140,3 +140,73 @@ to `develop`. Tests only; no `src/` change.
   twice in a row in `parseInferenceRequest`. It is harmless and redundant.
 
 Phase 1 closed 2026-10-04: #17 merged into `develop` as `165dec0`, with all 12 CI checks green.
+
+### Phase 2 audit result, 2026-10-04
+
+Three read-only reviewer passes over `v0.3.2..165dec0`, one per subsystem,
+plus the planner's own build checks. Findings: 4 BLOCKER, 16 MAJOR, 31 MINOR
+(slice A pipeline 4/10, slice B repository 3 blockers/8/10, slice C deploy
+4/10, planner 2). Raw reports: `phase2/findings-{A,B,C}.md` in the planner's
+scratch space; the dispositions below are the record.
+
+Planner findings:
+
+- G-1 BLOCKER: the pinned neuriplo-tasks v0.8.0 lacks `decodeImage` (added in
+  v0.8.1), so `NEURIPLO_RUNTIME_ENABLE_TASKS=ON`, the build that serves
+  encoded-image ensembles, does not compile. No CI job builds it. Verified:
+  tasks v0.8.2 + neuriplo v0.10.0 builds and passes 357/357.
+- G-2 MINOR: `CMakeLists.txt` uses plain `set()` for the pins, so
+  `-DNEURIPLO_TASKS_VERSION=...` cannot override `versions.env`.
+
+Fix batch (one feature branch and PR per packet):
+
+| Packet | Tier | Findings |
+|---|---|---|
+| P2-A pipeline + build | strongest | G-1 (pins tasks v0.8.2, neuriplo v0.10.0; CI job with tasks on), G-2, A-1, A-2, A-3, A-4, A-5, A-6, A-10 (FRAME_SIZE datatype only), A-11, A-12 (wrong types only), A-14, duplicated `shapeMatches` |
+| P2-B1 lifecycle | strongest | B-1, B-2 (+ wrong-typed admin fields 400), B-3, B-8, B-12, B-17 |
+| P2-B2 repository/config | strongest | B-4, B-5, B-6, B-7, B-10, B-11, B-13, B-14, B-15, B-16 + C-8, B-19, B-20, B-21, A-7 |
+| P2-C deploy | mid | C-1, C-2, C-4, C-5, C-6, C-10, C-11, C-12, C-13, C-14 |
+| P2-D changelog | mid | C-3 / B-9, and every user-visible change above |
+
+Deferred, with reason (each goes to the runtime `specs/roadmap.md`
+follow-ups):
+
+- A-8 (cancellation not propagated into steps), A-9 (step failure status
+  codes), A-10 edge-type checks, A-12 unknown keys, B-18 and the matching
+  slice A note (ensembles stay ready when a step model is unloaded; cached
+  step metadata goes stale): these are correctness-of-diagnostics or
+  operability issues on paths with no wrong-answer outcome, and each needs a
+  design choice that does not belong in a release batch.
+- A-13 (ensemble contract: `platform` for model-first graphs,
+  `max_batch_size`): this is a contract question, so it is raised against
+  `contracts/ensemble-contract.md` and not changed unilaterally.
+- C-7 (images and pods run as root) and C-9 (`Dockerfile.tensorrt` builds from
+  the context checkout): the fix needs a k3d/GPU validation run with `fsGroup`
+  on the PVC, which this packet cannot attest. Listed as a known limitation in
+  the v0.4.0 notes.
+- Admin and repository routes are unauthenticated and accept arbitrary
+  `model_path` / `plugin_dir`. That is the pre-existing design, and the
+  release notes state it as a known limitation.
+- gRPC codec does no metadata validation (pre-existing; executors validate).
+
+### Early Phase 4 smoke, 2026-10-04
+
+Ahead of the release, to de-risk V-7: runtime `develop` `165dec0`, real ONNX
+Runtime + gRPC + task steps, with tasks pinned to v0.8.2 in a scratch build
+(v0.8.0 does not compile, G-1). Model `yolo26s.onnx`; ensembles
+`yolo-detection.json` (pre + model + post envelope) and a pre + model graph;
+both advertise `IMAGE UINT8 [1, -1]`. Client: neuriplo-infer v0.10.0 build
+(this path is unchanged through v0.10.2) on `data/dog.jpg`.
+
+| Transport | Postprocess | Graph | Exit | Detections |
+|---|---|---|---|---|
+| HTTP | gpu (envelope) | pre + model + post | 0 | bicycle 0.94, dog 0.93, truck 0.54 |
+| HTTP | cpu | pre + model | 0 | rendered |
+| gRPC | gpu (envelope) | pre + model + post | 0 | rendered |
+| gRPC | cpu | pre + model | 0 | bicycle 0.94, dog 0.93, truck 0.54 |
+
+Server-side and client-side postprocessing rendered identical boxes and
+scores. `--postprocess_mode=cpu` against the envelope graph is correctly
+refused by the client; the ensemble README is to document the pre + model
+graph for that mode (P2-A). This is not the V-7 record: V-7 is re-run on the
+release tag.
