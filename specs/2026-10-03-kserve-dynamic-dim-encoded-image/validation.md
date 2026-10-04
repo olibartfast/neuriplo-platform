@@ -210,3 +210,46 @@ scores. `--postprocess_mode=cpu` against the envelope graph is correctly
 refused by the client; the ensemble README is to document the pre + model
 graph for that mode (P2-A). This is not the V-7 record: V-7 is re-run on the
 release tag.
+
+### Phase 2 fix batch progress, 2026-10-04
+
+| Packet | Runtime PR | Merge | Review rounds | Local acceptance |
+|---|---|---|---|---|
+| P2-C deploy | #19 | 746b54a | 2 | 135/135 preparer suite, dash + busybox + shellcheck |
+| P2-A pipeline + build | #21 | 35cc57a | 4 (general, then three A-3 parser rounds) | debug 333, grpc 355, debug-tasks 348 |
+| P2-B1 lifecycle | #22 | 2b844e9 | 3 (concurrency focus) | debug 350, grpc 372, tsan 350, no TSan warnings |
+| P2-B2 repository/config | pending | | | baseline debug 358, grpc 380 |
+| P2-D changelog | pending | | | |
+
+A-3, the pre-decode pixel cap, needed three security rounds. Round 1 found
+an overflow, a JPEG fill-byte bypass and a CgBI bypass. Round 2 found
+inter-segment padding, an `FF FF D8` SOI, CgBI runs of 8 or more, and
+misread BMP core headers. Round 3 ran about 9M differential fuzz inputs
+against `stbi_info_from_memory` under ASan/UBSan, with 0 bypasses, and asked
+for one more test, the core-BMP huge-dims test; a mutant without that branch
+gave 5095 bypasses in 200K inputs.
+
+Planner mutation check on P2-B1: removing the post-swap `notify_all` hangs
+the suite, and counting Loading placeholders in `allReady` fails it.
+
+Run ledger additions. The implementers ran the strongest tier with a
+12-turn limit per run.
+
+| Attempt | Role | Tokens (cumulative) | Resumes | Acceptance runs | Outcome |
+|---|---|---|---|---|---|
+| P2-A | implementer | ~356k | 9 | 3 (one per correction round) | approved after round 4 |
+| P2-B1 | implementer | ~399k | 10 | 3 | approved after round 3 |
+| P2-C | implementer (mid) | n/a | 2 | 2 | approved after round 2 |
+| A-3 rounds 2/3 | reviewer | 35k / 47k | 1 / 0 | n/a | REJECT / REJECT (test gap only) |
+| P2-B1 round 2 | reviewer | 116k | 0 | n/a | REJECT (flaky test only) |
+
+Interventions:
+- Planner gap: `acceptance.sh` diffed against `origin/develop`, which moved
+  during the batch, so a correct P2-A run failed its scope check. The check
+  now diffs against `HEAD`, and the planner re-scored that run (PASS).
+- No planner source repair.
+- The implementers repeatedly spent their first run reading. Smaller packets
+  would cut the number of resumes.
+- Side task, owner request: the runtime and client `plan/` folders were
+  ported into `specs/` and removed (runtime #20, client #9). In the client
+  run, the implementer ran acceptance three times instead of once.
