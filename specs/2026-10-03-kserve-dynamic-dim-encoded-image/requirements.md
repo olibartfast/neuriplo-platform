@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: In progress (Phase 2 fix batch running)
+Status: Complete (2026-10-05)
 
 ## Problem
 

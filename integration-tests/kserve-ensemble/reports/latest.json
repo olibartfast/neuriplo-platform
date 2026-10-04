@@ -1,0 +1,104 @@
+{
+  "compatibility_set": "kserve-encoded-image-v040",
+  "status": "active",
+  "last_attested": "2026-10-05",
+  "evidence": "integration-tests/kserve-ensemble/evidence-encoded-image-v040.yaml",
+  "checks": [
+    {
+      "check": "Clone pinned refs",
+      "source": "metadata CI",
+      "result": "verified"
+    },
+    {
+      "check": "Configure",
+      "source": "attested",
+      "result": "pass (2026-10-05)",
+      "detail": "neuriplo-kserve-runtime at tag v0.4.0 (ce00f4c) configured with the real-onnx-grpc preset and NEURIPLO_RUNTIME_ENABLE_TASKS=ON against its versions.env pins (neuriplo v0.10.0, neuriplo-tasks v0.8.2)."
+    },
+    {
+      "check": "Build",
+      "source": "attested",
+      "result": "pass (2026-10-05)",
+      "detail": "The runtime built at the tag and reports \"neuriplo-kserve-runtime 0.4.0\". Release CI passed 13 of 13 jobs on the release PR, including the debug-tasks build."
+    },
+    {
+      "check": "Unit tests",
+      "source": "attested",
+      "result": "pass (2026-10-05)",
+      "detail": "Release CI on the release PR: debug, gRPC, real ONNX + gRPC, task-enabled, sanitizer (asan, tsan, ubsan) and valgrind jobs all pass."
+    },
+    {
+      "check": "Local embedded inference smoke test",
+      "source": "attested",
+      "result": "skipped",
+      "detail": "Not applicable: this set covers remote KServe serving of encoded-image ensembles. Local embedded inference is unchanged."
+    },
+    {
+      "check": "KServe gRPC inference smoke test",
+      "source": "attested",
+      "result": "pass (2026-10-05)",
+      "detail": "V-7 matrix with neuriplo-infer --input_mode=encoded-image --task_model=yolo on data/dog.jpg against yolo26s.onnx. The ensembles declare IMAGE UINT8 [1, -1]. HTTP and gRPC with --postprocess_mode=gpu (yolo_ensemble, deploy/ensemble/yolo-detection.json) and --postprocess_mode=cpu (yolo_pre, preprocess + model) all exit 0. The decoded server envelope gives bicycle 0.95, dog 0.94, car 0.58 and truck 0.55. Negative control: v0.3.2 refuses the ensemble load (409 \"unsupported backend: ensemble\") and the client exits 1."
+    },
+    {
+      "check": "Result contract validation",
+      "source": "metadata CI",
+      "result": "verified"
+    },
+    {
+      "check": "Benchmark schema validation",
+      "source": "metadata CI",
+      "result": "verified"
+    }
+  ],
+  "repositories": [
+    {
+      "name": "neuriplo-tasks",
+      "version": "v0.8.2",
+      "ref": "843cdb866826c55b173536b17db1f12583abf9ae",
+      "url": "https://github.com/olibartfast/neuriplo-tasks",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "neuriplo",
+      "version": "v0.10.0",
+      "ref": "1664b4547f905860386213b2aa2adc29ce91369f",
+      "url": "https://github.com/olibartfast/neuriplo",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "neuriplo-infer",
+      "version": "v0.10.3",
+      "ref": "4fd2d9e910e80c963fd337059d7257f5150d4af0",
+      "url": "https://github.com/olibartfast/neuriplo-infer",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "neuriplo-kserve-client",
+      "version": "v0.4.0",
+      "ref": "e741f4286de61bf82b9d6925d2ce5da3a2ede5a7",
+      "url": "https://github.com/olibartfast/neuriplo-kserve-client",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "neuriplo-kserve-runtime",
+      "version": "v0.4.0",
+      "ref": "ce00f4c350fad4aff9ad398b1871dad4e3aa4621",
+      "url": "https://github.com/olibartfast/neuriplo-kserve-runtime",
+      "tag_resolves_to_ref": "yes"
+    },
+    {
+      "name": "videocapture",
+      "version": "v0.6.0",
+      "ref": "ebc7208d2b3de485d76aa7c06261ac80b0a22eaa",
+      "url": "https://github.com/olibartfast/videocapture",
+      "tag_resolves_to_ref": "yes"
+    }
+  ],
+  "failures": {
+    "clone": [],
+    "benchmark_schema": [],
+    "result_contract": [],
+    "evidence": []
+  },
+  "benchmark_summary": []
+}

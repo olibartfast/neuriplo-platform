@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: In progress (Phase 2 fix batch running)
+Status: Complete (2026-10-05)
 
 Written before implementation. Each check names the requirement it closes. The
 runtime commands run in a scratch worktree of `neuriplo-kserve-runtime` at the
@@ -218,8 +218,9 @@ release tag.
 | P2-C deploy | #19 | 746b54a | 2 | 135/135 preparer suite, dash + busybox + shellcheck |
 | P2-A pipeline + build | #21 | 35cc57a | 4 (general, then three A-3 parser rounds) | debug 333, grpc 355, debug-tasks 348 |
 | P2-B1 lifecycle | #22 | 2b844e9 | 3 (concurrency focus) | debug 350, grpc 372, tsan 350, no TSan warnings |
-| P2-B2 repository/config | pending | | | baseline debug 358, grpc 380 |
-| P2-D changelog | pending | | | |
+| P2-B2 repository/config | #23 | e77f6f0 | 2 (round 1 rejected) | debug 385, grpc 407 |
+| P2-D changelog | folded into the release PR #27 | ce00f4c | 1 | n/a |
+| P2-E release integration | #24 | 7994ec1 | 1 | debug 389, grpc 411 |
 
 A-3, the pre-decode pixel cap, needed three security rounds. Round 1 found
 an overflow, a JPEG fill-byte bypass and a CgBI bypass. Round 2 found
@@ -253,3 +254,111 @@ Interventions:
 - Side task, owner request: the runtime and client `plan/` folders were
   ported into `specs/` and removed (runtime #20, client #9). In the client
   run, the implementer ran acceptance three times instead of once.
+
+### Release review and integration, 2026-10-04 to 2026-10-05
+
+A final max-effort review of `develop` with the whole fix batch merged
+returned BLOCK on three integration defects, fixed in P2-E (#24) with one
+test each:
+
+- An ensemble could run over a step model that had failed or was still
+  loading; the executor now checks `isReady()` on every step snapshot.
+- A reload dropped the explicitly requested version; it now carries the
+  override.
+- In explicit model-control mode a first load in progress made the server
+  unready; an empty or loading registry is ready in that mode.
+
+The same PR rejects an activate request whose body version differs from the
+URL (400) and refreshes `--help`. P2-E's reviewer returned SHIP.
+
+Two owner changes landed alongside:
+
+- `7921148` (owner) removed `specs/history`, `specs/procedures` and the init-container preparer. The
+  owner then chose to keep the preparer. #25 restores
+  `deploy/prepare/`, `scripts/test-prepare-repository.sh` and the CI job
+  (135/135 under bash and dash), and fixes the links for the
+  `docs/init-container.md` to `docs/model-repository.md` rename.
+- On owner request the removed history was ported rather than dropped:
+  runtime #26 (Steps 0-14 and the target design as retrospective packets,
+  with a Deviations section where a step delivered less than planned),
+  client #10, and neuriplo-infer #59 (the merge procedure folded into
+  `specs/README.md`).
+
+### Phase 3 result, 2026-10-05
+
+- `release/0.4.0` cut from `develop` `d8415fc`; release PR #27 passed 13/13
+  CI jobs and merged to `master` as `ce00f4c`. Its tree is identical to the
+  release branch head.
+- Tag `v0.4.0` is on `ce00f4c`, and the GitHub release is published from the
+  `[0.4.0]` changelog section.
+- Back-merge #28 passed 13/13 and merged. V-5:
+  `git rev-list --left-right --count origin/develop...origin/master` prints
+  `2 0`. `master` holds nothing `develop` lacks; the two commits on the left
+  are the back-merge merge commits a PR-based back-merge necessarily adds. The
+  release branch is deleted.
+- One flaky test surfaced: `scheduler_skips_incompatible_queue_neighbors_during_batch_formation`
+  failed once under valgrind on #25 with no leak, and passed on rerun. It is
+  carried in the runtime roadmap Phase 4.
+
+### Phase 4 result (V-7), 2026-10-05
+
+Runtime built at tag `v0.4.0` (`--version` prints `0.4.0`), `real-onnx-grpc`
+with `NEURIPLO_RUNTIME_ENABLE_TASKS=ON`. Model `yolo26s.onnx`; both ensembles
+advertise `IMAGE UINT8 [1, -1]`. Client: neuriplo-infer `develop` build, the
+same client code as v0.10.2, on `data/dog.jpg`.
+
+| Transport | `--postprocess_mode` | Graph | Exit |
+|---|---|---|---|
+| HTTP | gpu | `yolo_ensemble` (pre + model + post envelope) | 0 |
+| HTTP | cpu | `yolo_pre` (pre + model) | 0 |
+| gRPC | gpu | `yolo_ensemble` | 0 |
+| gRPC | cpu | `yolo_pre` | 0 |
+
+- Detections from the decoded envelope: bicycle 0.95, dog 0.94, car 0.58 and
+  truck 0.55.
+- The four rendered outputs are pixel-identical (23,204 annotated pixels
+  each, 0 differing between any pair), so server-side and client-side
+  postprocessing agree over both transports.
+- Negative control on v0.3.2: the ensemble load returns
+  `409 UNAVAILABLE "unsupported backend: ensemble"` and the client exits 1
+  ("KServe server is reachable but the model is not ready").
+
+Evidence:
+[`integration-tests/kserve-ensemble/evidence-encoded-image-v040.yaml`](../../integration-tests/kserve-ensemble/evidence-encoded-image-v040.yaml),
+compatibility set `kserve-encoded-image-v040`.
+
+### Phase 5 result (V-6, V-8), 2026-10-05
+
+- neuriplo-infer #60: the limitation is resolved in `CHANGELOG.md` with a
+  note naming runtime v0.4.0, and `docs/KserveRuntime.md` documents the
+  graph each postprocess mode needs. It shipped as v0.10.3, a docs-only
+  patch whose pins are unchanged and verified by `validate_release_pins.sh`.
+- Platform: `versions.yaml` pins runtime v0.4.0 and infer v0.10.3 in the
+  matrix and in every set, and adds the set `kserve-encoded-image-v040`. The
+  `kserve-ensemble` README names that version set. `coordination/STATUS.md` and
+  `specs/roadmap.md` are updated.
+- V-6: `scripts/check_platform.py` and `scripts/generate_compat_report.py
+  --check` pass. The output is recorded in the commit that lands this section.
+
+Phase 5 was done by the planner rather than a cheap-tier delegate. The
+edits were mechanical docs and metadata, and delegating them would have cost
+more than doing them.
+
+### Run ledger additions, 2026-10-05
+
+| Attempt | Role | Resumes | Acceptance runs | Outcome |
+|---|---|---|---|---|
+| P2-B2 | implementer | n/a | 2 | approved after round 2 |
+| P2-E | implementer | n/a | 1 (re-scored after a mid-run check) | SHIP |
+| Release review | reviewer | 0 | n/a | BLOCK (3 integration defects), then SHIP on P2-E |
+| History port | planner (scripted generator) | n/a | link check | merged (#26, client #10, infer #59) |
+
+Interventions:
+- Planner gap: the P2-E acceptance ran while the implementer had
+  temporarily reverted a guard to prove that its test discriminates. The
+  run failed, the guard was restored, and acceptance passed.
+- Mechanical planner restore (#25): the preparer files came back verbatim
+  from `e77f6f0`. No new source was written.
+- No planner source repair.
+
+All checks V-1 to V-8 have dated evidence above. The packet is complete.

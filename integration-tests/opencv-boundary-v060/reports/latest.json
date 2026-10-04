@@ -67,8 +67,8 @@
     },
     {
       "name": "neuriplo-infer",
-      "version": "v0.10.2",
-      "ref": "6ed35450916a9c6b1c19279c6a7151ee5dbf83cb",
+      "version": "v0.10.3",
+      "ref": "4fd2d9e910e80c963fd337059d7257f5150d4af0",
       "url": "https://github.com/olibartfast/neuriplo-infer",
       "tag_resolves_to_ref": "yes"
     },
@@ -81,8 +81,8 @@
     },
     {
       "name": "neuriplo-kserve-runtime",
-      "version": "v0.3.2",
-      "ref": "2f3b960a3e48ca57f60c4ac045533fcb9b77fc22",
+      "version": "v0.4.0",
+      "ref": "ce00f4c350fad4aff9ad398b1871dad4e3aa4621",
       "url": "https://github.com/olibartfast/neuriplo-kserve-runtime",
       "tag_resolves_to_ref": "yes"
     },

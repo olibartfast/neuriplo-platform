@@ -1,0 +1,47 @@
+# Attested validation evidence for compatibility set
+# kserve-encoded-image-v040: V-7 of packet
+# specs/2026-10-03-kserve-dynamic-dim-encoded-image.
+
+compatibility_set: kserve-encoded-image-v040
+last_attested: 2026-10-05
+attested_by: release-maintainer
+
+checks:
+  configure:
+    status: pass
+    detail: >
+      neuriplo-kserve-runtime at tag v0.4.0 (ce00f4c) configured with the
+      real-onnx-grpc preset and NEURIPLO_RUNTIME_ENABLE_TASKS=ON against its
+      versions.env pins (neuriplo v0.10.0, neuriplo-tasks v0.8.2).
+    source: https://github.com/olibartfast/neuriplo-kserve-runtime/releases/tag/v0.4.0
+  build:
+    status: pass
+    detail: >
+      The runtime built at the tag and reports "neuriplo-kserve-runtime 0.4.0".
+      Release CI passed 13 of 13 jobs on the release PR, including the
+      debug-tasks build.
+    source: https://github.com/olibartfast/neuriplo-kserve-runtime/pull/27
+  unit_tests:
+    status: pass
+    detail: >
+      Release CI on the release PR: debug, gRPC, real ONNX + gRPC,
+      task-enabled, sanitizer (asan, tsan, ubsan) and valgrind jobs all pass.
+    source: https://github.com/olibartfast/neuriplo-kserve-runtime/pull/27
+  local_embedded_smoke:
+    status: skipped
+    detail: >
+      Not applicable: this set covers remote KServe serving of encoded-image
+      ensembles. Local embedded inference is unchanged.
+    source: specs/2026-10-03-kserve-dynamic-dim-encoded-image/validation.md
+  kserve_grpc_smoke:
+    status: pass
+    detail: >
+      V-7 matrix with neuriplo-infer --input_mode=encoded-image
+      --task_model=yolo on data/dog.jpg against yolo26s.onnx. The ensembles
+      declare IMAGE UINT8 [1, -1]. HTTP and gRPC with --postprocess_mode=gpu
+      (yolo_ensemble, deploy/ensemble/yolo-detection.json) and
+      --postprocess_mode=cpu (yolo_pre, preprocess + model) all exit 0. The
+      decoded server envelope gives bicycle 0.95, dog 0.94, car 0.58 and
+      truck 0.55. Negative control: v0.3.2 refuses the ensemble load
+      (409 "unsupported backend: ensemble") and the client exits 1.
+    source: https://github.com/olibartfast/neuriplo-infer/pull/60
