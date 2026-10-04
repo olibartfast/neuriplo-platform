@@ -3,9 +3,13 @@
 Validation status: Scaffold; metadata leg implemented, agreement leg pending the
 runtime and adapter work
 
-Version set: unpinned. Adds to a compatibility set once
+Version set: `kserve-encoded-image-v040` in `versions.yaml`:
 [neuriplo-kserve-runtime](https://github.com/olibartfast/neuriplo-kserve-runtime)
-tags a release containing the pipeline model kind.
+v0.4.0, the first release with the pipeline model kind, with neuriplo-infer
+v0.10.3. The encoded-image serving leg (V-7 of
+`specs/2026-10-03-kserve-dynamic-dim-encoded-image`) is attested in
+[`evidence-encoded-image-v040.yaml`](evidence-encoded-image-v040.yaml); the
+agreement leg below is still pending.
 
 Owning repos:
 

@@ -1,6 +1,6 @@
 # Ensemble status board
 
-Last updated: 2026-10-03
+Last updated: 2026-10-05
 
 ## Lanes
 
@@ -110,6 +110,16 @@ versions.yaml compatibility sets get entries once the siblings tag.
 
 ## Recently landed
 
+- **Release wave 2026-10-05**: neuriplo-kserve-runtime v0.4.0 (pipeline
+  ensemble models, model repository serving with the KServe repository
+  extension, `--use-gpu`, the `dali` backend id, task-layer steps behind
+  `NEURIPLO_RUNTIME_ENABLE_TASKS`, and the dynamic-dimension wildcard rule),
+  released after a full pre-release audit (fixes in runtime #19, #21-#24).
+  neuriplo-infer v0.10.3 is a docs-only patch recording that this closes the
+  0.10.x encoded-image limitation. V-7 passed on the tag over HTTP and gRPC
+  with both postprocess modes; evidence in
+  `integration-tests/kserve-ensemble/evidence-encoded-image-v040.yaml`. The
+  runtime and client step history was ported into dated spec packets.
 - **Release wave 2026-10-03**: neuriplo v0.10.0 (plugin-loader hardening:
   malformed plugin metadata and outputs are rejected, outputs are released on
   every path, descriptor lookup is thread-safe; adds the consumer C ABI
@@ -119,8 +129,8 @@ versions.yaml compatibility sets get entries once the siblings tag.
   `diagnostics` section, async `--output_video` via videocapture v0.6.0, pins
   neuriplo v0.10.0). neuriplo-infer stays on the C++ API rather than the C ABI.
   The `versions.yaml` matrix and the capabilities contract (now version 2) are
-  updated. Open: `--input_mode=encoded-image` against a model with a dynamic
-  input dimension is still rejected by neuriplo-kserve-runtime v0.3.2.
+  updated. The open `--input_mode=encoded-image` limitation from this wave was
+  closed by runtime v0.4.0 (2026-10-05).
 - **Release wave 2026-09-12**: neuriplo-tasks v0.8.2 (image inputs typed
   `UInt8` now receive raw 0-255 pixels; detector-normalization fixes carried
   from v0.8.1), neuriplo v0.9.1, videocapture v0.5.0. neuriplo-infer `develop`

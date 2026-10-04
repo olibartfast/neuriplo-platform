@@ -1,8 +1,8 @@
 {
-  "compatibility_set": "opencv-boundary-v060",
+  "compatibility_set": "kserve-encoded-image-v040",
   "status": "active",
-  "last_attested": "2026-07-10",
-  "evidence": "integration-tests/opencv-boundary-v060/evidence.yaml",
+  "last_attested": "2026-10-05",
+  "evidence": "integration-tests/kserve-ensemble/evidence-encoded-image-v040.yaml",
   "checks": [
     {
       "check": "Clone pinned refs",
@@ -12,32 +12,32 @@
     {
       "check": "Configure",
       "source": "attested",
-      "result": "pass (2026-07-10)",
-      "detail": "Clean FetchContent configurations resolved neuriplo-tasks v0.6.0 for neuriplo-infer, tritonic, and neuriplo-track without local sibling overrides."
+      "result": "pass (2026-10-05)",
+      "detail": "neuriplo-kserve-runtime at tag v0.4.0 (ce00f4c) configured with the real-onnx-grpc preset and NEURIPLO_RUNTIME_ENABLE_TASKS=ON against its versions.env pins (neuriplo v0.10.0, neuriplo-tasks v0.8.2)."
     },
     {
       "check": "Build",
       "source": "attested",
-      "result": "pass (2026-07-10)",
-      "detail": "Clean consumer builds completed against neuriplo-tasks v0.6.0."
+      "result": "pass (2026-10-05)",
+      "detail": "The runtime built at the tag and reports \"neuriplo-kserve-runtime 0.4.0\". Release CI passed 13 of 13 jobs on the release PR, including the debug-tasks build."
     },
     {
       "check": "Unit tests",
       "source": "attested",
-      "result": "pass (2026-07-10)",
-      "detail": "neuriplo-infer passed 29 CTest tests and tritonic passed 50 CTest tests."
+      "result": "pass (2026-10-05)",
+      "detail": "Release CI on the release PR: debug, gRPC, real ONNX + gRPC, task-enabled, sanitizer (asan, tsan, ubsan) and valgrind jobs all pass."
     },
     {
       "check": "Local embedded inference smoke test",
       "source": "attested",
-      "result": "pass (2026-07-10)",
-      "detail": "neuriplo-track CLI help smoke passed from the clean v0.6.0 build."
+      "result": "skipped",
+      "detail": "Not applicable: this set covers remote KServe serving of encoded-image ensembles. Local embedded inference is unchanged."
     },
     {
       "check": "KServe gRPC inference smoke test",
       "source": "attested",
-      "result": "pass (2026-07-10)",
-      "detail": "neuriplo-infer KServe HTTP plus gRPC CI completed successfully against the merged develop commit."
+      "result": "pass (2026-10-05)",
+      "detail": "V-7 matrix with neuriplo-infer --input_mode=encoded-image --task_model=yolo on data/dog.jpg against yolo26s.onnx. The ensembles declare IMAGE UINT8 [1, -1]. HTTP and gRPC with --postprocess_mode=gpu (yolo_ensemble, deploy/ensemble/yolo-detection.json) and --postprocess_mode=cpu (yolo_pre, preprocess + model) all exit 0. The decoded server envelope gives bicycle 0.95, dog 0.94, car 0.58 and truck 0.55. Negative control: v0.3.2 refuses the ensemble load (409 \"unsupported backend: ensemble\") and the client exits 1."
     },
     {
       "check": "Result contract validation",
