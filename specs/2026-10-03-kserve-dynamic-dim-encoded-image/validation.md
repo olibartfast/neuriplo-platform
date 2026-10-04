@@ -2,7 +2,7 @@
 
 Milestone: Serve encoded-image requests against dynamic-dimension inputs
 
-Status: In progress (Phase 1 in review)
+Status: In progress (Phase 1 complete; Phase 2 audit running)
 
 Written before implementation. Each check names the requirement it closes. The
 runtime commands run in a scratch worktree of `neuriplo-kserve-runtime` at the
@@ -139,4 +139,4 @@ to `develop`. Tests only; no `src/` change.
 - For the Phase 2 audit: `src/KServeV2Codec.cpp` runs the `shapeMatches` check
   twice in a row in `parseInferenceRequest`. It is harmless and redundant.
 
-Phase 1 closes when #17 is merged into `develop`.
+Phase 1 closed 2026-10-04: #17 merged into `develop` as `165dec0`, with all 12 CI checks green.

@@ -26,7 +26,7 @@ advance what evidence closes it.
 
 | Packet | State |
 |---|---|
-| [2026-10-03-kserve-dynamic-dim-encoded-image](2026-10-03-kserve-dynamic-dim-encoded-image/requirements.md) | In progress, Phase 1 in review (neuriplo-kserve-runtime#17). Locks in and releases the runtime wildcard rule for dynamic input dimensions, closing the neuriplo-infer encoded-image known limitation. |
+| [2026-10-03-kserve-dynamic-dim-encoded-image](2026-10-03-kserve-dynamic-dim-encoded-image/requirements.md) | In progress, Phase 1 merged (neuriplo-kserve-runtime#17); Phase 2 pre-release audit running. Locks in and releases the runtime wildcard rule for dynamic input dimensions, closing the neuriplo-infer encoded-image known limitation. |
 | [2026-08-24-register-neuriplo-ui](2026-08-24-register-neuriplo-ui/requirements.md) | Complete. Registers the browser operator interface and its capability-discovery boundary. |
 | [2026-08-17-control-plane-validation-hardening](2026-08-17-control-plane-validation-hardening/requirements.md) | Specified, not implemented. `scripts/check_all.py` does not exist yet. |
 
