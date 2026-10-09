@@ -1,6 +1,6 @@
 # Ensemble status board
 
-Last updated: 2026-10-05
+Last updated: 2026-10-09
 
 ## Lanes
 
@@ -107,6 +107,22 @@ All coding-repo work is merged to local develop (2026-08-05): neuriplo-tasks,
 neuriplo (new DALI backend), neuriplo-kserve-client, neuriplo-kserve-runtime,
 and neuriplo-infer. Releases, tags, and version-matrix pins remain human-owned;
 versions.yaml compatibility sets get entries once the siblings tag.
+
+## Open PRs (GitHub, 2026-10-09)
+
+| Repo | PR | Target | State |
+|---|---|---|---|
+| neuriplo-tasks | #12 `feature/yolo-world-export` -- YOLO-World fixed-vocabulary export recipe; `yoloworld` routes to the existing YOLO detection task, no library code change | develop | Opened 2026-10-09, CI green, awaiting review |
+| neuriplo | #39 `feature/native-engine-cpu-spine` -- specs only: Phase N0 packet for a first-party `NATIVE` backend plus the constitution amendment it needs | develop | Open since 2026-09-17, last updated 2026-10-01; needs a human decision on the amendment |
+
+No open PRs in neuriplo-infer, neuriplo-kserve-client, neuriplo-kserve-runtime,
+videocapture, neuriplo-ui, or neuriplo-platform. Nothing merged anywhere since
+the 2026-10-05 release wave beyond its back-merges.
+
+neuriplo-ui: `master` has moved 42 commits past the `versions.yaml` ref
+(`16c5093`, 2026-08-24), through Phase 7 packaging and CI (#7, 2026-08-29); head
+is `5f0bd8f` (2026-08-31). It is still pinned `version: wip`, untagged; bumping
+the ref is a human-owned pin change.
 
 ## Recently landed
 
