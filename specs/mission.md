@@ -4,15 +4,15 @@ Living document. Update it when the platform's purpose or boundaries change,
 not when a milestone lands. Milestone history belongs in the dated packets
 alongside this file.
 
-Last updated: 2026-08-24
+Last updated: 2026-10-10
 
 ## Why This Repository Exists
 
-Neuriplo is a GPU-first AI inference serving ecosystem split across seven
+Neuriplo is a GPU-first AI inference serving ecosystem split across eight
 implementation repositories. The split is deliberate: task semantics, backend
-execution, application wiring, operator interface, protocol client, serving
-runtime, and video I/O each evolve at their own pace and are each useful on
-their own.
+execution, an experimental first-party runtime, application wiring, operator
+interface, protocol client, serving runtime, and video I/O each evolve at their
+own pace and are each useful on their own.
 
 The cost of that split is that no single repository can answer the questions
 that matter most in production:

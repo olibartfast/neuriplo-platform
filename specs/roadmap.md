@@ -6,7 +6,7 @@ production-readiness gaps lives in
 [`docs/architecture/production-roadmap.md`](../docs/architecture/production-roadmap.md),
 and this file only says which of those gaps are being cut into packets next.
 
-Last updated: 2026-10-03
+Last updated: 2026-10-10
 
 ## How To Read This
 
@@ -27,6 +27,7 @@ advance what evidence closes it.
 | Packet | State |
 |---|---|
 | [2026-10-03-kserve-dynamic-dim-encoded-image](2026-10-03-kserve-dynamic-dim-encoded-image/requirements.md) | Complete (2026-10-05). neuriplo-kserve-runtime v0.4.0 released after a full audit (4 blockers, 16 major, 31 minor, plus 3 release-review defects, fixed in #19, #21-#24); V-7 attested on the tag; neuriplo-infer v0.10.3 records the closed encoded-image limitation. |
+| [2026-10-10-register-nert](2026-10-10-register-nert/requirements.md) | Complete. Registers the experimental first-party ONNX inference runtime and its neuriplo -> nert dependency rule. |
 | [2026-08-24-register-neuriplo-ui](2026-08-24-register-neuriplo-ui/requirements.md) | Complete. Registers the browser operator interface and its capability-discovery boundary. |
 | [2026-08-17-control-plane-validation-hardening](2026-08-17-control-plane-validation-hardening/requirements.md) | Specified, not implemented. `scripts/check_all.py` does not exist yet. |
 

@@ -20,6 +20,9 @@ Implementation-level sources:
   postprocessing, result types.
 - `neuriplo`: backend abstractions, backend adapters, backend runtime package
   versions, runtime compatibility behavior.
+- `nert`: first-party ONNX inference runtime internals (loader, shape
+  inference, planning, kernels). Consumed by `neuriplo` through a pinned
+  `NERT_VERSION` and FetchContent.
 - `neuriplo-infer`: local CLI, app configuration, runtime wiring,
   visualization, local setup scripts.
 - `neuriplo-ui`: browser presentation, local API adapter, capability-driven
@@ -49,6 +52,12 @@ or result schema semantics.
 Local app setup behavior belongs to `neuriplo-infer`. Cross-repository
 compatibility belongs here.
 
+`nert` is a leaf dependency: it must not depend on any other ecosystem
+repository or vendor SDK. `neuriplo` may depend on `nert` (backend `NERT`,
+experimental, pinned by `NERT_VERSION` in `neuriplo`'s `versions.env`);
+`nert` must never depend on `neuriplo`. The default `neuriplo` backend is not
+affected by this dependency.
+
 Browser presentation and browser-to-process adaptation belong to
 `neuriplo-ui`. It consumes versioned `neuriplo-infer` process contracts and
 must not redefine their capability identifiers or execution semantics.
@@ -67,7 +76,7 @@ For each repository in `versions.yaml`:
 - Compatibility sets must use the pinned commit SHA for WIP repos.
 
 The current baseline treats all six C++ implementation repositories as
-released repos. `neuriplo-ui` is WIP and pinned by commit.
+released repos. `neuriplo-ui` and `nert` are WIP and pinned by commit.
 
 ## Branch Policy
 
@@ -77,7 +86,7 @@ Sibling implementation repositories follow Gitflow:
 - `master` is release-only
 - direct changes to `master` are not allowed
 
-`neuriplo-ui` currently uses `master` as its default integration branch and is
+`neuriplo-ui` and `nert` currently use `master` as their default branch and are
 listed separately from the C++ Gitflow siblings in `ops/policies.yaml`.
 
 `neuriplo-platform` currently uses `main` for platform documentation and metadata.
@@ -103,6 +112,7 @@ Do not duplicate these in platform docs:
 - serving implementation details owned by `neuriplo-kserve-runtime`
 - video backend setup matrices owned by `videocapture`
 - UI implementation and browser styling owned by `neuriplo-ui`
+- ONNX operator coverage and kernel details owned by `nert`
 
 Instead, link to the owning repo and document only the cross-repository contract
 or compatibility implication here.
