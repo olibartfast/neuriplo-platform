@@ -16,6 +16,9 @@ layer sits above the application boundary without linking runtime libraries.
 operator workflow:
   neuriplo-ui browser -> neuriplo-ui local adapter -> neuriplo-infer
 
+experimental first-party runtime:
+  neuriplo (NERT backend) -> nert
+
 embedded local mode:
   neuriplo-infer -> neuriplo-tasks + neuriplo + videocapture
 
@@ -43,6 +46,7 @@ System boundary: neuriplo inference ecosystem
   |
   |- neuriplo-tasks: task contract, preprocess, postprocess, result type (CV tasks as first domain)
   |- neuriplo: GPU-first backend abstraction, execution, GPU capability reporting
+  |- nert: experimental dependency-free ONNX inference runtime consumed by neuriplo as the NERT backend
   |- neuriplo-infer: embedded local app and KServe V2 client wiring
   |- neuriplo-ui: browser operator app, local process adapter, and browser E2E
   |- neuriplo-kserve-client: backend-agnostic KServe V2 protocol client (HTTP/gRPC)
@@ -101,6 +105,28 @@ Likely patterns:
 - State
 - RAII
 - Runtime factory registry
+
+### [nert](https://github.com/olibartfast/nert)
+
+Owns:
+
+- The Neuriplo Engine Runtime: a dependency-free ONNX inference runtime in
+  C++17 (CPU reference interpreter, ONNX opset 18)
+- The hand-written ONNX loader, static shape inference, constant folding,
+  single-arena planning, and CPU kernels used as a correctness oracle
+- Its own operator coverage and correctness validation
+
+Status: experimental, WIP (0.1.0 unreleased). It depends on no other ecosystem
+repository and no vendor SDK. `neuriplo` consumes it as the experimental
+`NERT` backend through a pinned version and FetchContent; the dependency
+direction is `neuriplo -> nert`, never the reverse. See ADR 0013.
+
+Likely patterns:
+
+- Interpreter
+- Plan/Execute separation
+- Registry (operator kernels)
+- RAII
 
 ### [neuriplo-infer](https://github.com/olibartfast/neuriplo-infer)
 

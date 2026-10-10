@@ -1,0 +1,70 @@
+name: nert
+repo_root: ../nert
+role: inference-runtime-layer
+primary_role: nert-agent
+default_branches:
+  default: main
+
+dependencies: []
+
+entrypoints:
+  configure:
+    - cmake -S . -B build && cmake --build build
+  build:
+    - cmake --build build
+  test:
+    - python3 tools/provision_resnet18.py fixtures
+    - NERT_FIXTURE=fixtures/resnet18.onnx ctest --test-dir build --output-on-failure
+  format:
+    - scripts/format.sh --check
+  install:
+    - cmake --install build  # exports CMake package nert (find_package(nert), target nert::nert)
+
+api_surface:
+  public_components:
+    - ONNX loader (opset 18)
+    - static shape inference and constant folding
+    - single-arena memory planner
+    - CPU reference interpreter and naive kernels (correctness oracle)
+  supported_dtypes:
+    - float32 compute
+    - int64 and bool shape data and I/O
+  status: experimental
+  version_state: 0.1.0 unreleased
+
+constraints:
+  no_ecosystem_dependencies: true
+  no_vendor_sdk_dependencies: true
+  never_depend_on_neuriplo: true
+  keep_kernels_as_correctness_oracle: true
+  preserve_onnx_opset_18_coverage: true
+
+owned_paths:
+  - src/
+  - include/engine/
+  - test/
+  - tools/
+  - scripts/
+  - .github/
+  - CMakeLists.txt
+
+cross_repo_contracts:
+  provides_to_neuriplo:
+    - library consumed through CMake FetchContent
+    - ONNX opset 18 operator coverage
+    - float32 compute with int64 and bool shape data and I/O
+
+consumers:
+  - neuriplo
+
+automation_rules:
+  allowed_change_classes:
+    - ci-triage
+    - test-fix
+    - docs-sync
+  forbidden_change_classes:
+    - model-io-change
+    - perf-critical-kernel-change
+    - new-dependency
+    - packaging-release-change
+    - large-refactor
