@@ -91,6 +91,11 @@ integration branch and may use `feat/*` or `feature/*` branches. Its `master`
 branch is not governed by the C++ release-only rule. Validate it with its own
 Node.js and browser test commands before commit, push, or PR.
 
+**Experimental runtime component** (`nert`) is recorded in `ops/policies.yaml`
+with `main` as its default branch; it is a single-branch repository where work
+lands on `main`, and it is not governed by the C++ release-only rule. Validate it with its own CMake and
+ctest commands before commit, push, or PR.
+
 **neuriplo-platform** is the document/architecture orchestrator. Gitflow is not
 mandatory here; work normally lands on `main`. Do not apply sibling
 `develop`/`master` branch rules to this repo.

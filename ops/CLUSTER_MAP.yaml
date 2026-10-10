@@ -6,6 +6,7 @@ cluster:
     architecture_control_plane: neuriplo-platform
     task_contracts: neuriplo-tasks
     backend_abstraction: neuriplo
+    experimental_inference_runtime: nert
     local_application_flow: neuriplo-infer
     operator_interface: neuriplo-ui
     serving_runtime: neuriplo-kserve-runtime
@@ -16,6 +17,7 @@ cluster:
     neuriplo-platform: .
     neuriplo-tasks: ../neuriplo-tasks
     neuriplo: ../neuriplo
+    nert: ../nert
     neuriplo-infer: ../neuriplo-infer
     neuriplo-ui: ../neuriplo-ui
     neuriplo-kserve-client: ../neuriplo-kserve-client
@@ -59,6 +61,8 @@ repos:
     repo_root: ../neuriplo
     role: backend-abstraction-layer
     primary_role: neuriplo-agent
+    depends_on:
+      - nert
     provides:
       - backend_abstractions
       - backend_adapters
@@ -71,6 +75,24 @@ repos:
       - ci-triage
       - dependency-sync
       - backend-config-fix
+      - docs-sync
+
+  nert:
+    repo_root: ../nert
+    role: inference-runtime-layer
+    primary_role: nert-agent
+    provides:
+      - onnx_loader
+      - static_shape_inference
+      - constant_folding
+      - memory_planning
+      - cpu_reference_interpreter
+      - cpu_reference_kernels
+    consumed_by:
+      - neuriplo
+    automation_scope:
+      - ci-triage
+      - test-fix
       - docs-sync
 
   neuriplo-infer:
@@ -181,6 +203,14 @@ repos:
       - docs-sync
 
 dependency_edges:
+  - from: neuriplo
+    to: nert
+    type: library
+    critical_contracts:
+      - NERT_VERSION pin in neuriplo versions.env
+      - CMake FetchContent consumption
+      - ONNX opset 18 operator coverage
+      - float32 compute with int64 and bool shape data and I/O
   - from: neuriplo-ui
     to: neuriplo-infer
     type: process_api
@@ -269,6 +299,7 @@ agents:
   repo_workers:
     - neuriplo-tasks-worker
     - neuriplo-worker
+    - nert-worker
     - neuriplo-infer-worker
     - neuriplo-ui-worker
     - neuriplo-kserve-client-worker
@@ -289,6 +320,7 @@ agents:
       - reject_unsafe_packaging_or_version_drift
   primary_role_ownership:
     neuriplo: neuriplo-agent
+    nert: nert-agent
     neuriplo-kserve-client: client-agent
     neuriplo-kserve-runtime: runtime-infer-agent
     neuriplo-infer: runtime-infer-agent
