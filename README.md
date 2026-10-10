@@ -6,6 +6,7 @@ Neuriplo Platform validates cross-repository compatibility between:
 
 - task contracts
 - backend execution
+- first-party inference runtime (experimental)
 - local inference applications
 - browser operator applications and E2E workflows
 - KServe V2 clients
@@ -17,6 +18,7 @@ failure-mode expectations, and architecture decisions across:
 
 - [`neuriplo-tasks`](https://github.com/olibartfast/neuriplo-tasks): domain and task layer (CV tasks as first domain)
 - [`neuriplo`](https://github.com/olibartfast/neuriplo): GPU-first backend abstraction layer and backend capability reporting
+- [`nert`](https://github.com/olibartfast/nert): Neuriplo Engine Runtime, an experimental dependency-free first-party ONNX inference runtime consumed by `neuriplo` as its `NERT` backend
 - [`neuriplo-infer`](https://github.com/olibartfast/neuriplo-infer): local and remote inference application layer, including benchmark scenario execution
 - [`neuriplo-ui`](https://github.com/olibartfast/neuriplo-ui) (private): browser operator application, local API adapter, capability discovery, and browser E2E harness
 - [`neuriplo-kserve-client`](https://github.com/olibartfast/neuriplo-kserve-client): standalone KServe V2 / Open Inference Protocol client library (backend-agnostic HTTP/gRPC client with retry, TLS, auth, model repository extension) consumed by `neuriplo-infer`
@@ -58,6 +60,7 @@ For every major platform change:
 ```text
 neuriplo-tasks          = domain/task layer (CV tasks as first domain)
 neuriplo                = GPU-first backend abstraction layer
+nert                    = first-party ONNX inference runtime (experimental; consumed by neuriplo)
 neuriplo-infer          = local application layer
 neuriplo-ui             = browser operator application and local API adapter
 neuriplo-kserve-client  = standalone KServe V2 / Open Inference Protocol client library (consumed by neuriplo-infer)

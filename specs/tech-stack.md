@@ -5,7 +5,7 @@ governed ecosystem runs on, so a packet does not have to restate either.
 Version pins live in [`versions.yaml`](../versions.yaml); this file records the
 choices, not the numbers.
 
-Last updated: 2026-08-24
+Last updated: 2026-10-10
 
 ## Control-Plane Stack (This Repository)
 
@@ -42,8 +42,9 @@ owning repository; this table is the platform's view of it.
 
 | Concern | Choice | Owner |
 |---|---|---|
-| Native implementation language and build | C++ with CMake across the six runtime and library repos | each owning repo |
+| Native implementation language and build | C++ with CMake across the six runtime and library repos and `nert` (C++17) | each owning repo |
 | Operator interface | React and TypeScript with Vite; Node.js and Fastify local adapter; Playwright browser tests | [`neuriplo-ui`](https://github.com/olibartfast/neuriplo-ui) |
+| First-party inference runtime | Dependency-free ONNX runtime, C++17, CPU reference interpreter, opset 18; experimental | [`nert`](https://github.com/olibartfast/nert) |
 | Backend execution | OpenCV DNN, ONNX Runtime, LibTorch, TensorRT, OpenVINO, LibTensorFlow, GGML, TVM | [`neuriplo`](https://github.com/olibartfast/neuriplo) |
 | Task semantics | preprocess / execute / postprocess contract, computer vision as the first domain | [`neuriplo-tasks`](https://github.com/olibartfast/neuriplo-tasks) |
 | Predictive serving protocol | KServe V2 / Open Inference Protocol, HTTP and gRPC, raw little-endian tensor payloads | [`neuriplo-kserve-client`](https://github.com/olibartfast/neuriplo-kserve-client) and [`neuriplo-kserve-runtime`](https://github.com/olibartfast/neuriplo-kserve-runtime) |

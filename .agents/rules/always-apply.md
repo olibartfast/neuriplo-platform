@@ -25,6 +25,9 @@ not apply there.
 uses `master` as its integration branch and may use short-lived `feat/*` or
 `feature/*` branches. Its `master` branch is not release-only.
 
+**Not mandatory** for `nert`. It is a non-Gitflow, single-branch repository:
+its default branch is `main`, and work lands on `main`.
+
 ## Branch Roles (C++ Gitflow repos only)
 
 | Gitflow role | Branch |

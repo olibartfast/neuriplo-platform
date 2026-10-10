@@ -21,6 +21,12 @@ branch_policy:
         - master
         - feat/*
         - feature/*
+    nert:
+      default_branch: main
+      normal_changes_must_target:
+        - main
+        - feat/*
+        - feature/*
   sibling_rules:
     normal_changes_must_target:
       - develop

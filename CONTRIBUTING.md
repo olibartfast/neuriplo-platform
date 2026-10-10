@@ -19,7 +19,7 @@ python3 scripts/bootstrap.py
 python3 scripts/check_platform.py
 ```
 
-The bootstrap script clones all 7 sibling repos into the parent directory and
+The bootstrap script clones all 8 sibling repos into the parent directory and
 checks out the exact commits pinned in [versions.yaml](versions.yaml). After
 bootstrap your directory layout looks like this. Access to the private
 `neuriplo-ui` repository requires authenticated GitHub credentials.
@@ -29,6 +29,7 @@ workspace/
 |- neuriplo-platform/          # architecture control plane (this repo)
 |- neuriplo-tasks/             # domain/task layer
 |- neuriplo/                   # GPU-first backend abstraction
+|- nert/                       # experimental first-party ONNX inference runtime
 |- neuriplo-infer/             # local application layer
 |- neuriplo-ui/                # browser operator interface and local API adapter
 |- neuriplo-kserve-client/     # KServe V2 protocol client
@@ -42,6 +43,7 @@ workspace/
 |---|---|---|
 | neuriplo-tasks | Domain/task contracts, pre/post-processing | `cmake -S . -B build -DBUILD_TESTS=ON` |
 | neuriplo | GPU-first backend abstraction (ONNX, TensorRT, etc.) | `cmake -S . -B build -DDEFAULT_BACKEND=OPENCV_DNN` |
+| nert | Experimental dependency-free ONNX inference runtime (consumed by neuriplo) | `cmake -S . -B build` |
 | neuriplo-infer | CLI, config, E2E wiring (local + remote) | `cmake -S . -B build -DDEFAULT_BACKEND=OPENCV_DNN` |
 | neuriplo-ui | Browser operator interface and local API adapter | `npm install && npm run build` |
 | neuriplo-kserve-client | KServe V2 client (HTTP/gRPC, backend-agnostic) | `cmake -B build -DKSERVE_CLIENT_BUILD_TESTS=ON` |
@@ -78,7 +80,7 @@ For every major platform change:
 This repo follows a `main`-branch workflow. The six C++ sibling repos use
 Gitflow (`develop` for normal work, `master` for releases). `neuriplo-ui`
 currently uses `master` for integration and may use short-lived `feat/*` or
-`feature/*` branches.
+`feature/*` branches. `nert` is a non-Gitflow, single-branch repository: work lands on `main`.
 
 ## Validation
 

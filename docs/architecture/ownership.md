@@ -34,6 +34,20 @@ Examples:
 - Mixed-precision and quantization policy
 - Runtime compatibility behavior
 
+### First-Party Inference Runtime
+
+Belongs in `nert`.
+
+Examples:
+
+- ONNX model loading, static shape inference, and constant folding
+- Memory planning and the CPU reference interpreter and kernels
+- Operator coverage and operator-level correctness
+
+`nert` is experimental and depends on no other ecosystem repository and no
+vendor SDK. The `NERT` backend adapter (session, tensor translation, backend
+selection) belongs in `neuriplo`, not in `nert`.
+
 ### Local Application Flow
 
 Belongs in `neuriplo-infer`.
@@ -105,6 +119,9 @@ Examples:
 If a change is about what a task means, put it in `neuriplo-tasks`.
 
 If a change is about how inference runs on a backend, put it in `neuriplo`.
+
+If a change is about how an ONNX graph is loaded, planned, or executed by the
+first-party runtime itself, put it in `nert`.
 
 If a change is about how a user runs embedded local inference or calls a remote
 KServe endpoint, put it in `neuriplo-infer`.

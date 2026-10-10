@@ -1,6 +1,6 @@
 # Ensemble status board
 
-Last updated: 2026-10-09
+Last updated: 2026-10-10
 
 ## Lanes
 
@@ -10,6 +10,16 @@ Last updated: 2026-10-09
 | runtime-infer-agent | neuriplo-kserve-runtime, neuriplo-infer | Ensemble/pipeline + DALI/TensorRT lane merged to develop in both repos | Done |
 | client-agent | neuriplo-kserve-client | Ensemble conformance merged to develop | Done |
 | human | merges, releases, platform | ADR 0011 + ensemble contract written; review the infer alignment branch | WIP |
+
+## NERT registration (2026-10-10)
+
+`nert` (Neuriplo Engine Runtime) was extracted from `neuriplo` `engine/` into
+its own repository and is registered here as a WIP repository pinned at
+`81b6b1f` (ADR 0013, packet `specs/2026-10-10-register-nert`). `neuriplo`
+consumes it as the experimental `NERT` backend through a pinned `NERT_VERSION`
+(neuriplo branch `feature/nert`, merging into `develop`; default backend stays
+OPENCV_DNN). nert is a non-Gitflow, single-branch repository; its default branch
+is `main` and work lands on `main`.
 
 ## Ensemble serving lane (2026-08-04)
 

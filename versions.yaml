@@ -21,6 +21,11 @@ repositories:
     visibility: public
     version: v0.10.0
     ref: 1664b4547f905860386213b2aa2adc29ce91369f
+  nert:
+    owner: inference-runtime-layer
+    visibility: public
+    version: wip
+    ref: 81b6b1f824655403742e727853afe05261dae5d0
   neuriplo-infer:
     owner: local-application-layer
     visibility: public

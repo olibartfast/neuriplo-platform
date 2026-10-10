@@ -5,7 +5,8 @@ default_branches:
   integration: develop
   release: master
 
-dependencies: []
+dependencies:
+  - nert
 
 entrypoints:
   configure:
@@ -31,6 +32,8 @@ api_surface:
     - LIBTENSORFLOW
     - GGML
     - TVM
+  experimental_backends:
+    - NERT
 
 constraints:
   preserve_backend_selection_behavior: true
@@ -44,6 +47,12 @@ owned_paths:
   - scripts/
   - docs/
   - versions.env
+
+cross_repo_contracts:
+  consumes_from_nert:
+    - NERT_VERSION pin in versions.env
+    - CMake FetchContent consumption
+    - ONNX opset 18 operator coverage
 
 consumers:
   - neuriplo-infer
