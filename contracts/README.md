@@ -33,6 +33,9 @@ interface used across repositories.
 - [Capability discovery contract](capabilities-contract.md): build-specific
   tasks, models, parameters, local backends, and client-server workflows
   produced by `neuriplo-infer` for `neuriplo-ui` and other tools.
+- [Dependency manifest contract](dependency-manifest-contract.md): per-project
+  `deps.yaml` intent, `deps.lock` resolution, and `versions.env` projection
+  across apt, snap, conan, vcpkg, custom-url, and fetchcontent providers.
 
 ## Contract Template
 
