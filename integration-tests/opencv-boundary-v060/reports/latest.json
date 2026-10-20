@@ -54,42 +54,42 @@
     {
       "name": "neuriplo-tasks",
       "version": "v0.8.2",
-      "ref": "843cdb866826c55b173536b17db1f12583abf9ae",
+      "ref": "a1c5ecc0430b92acf689a40d2d7fe3a2269d3843",
       "url": "https://github.com/olibartfast/neuriplo-tasks",
       "tag_resolves_to_ref": "yes"
     },
     {
       "name": "neuriplo",
       "version": "v0.10.0",
-      "ref": "1664b4547f905860386213b2aa2adc29ce91369f",
+      "ref": "3236d61578295558c957115b5d4bba392dc43aeb",
       "url": "https://github.com/olibartfast/neuriplo",
       "tag_resolves_to_ref": "yes"
     },
     {
       "name": "neuriplo-infer",
       "version": "v0.10.3",
-      "ref": "4fd2d9e910e80c963fd337059d7257f5150d4af0",
+      "ref": "5d23bcec8f4b003c00eac1fc27e31d375a063192",
       "url": "https://github.com/olibartfast/neuriplo-infer",
       "tag_resolves_to_ref": "yes"
     },
     {
       "name": "neuriplo-kserve-client",
       "version": "v0.4.0",
-      "ref": "e741f4286de61bf82b9d6925d2ce5da3a2ede5a7",
+      "ref": "b9b154db421c6f02b73673e7c8a952bbfbaba8fa",
       "url": "https://github.com/olibartfast/neuriplo-kserve-client",
       "tag_resolves_to_ref": "yes"
     },
     {
       "name": "neuriplo-kserve-runtime",
       "version": "v0.4.0",
-      "ref": "ce00f4c350fad4aff9ad398b1871dad4e3aa4621",
+      "ref": "db0faa728c13a8ea59f9b3c97feddbdaf0a26596",
       "url": "https://github.com/olibartfast/neuriplo-kserve-runtime",
       "tag_resolves_to_ref": "yes"
     },
     {
       "name": "videocapture",
       "version": "v0.6.0",
-      "ref": "ebc7208d2b3de485d76aa7c06261ac80b0a22eaa",
+      "ref": "95a77257d3542d52368d84bd060e211e15242b8d",
       "url": "https://github.com/olibartfast/videocapture",
       "tag_resolves_to_ref": "yes"
     }
