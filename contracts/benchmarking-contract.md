@@ -153,7 +153,7 @@ runs against every `integration-tests/**/results/*.json`.
 
 No conforming baseline has been published yet. Latency evidence (HTTP JSON vs
 binary vs gRPC) is recorded in
-`integration-tests/kserve-runtime-edgecrafter-e2e/BENCHMARK.md`.
+[neuriplo-infer `integration-tests/kserve-runtime-edgecrafter-e2e/BENCHMARK.md`](https://github.com/olibartfast/neuriplo-infer/blob/develop/integration-tests/kserve-runtime-edgecrafter-e2e/BENCHMARK.md).
 
 ## Validation Strategy
 

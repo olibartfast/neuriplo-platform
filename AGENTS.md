@@ -30,10 +30,10 @@ This repo has no build step. Use validation commands instead:
 ```bash
 scripts/check_platform.py
 scripts/check_component_progress.py
-integration-tests/local-inference-smoke/run.py
+../neuriplo-infer/integration-tests/local-inference-smoke/run.py
 ```
 
-`check_platform.py` validates YAML metadata, required docs, examples, integration-test shape, ASCII content, and version policy. `check_component_progress.py` reports compile-speed and baseline tooling progress across local sibling implementation repos (see `ops/runbooks/faster-compilation.md`). The smoke test checks local sibling checkouts and dry-runs the app-owned E2E runner.
+`check_platform.py` validates YAML metadata, required docs, examples, integration-test shape, ASCII content, and version policy. `check_component_progress.py` reports compile-speed and baseline tooling progress across local sibling implementation repos (see `ops/runbooks/faster-compilation.md`). The app-owned smoke test lives in `neuriplo-infer` and dry-runs its E2E runner.
 
 ## Coding Style & Naming Conventions
 
@@ -51,7 +51,7 @@ Python scripts should be small, dependency-light, executable, and compatible wit
 
 ## Testing Guidelines
 
-Run `scripts/check_platform.py` before every commit. If integration-test metadata or smoke behavior changes, also run `integration-tests/local-inference-smoke/run.py`. Do not add model downloads, generated artifacts, or GPU-dependent checks without documenting requirements in the test README.
+Run `scripts/check_platform.py` before every commit. If integration-test metadata changes, also run the app-owned smoke in `neuriplo-infer` (`../neuriplo-infer/integration-tests/local-inference-smoke/run.py`). Do not add model downloads, generated artifacts, or GPU-dependent checks without documenting requirements in the test README.
 
 ## Agent Commit Signing
 

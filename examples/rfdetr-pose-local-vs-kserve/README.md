@@ -58,7 +58,7 @@ A completed run should publish:
 - KServe gRPC benchmark JSON conforming to
   [the benchmarking contract](../../contracts/benchmarking-contract.md)
 - compatibility report under
-  `integration-tests/rfdetr-pose-local-vs-kserve/reports/`
+  `neuriplo-infer/integration-tests/rfdetr-pose-local-vs-kserve/reports/`
 
 ## Contract Checkpoints
 

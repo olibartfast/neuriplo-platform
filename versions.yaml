@@ -59,8 +59,12 @@ compatibility_sets:
     # metadata CI cannot run (configure, build, unit tests, inference smoke).
     # The report generator validates this file and renders it; it does not
     # re-execute the attested checks.
-    evidence: integration-tests/rfdetr-pose-local-vs-kserve/evidence.yaml
+    # Moved 2026-10-23: the live evidence file and baselines now live at
+    # neuriplo-infer/integration-tests/rfdetr-pose-local-vs-kserve/
+    # (evidence.yaml, baselines/local.json, baselines/kserve-grpc.json).
+    # This set is superseded; the historical notes below are retained.
     notes:
+      - "Moved 2026-10-23: the live evidence file now lives at neuriplo-infer/integration-tests/rfdetr-pose-local-vs-kserve/evidence.yaml."
       - "Historical evidence: neuriplo-tasks v0.5.0 adds the RfDetrPose task family (RF-DETR keypoint pose) and batch support across postprocessors; public header changes are additive only (new RfDetrPosePostprocessor header, Keypoint visibility/covariance fields, and a private enum enumerator)."
       - "Historical evidence: neuriplo-infer v0.8.0 routes the new rfdetrpose/rfdetrkeypoint/rfdetrkpt type strings to PoseEstimation and defaults the KServe remote-runtime client to gRPC."
       - "Historical evidence: validated by a full release build of neuriplo-infer v0.8.0 against the pinned sibling tags fetched from GitHub (local backends plus KServe gRPC, OpenCV-DNN backend): 29 of 29 app tests pass."
@@ -74,14 +78,13 @@ compatibility_sets:
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
       videocapture: v0.6.0
-    benchmark_baselines:
-      - scenario: rfdetr-pose-local
-        file: integration-tests/rfdetr-pose-local-vs-kserve/baselines/local.json
-      - scenario: rfdetr-pose-kserve-grpc
-        file: integration-tests/rfdetr-pose-local-vs-kserve/baselines/kserve-grpc.json
+    benchmark_baselines: []
+    # Moved 2026-10-23: live baselines now live under
+    # neuriplo-infer/integration-tests/rfdetr-pose-local-vs-kserve/baselines/.
   - name: ecdet-kserve-litert-followup
     status: draft
     notes:
+      - "Moved 2026-10-23: the live baseline now lives at neuriplo-infer/integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json."
       - EdgeCrafter ecdet remains validated across ONNX Runtime, TensorRT, OpenVINO, and ExecuTorch.
       - neuriplo adds LiteRT custom kernels needed by the converted ecdet graph, but ecdet TFLite remains excluded because ONNX-to-TFLite conversion fidelity is known bad.
       - neuriplo-infer documents the ecdet TFLite limitation and keeps the LiteRT warning in the E2E helper.
@@ -96,9 +99,9 @@ compatibility_sets:
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
       videocapture: v0.6.0
-    benchmark_baselines:
-      - scenario: ecdet-kserve-http
-        file: integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json
+    benchmark_baselines: []
+    # Moved 2026-10-23: the live baseline now lives at
+    # neuriplo-infer/integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json.
   - name: opencv-boundary-v060
     status: active
     evidence: integration-tests/opencv-boundary-v060/evidence.yaml

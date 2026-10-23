@@ -93,10 +93,10 @@ python3 scripts/check_platform.py
 This validates YAML metadata, ASCII content, docs, examples, integration tests,
 version matrix, policies, and cluster map consistency.
 
-When integration-test metadata or smoke behavior changes, also run:
+When the app-owned E2E runner changes, also run its smoke from the sibling checkout:
 
 ```bash
-python3 integration-tests/local-inference-smoke/run.py
+python3 ../neuriplo-infer/integration-tests/local-inference-smoke/run.py
 ```
 
 ## Where to Go Next

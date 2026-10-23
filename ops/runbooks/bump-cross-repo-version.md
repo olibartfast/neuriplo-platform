@@ -35,7 +35,8 @@ duplicating repo-local dependency policy.
    - Confirm no unrelated repo was added to the version matrix.
 
 5. Run impacted integration checks when local checkouts exist.
-   - For local inference changes, run `integration-tests/local-inference-smoke/run.py`.
+   - For local inference changes, run the app-owned smoke in `neuriplo-infer`:
+     `../neuriplo-infer/integration-tests/local-inference-smoke/run.py`.
    - For serving changes, run the serving smoke test once it exists.
 
 6. Record PR evidence.
