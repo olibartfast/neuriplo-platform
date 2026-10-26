@@ -1,6 +1,6 @@
 # Ensemble status board
 
-Last updated: 2026-10-10
+Last updated: 2026-10-26
 
 ## Lanes
 
@@ -135,6 +135,17 @@ is `5f0bd8f` (2026-08-31). It is still pinned `version: wip`, untagged; bumping
 the ref is a human-owned pin change.
 
 ## Recently landed
+
+- **Release refresh 2026-10-26**:
+  [neuriplo-infer](https://github.com/olibartfast/neuriplo-infer) v0.11.2,
+  [neuriplo](https://github.com/olibartfast/neuriplo) v0.11.1, and
+  [videocapture](https://github.com/olibartfast/videocapture) v0.6.1 are pinned
+  by release commit in `versions.yaml`. Infer's release PR backend/KServe
+  matrix and Release Guard passed. Local app suites passed 179/179 on each
+  of OpenCV 4.6 and 5.0 with remote-fetched siblings. The new
+  `infer-v0112-opencv-release` set is draft: live model/runtime, performance,
+  and native AMD GPU coverage are not re-attested. Existing evidence files
+  remain historical; standalone NERT and serving-runtime pins are unchanged.
 
 - **Release wave 2026-10-05**: neuriplo-kserve-runtime v0.4.0 (pipeline
   ensemble models, model repository serving with the KServe repository

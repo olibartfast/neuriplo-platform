@@ -19,8 +19,8 @@ repositories:
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
-    version: v0.10.0
-    ref: 3236d61578295558c957115b5d4bba392dc43aeb
+    version: v0.11.1
+    ref: d4854ccd87a4072ae74a30d05bb48bbee72dae75
   nert:
     owner: inference-runtime-layer
     visibility: public
@@ -29,8 +29,8 @@ repositories:
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.10.3
-    ref: 5d23bcec8f4b003c00eac1fc27e31d375a063192
+    version: v0.11.2
+    ref: 1192ea18dac3b85a8f118e7faa95e5b52c045b96
   neuriplo-ui:
     owner: operator-ui-layer
     visibility: private
@@ -49,8 +49,8 @@ repositories:
   videocapture:
     owner: video-io
     visibility: public
-    version: v0.6.0
-    ref: 95a77257d3542d52368d84bd060e211e15242b8d
+    version: v0.6.1
+    ref: 9429bc6b4995e9f2b4436fcd460f16ccce3d1196
 
 compatibility_sets:
   - name: rfdetr-keypoint-pose-followup
@@ -64,6 +64,7 @@ compatibility_sets:
     # (evidence.yaml, baselines/local.json, baselines/kserve-grpc.json).
     # This set is superseded; the historical notes below are retained.
     notes:
+      - "Matrix refresh 2026-10-26: neuriplo v0.11.1, neuriplo-infer v0.11.2, videocapture v0.6.1. This set retains its historical evidence; live scenario compatibility has not been re-attested at these pins."
       - "Moved 2026-10-23: the live evidence file now lives at neuriplo-infer/integration-tests/rfdetr-pose-local-vs-kserve/evidence.yaml."
       - "Historical evidence: neuriplo-tasks v0.5.0 adds the RfDetrPose task family (RF-DETR keypoint pose) and batch support across postprocessors; public header changes are additive only (new RfDetrPosePostprocessor header, Keypoint visibility/covariance fields, and a private enum enumerator)."
       - "Historical evidence: neuriplo-infer v0.8.0 routes the new rfdetrpose/rfdetrkeypoint/rfdetrkpt type strings to PoseEstimation and defaults the KServe remote-runtime client to gRPC."
@@ -73,17 +74,18 @@ compatibility_sets:
       - "The matrix now pins neuriplo-kserve-runtime v0.4.0 and neuriplo-infer v0.10.3 (2026-10-05). This set's evidence predates those pins and is not re-attested against them; runtime v0.4.0 is attested only by kserve-encoded-image-v040."
     repositories:
       neuriplo-tasks: v0.8.2
-      neuriplo: v0.10.0
-      neuriplo-infer: v0.10.3
+      neuriplo: v0.11.1
+      neuriplo-infer: v0.11.2
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
-      videocapture: v0.6.0
+      videocapture: v0.6.1
     benchmark_baselines: []
     # Moved 2026-10-23: live baselines now live under
     # neuriplo-infer/integration-tests/rfdetr-pose-local-vs-kserve/baselines/.
   - name: ecdet-kserve-litert-followup
     status: draft
     notes:
+      - "Matrix refresh 2026-10-26: neuriplo v0.11.1, neuriplo-infer v0.11.2, videocapture v0.6.1. This set retains its historical evidence; live scenario compatibility has not been re-attested at these pins."
       - "Moved 2026-10-23: the live baseline now lives at neuriplo-infer/integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json."
       - EdgeCrafter ecdet remains validated across ONNX Runtime, TensorRT, OpenVINO, and ExecuTorch.
       - neuriplo adds LiteRT custom kernels needed by the converted ecdet graph, but ecdet TFLite remains excluded because ONNX-to-TFLite conversion fidelity is known bad.
@@ -94,11 +96,11 @@ compatibility_sets:
       - "The matrix now pins neuriplo-kserve-runtime v0.4.0 and neuriplo-infer v0.10.3 (2026-10-05). This set's evidence predates those pins and is not re-attested against them; runtime v0.4.0 is attested only by kserve-encoded-image-v040."
     repositories:
       neuriplo-tasks: v0.8.2
-      neuriplo: v0.10.0
-      neuriplo-infer: v0.10.3
+      neuriplo: v0.11.1
+      neuriplo-infer: v0.11.2
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
-      videocapture: v0.6.0
+      videocapture: v0.6.1
     benchmark_baselines: []
     # Moved 2026-10-23: the live baseline now lives at
     # neuriplo-infer/integration-tests/kserve-runtime-edgecrafter-e2e/baselines/http.json.
@@ -106,6 +108,7 @@ compatibility_sets:
     status: active
     evidence: integration-tests/opencv-boundary-v060/evidence.yaml
     notes:
+      - "Matrix refresh 2026-10-26: neuriplo v0.11.1, neuriplo-infer v0.11.2, videocapture v0.6.1. This set retains its historical evidence; live scenario compatibility has not been re-attested at these pins."
       - neuriplo-tasks v0.6.0 moves public task contracts to native vision types and makes OpenCV interop optional through neuriplo-tasks::vision-opencv.
       - neuriplo-infer v0.9.0 contains the validated OpenCV-boundary migration; all 29 CTest tests passed against the published neuriplo-tasks tag.
       - tritonic v0.3.0 contains the validated OpenCV-boundary migration; all 50 CTest tests passed against the published neuriplo-tasks tag.
@@ -114,11 +117,11 @@ compatibility_sets:
       - "The matrix now pins neuriplo-kserve-runtime v0.4.0 and neuriplo-infer v0.10.3 (2026-10-05). This set's evidence predates those pins and is not re-attested against them; runtime v0.4.0 is attested only by kserve-encoded-image-v040."
     repositories:
       neuriplo-tasks: v0.8.2
-      neuriplo: v0.10.0
-      neuriplo-infer: v0.10.3
+      neuriplo: v0.11.1
+      neuriplo-infer: v0.11.2
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
-      videocapture: v0.6.0
+      videocapture: v0.6.1
   - name: kserve-encoded-image-v040
     status: active
     # V-7 of specs/2026-10-03-kserve-dynamic-dim-encoded-image: encoded-image
@@ -126,13 +129,33 @@ compatibility_sets:
     # dimension, over HTTP and gRPC, with server- and client-side postprocess.
     evidence: integration-tests/kserve-ensemble/evidence-encoded-image-v040.yaml
     notes:
+      - "Matrix refresh 2026-10-26: neuriplo v0.11.1, neuriplo-infer v0.11.2, videocapture v0.6.1. This set retains its historical evidence; live scenario compatibility has not been re-attested at these pins."
       - neuriplo-kserve-runtime v0.4.0 treats a negative metadata dimension as a wildcard and serves pipeline (ensemble) models; v0.3.2 refuses the ensemble load.
       - neuriplo-infer v0.10.3 is a docs-only patch over v0.10.2; its encoded-image client path is unchanged and was exercised against the v0.4.0 tag.
       - The four transport x postprocess-mode runs render pixel-identical outputs.
     repositories:
       neuriplo-tasks: v0.8.2
-      neuriplo: v0.10.0
-      neuriplo-infer: v0.10.3
+      neuriplo: v0.11.1
+      neuriplo-infer: v0.11.2
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
-      videocapture: v0.6.0
+      videocapture: v0.6.1
+
+  - name: infer-v0112-opencv-release
+    status: draft
+    notes:
+      - "Release metadata verified 2026-10-26: each updated version tag resolves to its recorded repository commit."
+      - "neuriplo-infer v0.11.2 consumes exactly these four sibling release tags; isolated builds fetched siblings from GitHub without local source overrides."
+      - "OpenCV 4.6.0 and 5.0.0 each passed 179/179 local app CTest checks on the release snapshot."
+      - "Release PR backend builds, KServe build matrix, and Release Validation passed; dependency-install timeout jobs passed after retry."
+      - "Release PR CI: https://github.com/olibartfast/neuriplo-infer/actions/runs/40364325126"
+      - "Release Guard: https://github.com/olibartfast/neuriplo-infer/actions/runs/40387742937"
+      - "Draft: these are app build/test checks, not live inference, KServe runtime/model parity, performance, or native AMD GPU evidence."
+      - "The serving-runtime and standalone experimental NERT pins are unchanged; this refresh does not re-attest them."
+    repositories:
+      neuriplo-tasks: v0.8.2
+      neuriplo: v0.11.1
+      neuriplo-infer: v0.11.2
+      neuriplo-kserve-client: v0.4.0
+      videocapture: v0.6.1
+    benchmark_baselines: []
