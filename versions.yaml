@@ -33,7 +33,7 @@ repositories:
     ref: 1192ea18dac3b85a8f118e7faa95e5b52c045b96
   neuriplo-ui:
     owner: operator-ui-layer
-    visibility: private
+    visibility: public
     version: wip
     ref: 1f9a09dfcd802c24cb9e93aa0036268c1d038fc5
   neuriplo-kserve-client:

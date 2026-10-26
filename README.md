@@ -20,7 +20,7 @@ failure-mode expectations, and architecture decisions across:
 - [`neuriplo`](https://github.com/olibartfast/neuriplo): GPU-first backend abstraction layer and backend capability reporting
 - [`nert`](https://github.com/olibartfast/nert): Neuriplo Engine Runtime, an experimental dependency-free first-party ONNX inference runtime consumed by `neuriplo` as its `NERT` backend
 - [`neuriplo-infer`](https://github.com/olibartfast/neuriplo-infer): local and remote inference application layer, including benchmark scenario execution
-- [`neuriplo-ui`](https://github.com/olibartfast/neuriplo-ui) (private): browser operator application, local API adapter, capability discovery, and browser E2E harness
+- [`neuriplo-ui`](https://github.com/olibartfast/neuriplo-ui): browser operator application, local API adapter, capability discovery, and browser E2E harness
 - [`neuriplo-kserve-client`](https://github.com/olibartfast/neuriplo-kserve-client): standalone KServe V2 / Open Inference Protocol client library (backend-agnostic HTTP/gRPC client with retry, TLS, auth, model repository extension) consumed by `neuriplo-infer`
 - [`neuriplo-kserve-runtime`](https://github.com/olibartfast/neuriplo-kserve-runtime): serving and runtime layer with dynamic batching, scheduling, and multi-GPU placement
 - [`videocapture`](https://github.com/olibartfast/videocapture): video and image source layer consumed by `neuriplo-infer` (CV task domain only)

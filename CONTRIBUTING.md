@@ -21,8 +21,7 @@ python3 scripts/check_platform.py
 
 The bootstrap script clones all 8 sibling repos into the parent directory and
 checks out the exact commits pinned in [versions.yaml](versions.yaml). After
-bootstrap your directory layout looks like this. Access to the private
-`neuriplo-ui` repository requires authenticated GitHub credentials.
+bootstrap your directory layout looks like this.
 
 ```text
 workspace/
