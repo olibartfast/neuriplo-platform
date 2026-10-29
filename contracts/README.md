@@ -36,6 +36,9 @@ interface used across repositories.
 - [Dependency manifest contract](dependency-manifest-contract.md): per-project
   `deps.yaml` intent, `deps.lock` resolution, and `versions.env` projection
   across apt, snap, conan, vcpkg, custom-url, and fetchcontent providers.
+- [Scheduler job contract](scheduler-job-contract.md): executor-neutral
+  validation job identity, profile reference, and evidence envelope shared
+  by Slurm, Kubernetes, and native-runner bindings.
 
 ## Contract Template
 

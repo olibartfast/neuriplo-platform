@@ -21,3 +21,4 @@ Use [0000-template.md](0000-template.md) for new records.
 - [0011 Serve ensembles as a native runtime pipeline model kind](0011-ensemble-pipeline-serving.md)
 - [0012 Adopt browser-based neuriplo-ui as the operator application layer](0012-adopt-browser-neuriplo-ui.md)
 - [0013 Create the nert repository for the Neuriplo Engine Runtime](0013-create-nert-repository.md)
+- [0014 Generic profiles with executor-neutral scheduling](0014-generic-profiles-executor-neutral-scheduling.md)

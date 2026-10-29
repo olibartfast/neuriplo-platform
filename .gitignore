@@ -7,3 +7,8 @@ __pycache__/
 # Local integration-test outputs.
 data/
 logs/
+
+# Operator-owned private inventory: profile-to-host mapping, addresses,
+# credentials, and session notes. Generic profile IDs live in tracked
+# docs; anything identifying a real host stays here, never committed.
+operator-inventory/
