@@ -85,6 +85,19 @@ tracked files.
 - Building Slurm from source is a last resort for version-locked
   workers: it needs the full toolchain plus dev headers on the
   worker. Prefer distribution packages with matching versions.
+- The SlurmUser UID/GID must be identical on controller and workers.
+  Check `id slurm` everywhere: a mismatch surfaces as
+  "Security violation ... uid X != Slurm uid" and cross-node jobs
+  fail even when munge keys match. Remap with usermod/groupmod and
+  chown the spool, log, key and config trees.
+- Locked-down ARM workers (no foreign apt, no SDK headers) can run
+  an extracted matching-version Slurm without touching the package
+  database: unpack the backend and daemon debs with `dpkg-deb -x`
+  under a prefix such as `/opt`, bind-mount or symlink the
+  `slurm-wlm` plugin dir where the configured Plugindir expects it,
+  create the slurm user, and launch munged/slurmd from the prefix
+  with `LD_LIBRARY_PATH` pointed at it. Never install foreign
+  packages on images where that risks the boot chain.
 
 ### Step 4: stop and verify
 
