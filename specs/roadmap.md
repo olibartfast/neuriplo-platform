@@ -27,7 +27,7 @@ advance what evidence closes it.
 | Packet | State |
 |---|---|
 | [2026-10-29-heterogeneous-scheduler-placement](2026-10-29-heterogeneous-scheduler-placement/requirements.md) | Complete (2026-10-29). Generic profiles, executor-neutral job/evidence contract (Slurm first), Windows native-runner profile, SDK cache limits, on-demand policy, privacy rule. Group 5 (first executor runs) deferred to an operator-scheduled session. |
-| [2026-10-13-unified-dependency-manager](2026-10-13-unified-dependency-manager/requirements.md) | Specified, not implemented. Standalone fetched manager (`coldpac` working name): `deps.yaml` + `deps.lock` + `versions.env` projection over apt, snap, conan, vcpkg, custom-url, fetchcontent. |
+| [2026-10-13-unified-dependency-manager](2026-10-13-unified-dependency-manager/requirements.md) | In progress (coldpac v0.1.2 released; V-1 to V-7 evidence recorded; videocapture PR #19 open with all CI green, merge pending). |
 | [2026-10-03-kserve-dynamic-dim-encoded-image](2026-10-03-kserve-dynamic-dim-encoded-image/requirements.md) | Complete (2026-10-05). neuriplo-kserve-runtime v0.4.0 released after a full audit (4 blockers, 16 major, 31 minor, plus 3 release-review defects, fixed in #19, #21-#24); V-7 attested on the tag; neuriplo-infer v0.10.3 records the closed encoded-image limitation. |
 | [2026-10-10-register-nert](2026-10-10-register-nert/requirements.md) | Complete. Registers the experimental first-party ONNX inference runtime and its neuriplo -> nert dependency rule. |
 | [2026-08-24-register-neuriplo-ui](2026-08-24-register-neuriplo-ui/requirements.md) | Complete. Registers the browser operator interface and its capability-discovery boundary. |
