@@ -12,3 +12,6 @@ logs/
 # credentials, and session notes. Generic profile IDs live in tracked
 # docs; anything identifying a real host stays here, never committed.
 operator-inventory/
+
+# Local secret files (passwords, tokens). Never commit.
+.env
