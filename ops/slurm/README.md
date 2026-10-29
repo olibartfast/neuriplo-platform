@@ -15,7 +15,7 @@ in `operator-inventory/hosts.env` (git-ignored, never commit).
 ```bash
 cp ops/slurm/hosts.env.example operator-inventory/hosts.env
 # fill in real hosts/addresses in operator-inventory/hosts.env
-python3 ops/slurm/render_bindings.py > /tmp/slurm-nodes.conf
+python3 ops/slurm/render_bindings.py --controller P_LNX_NVIDIA > /tmp/slurm.conf
 ```
 
 Stdout carries private addresses: keep it on the local machine, never

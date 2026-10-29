@@ -2,7 +2,41 @@
 
 Milestone: Heterogeneous hardware placement and executor-neutral scheduling
 
-Status: Specified, not implemented
+Status: Complete (2026-10-29)
+
+## Results
+
+### Review pass, 2026-10-29
+
+Groups 1 to 4 verified against V-1 to V-7; Group 5 stays deferred per
+the plan (needs operator-scheduled sessions and powered machines).
+
+- V-1: `scripts/check_platform.py` passes with the packet, ADR 0014,
+  placement doc, scheduler-job contract, runbook, `ops/slurm/` helper,
+  and roadmap registration present; all files ASCII.
+- V-2: the contract carries Owner, Consumers, Version 0.1.0, Status
+  Draft, Purpose, identity/binding/evidence schema, compatibility
+  rules, validation strategy, and Slurm/Kubernetes/native-runner
+  examples; it is listed in `contracts/README.md`.
+- V-3: privacy grep over all new files returns no hits (no tailnet,
+  carrier-grade NAT, dotted-quad, hostname, or account-label patterns);
+  the example inventory carries empty values only.
+- V-4: packet commits (`7c81ad3`, `2b403ff`) touch platform docs, one
+  contract, one runbook, `ops/slurm/`, the packet, `.gitignore`, and
+  roadmap/ADR-index edits only; no `versions.yaml` pin, no
+  compatibility set, no owning-repo branch.
+- V-5: the placement doc states the GGML/TVM placeholder limit and the
+  CPU-recipe limit explicitly; no GPU-variant build, packaging, or
+  distribution step is introduced anywhere.
+- V-6: reader check passes -- the profile table maps each backend to
+  its profiles, the on-demand policy states no purchase is recommended
+  and offline means planned/on-demand rather than failed.
+- V-7: reader check passes -- the Slurm and Kubernetes examples share
+  one job identity with different bindings and an unchanged evidence
+  envelope; the native-runner example covers `P-WIN-CPU`.
+- Tool check: `ops/slurm/render_bindings.py` runs exit 0 against the
+  example inventory (all profiles unassigned/planned, partitions with
+  no online nodes); one canonical-ID comment fix (`P-WIN-CPU`).
 
 Written before implementation. Each check names the requirement it closes.
 

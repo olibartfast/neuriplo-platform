@@ -15,6 +15,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_ENV = ROOT / "operator-inventory" / "hosts.env"
 
+SPOOL_DEFAULTS = (
+    "StateSaveLocation=/var/spool/slurmctld",
+    "SlurmdSpoolDir=/var/spool/slurmd",
+    "SlurmctldPidFile=/var/run/slurmctld.pid",
+    "SlurmdPidFile=/var/run/slurmd.pid",
+    "SlurmctldLogFile=/var/log/slurm/slurmctld.log",
+    "SlurmdLogFile=/var/log/slurm/slurmd.log",
+    "ProctrackType=proctrack/linuxproc",
+    "SelectType=select/cons_tres",
+    "TaskPlugin=task/affinity",
+)
+
 SLURM_PROFILES = (
     "P_LNX_NVIDIA",
     "P_LNX_CPU",
@@ -44,7 +56,13 @@ def load_env(path: Path) -> dict[str, str]:
 
 
 def main() -> int:
-    env_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_ENV
+    args = sys.argv[1:]
+    controller = ""
+    if "--controller" in args:
+        index = args.index("--controller")
+        controller = args[index + 1]
+        del args[index : index + 2]
+    env_path = Path(args[0]) if args else DEFAULT_ENV
     if not env_path.is_file():
         print(f"missing inventory file: {env_path}", file=sys.stderr)
         print("copy ops/slurm/hosts.env.example there and fill it in.", file=sys.stderr)
@@ -57,10 +75,18 @@ def main() -> int:
 
     lines: list[str] = []
     lines.append("ClusterName=neuriplo-tailnet")
-    lines.append("SlurmctldHost=<controller-host>(<controller-addr>)")
+    if controller and values.get(f"{controller}_HOST") and values.get(f"{controller}_ADDR"):
+        host = values[f"{controller}_HOST"]
+        addr = values[f"{controller}_ADDR"]
+        lines.append(f"SlurmctldHost={host}({addr})")
+    else:
+        lines.append("SlurmctldHost=<controller-host>(<controller-addr>)")
     lines.append("SlurmctldPort=6817")
     lines.append("SlurmdPort=6818")
     lines.append("AuthType=auth/munge")
+    if controller:
+        lines.extend(SPOOL_DEFAULTS)
+        lines.append("")
     lines.append("")
     for profile in SLURM_PROFILES:
         host = values.get(f"{profile}_HOST", "")
@@ -78,7 +104,7 @@ def main() -> int:
             node += f' Feature="{features}"'
         node += " State=UNKNOWN"
         lines.append(node)
-    lines.append("# P_WIN_CPU: native runner, no slurmd (see scheduler job contract)")
+    lines.append("# P-WIN-CPU: native runner, no slurmd (see scheduler job contract)")
     lines.append("")
     for name, members in PARTITIONS:
         present = [values.get(f"{p}_HOST", p) for p in members if values.get(f"{p}_ADDR", "")]

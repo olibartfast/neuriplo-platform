@@ -2,7 +2,7 @@
 
 Milestone: Heterogeneous hardware placement and executor-neutral scheduling
 
-Status: Specified, not implemented
+Status: Complete (2026-10-29)
 
 ## Problem
 
