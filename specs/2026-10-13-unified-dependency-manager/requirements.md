@@ -2,7 +2,8 @@
 
 Milestone: Unified dependency manager as a standalone repo
 
-Status: Specified, not implemented
+Status: In progress (coldpac v0.1.0 released 2026-10-29; consumer
+integration pending)
 
 ## Problem
 
