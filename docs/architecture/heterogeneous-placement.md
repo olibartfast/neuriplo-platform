@@ -139,3 +139,14 @@ sessions or directly on the node.
   public issues, as the privacy rule requires. Cloud- and
   robotics-specific parts do not transfer to the edge and Windows
   profiles.
+- Nebius Soperator (`https://github.com/nebius/soperator`):
+  Kubernetes operator that runs Slurm clusters on Kubernetes from one
+  `SlurmCluster` resource, with ephemeral autoscaling workers, health
+  checks, Pyxis/Enroot runtimes, and Tailscale SSH support. Convergence
+  option to reassess when the Kubernetes serving phase starts: Slurm
+  jobs could then run inside Kubernetes instead of on a separate
+  bare-metal Slurm. Not for now: it needs a Kubernetes control plane,
+  Ubuntu 24.04 node images, and the GPU Operator, and it targets
+  datacenter/cloud GPUs rather than the intermittent edge, ARM, and
+  Windows profiles. Current limits to recheck at that time include
+  single-partition and GPU-only or CPU-only cluster constraints.
