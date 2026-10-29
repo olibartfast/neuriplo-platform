@@ -2,8 +2,8 @@
 
 Milestone: Unified dependency manager as a standalone repo
 
-Status: In progress (coldpac v0.1.0 released 2026-10-29; consumer
-integration pending)
+Status: In progress (coldpac v0.1.2 released 2026-10-29; V-1 to V-7
+evidence recorded. Videocapture PR #19 open, merge pending.)
 
 ## Problem
 

@@ -2,10 +2,44 @@
 
 Milestone: Unified dependency manager as a standalone repo
 
-Status: In progress (coldpac v0.1.0 released 2026-10-29; V-1 to V-5 pass.
-V-6 and V-7 need consumer integration, out of scope for this step.)
+Status: In progress (coldpac v0.1.2 released 2026-10-29; V-1 to V-7
+evidence recorded. Videocapture PR #19 open, merge pending.)
 
 ## Results
+
+### coldpac v0.1.2 + videocapture integration, 2026-10-29
+
+Evidence is scheduler-job-shaped so it rebinds to `slurm` unchanged when
+the heterogeneous-scheduler packet lands. Runs below were executed by
+hand on this Ubuntu 24.04 box, so `executor` reads `local-hand`
+(transitional: not yet in the contract enum; becomes `executor=slurm`
+on re-run under a scheduled session).
+
+- V-6 (R-1): `videocapture` branch `feat/coldpac-deps`
+  ([PR #19](https://github.com/olibartfast/videocapture/pull/19))
+  fetches `olibartfast/coldpac` at tag `v0.1.2` via
+  `FetchContent_Declare` (`cmake/ColdpacFetch.cmake`), configures from a
+  clean scratch dir, and `coldpac validate` passes (4 packages).
+  `coldpac-status` output matches the hand-verified `dpkg -l` baseline:
+  opencv `4.6.0+dfsg-13.1ubuntu1` ok, ffmpeg `7:6.1.1-3ubuntu5` ok,
+  cmake `3.28.3-1build7` ok, gstreamer missing (optional backend, not
+  installed -- `dpkg-query` confirms absent). Full build + ctest:
+  21/21 pass.
+  `evidence: outcome=pass, executor=local-hand, session=coldpac-v06-2026-10-29`.
+- V-7 (R-3, R-4): scratch demo (discarded, `/tmp/v7demo`, not merged):
+  bumped one apt baseline (`opencv` wanted `==4.6.1`) and one custom-url
+  sha256. `status --offline` flags exactly those two entries --
+  `drift: installed ... vs wanted ==4.6.1` and
+  `stale lock (sha256 changed, re-run resolve)` -- and reports the third
+  entry ok; exit 1. The stale-lock check was a coldpac gap found while
+  writing this demo; it shipped in `v0.1.2` with a regression test.
+  `evidence: outcome=pass, executor=local-hand, session=coldpac-v07-2026-10-29`.
+- V-7 correction (packet rule: wrong evidence gets fixed here, with the
+  reason): the check as first written said `status` reports
+  `Update available`. That was wrong: a bumped baseline is drift and a
+  changed pin is a stale lock; `Update available` only fires when the
+  provider candidate exceeds a satisfying install. The Manual section
+  below is updated to match.
 
 ### coldpac v0.1.0, 2026-10-29
 
@@ -65,8 +99,9 @@ Written before implementation. Each check names the requirement it closes.
   repo via `FetchContent_Declare` pinned to a tag, configures from clean,
   and its `status` output matches the hand-verified `dpkg -l` baseline.
 - V-7 (R-3, R-4): Update detection demo: bump one apt baseline and one
-  custom-url sha256 in a scratch branch; `status` reports
-  `Update available` for exactly those entries.
+  custom-url sha256 in a scratch branch; `status` flags exactly those two
+  entries (drift for the baseline, stale lock for the pin) and reports
+  the rest ok.
 
 ## Definition Of Done
 
