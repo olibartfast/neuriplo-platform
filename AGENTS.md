@@ -102,6 +102,15 @@ mandatory here; work normally lands on `main`. Do not apply sibling
 
 PRs should describe changed docs/contracts, affected repos, validation output, and any follow-up required. Use `ops/PR_EVIDENCE_TEMPLATE.md` for cross-repo maintenance work.
 
+## Release Coordination
+
+When any `neuriplo-*` component publishes a release, update this repository in
+the same release cycle. Bump the component's `version` and `ref` in
+`versions.yaml` to the tag and its commit, and add or update the compatibility
+set that records what was validated. Run `scripts/check_platform.py` before
+calling the release complete. A component release whose platform pins still
+point at the previous tag is not finished.
+
 ## Architecture Rules
 
 Do not move runtime implementation into this repo. Document ownership, contracts, compatibility, and integration expectations here; keep implementation details in the owning repository.

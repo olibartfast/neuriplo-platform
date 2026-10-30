@@ -6,7 +6,9 @@ release or needs a temporary WIP commit pin.
 ## Goal
 
 Record a known-good ecosystem version without changing runtime behavior or
-duplicating repo-local dependency policy.
+duplicating repo-local dependency policy. Every `neuriplo-*` component release
+runs this step before the release is considered complete; the new tag must be
+reflected in `versions.yaml` and a compatibility set.
 
 ## Preconditions
 
