@@ -2,10 +2,19 @@
 
 Milestone: Unified dependency manager as a standalone repo
 
-Status: In progress (coldpac v0.1.2 released 2026-10-29; V-1 to V-7
-evidence recorded. Videocapture PR #19 open, merge pending.)
+Status: Complete (2026-10-30; videocapture PR #19 merged as `abac981`)
 
 ## Results
+
+### Merge, 2026-10-30
+
+- Videocapture PR #19 merged to `develop` as `abac981` (merge commit,
+  all 11 CI checks green). Feature branch removed locally and remotely.
+- Contract stays `Draft`: promotion to `Review`/`Stable` needs the
+  per-contract human review whose criteria belong to the roadmap's
+  contract-promotion packet, so the packet DoD's "leaves Draft" is
+  deliberately unmet and recorded here instead of fudged.
+- ADR 0013 is `Accepted`; roadmap entry marked complete.
 
 ### coldpac v0.1.2 + videocapture integration, 2026-10-29
 
