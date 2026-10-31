@@ -41,6 +41,8 @@ neuriplo-platform/
 |- examples/
 |- integration-tests/
 |- ops/
+|   |- runbooks/
+|   `- slurm/
 |- docker/
 `- versions.yaml
 ```
@@ -68,6 +70,34 @@ neuriplo-kserve-runtime = serving/runtime layer with dynamic batching, schedulin
 videocapture            = video/image source layer (CV task domain)
 neuriplo-platform       = architecture control plane
 ```
+
+## Operations
+
+Cross-repository operational assets live in [`ops/`](ops/README.md). The
+topology is in [`ops/CLUSTER_MAP.yaml`](ops/CLUSTER_MAP.yaml), and the allowed
+automated change classes are in [`ops/policies.yaml`](ops/policies.yaml).
+
+### Slurm batch builds
+
+Backend image builds run in parallel on a Slurm cluster. The controller runs
+`slurmctld`, every build worker runs `slurmd`, and all nodes share one Slurm
+major/minor release and one munge key. Job identity and evidence stay
+executor-neutral per the [scheduler job contract](contracts/scheduler-job-contract.md);
+the profiles that jobs target come from
+[heterogeneous placement](docs/architecture/heterogeneous-placement.md).
+
+- [Slurm backend builds runbook](ops/runbooks/slurm-backend-builds.md):
+  daemon bring-up (`slurmctld`, `slurmd`, `munge`), `sbatch` dispatch,
+  version-matching and UID/GID notes, ARM worker exceptions, and teardown.
+- [Slurm binding helper](ops/slurm/README.md): renders local-only
+  `slurm.conf` node and partition lines from the untracked operator inventory.
+- [Scheduled validation session runbook](ops/runbooks/scheduled-validation-session.md):
+  the session lifecycle that wraps any executor, including Slurm.
+- [Heterogeneous hardware placement](docs/architecture/heterogeneous-placement.md):
+  profile definitions used by Slurm constraints and GRES bindings.
+
+Do not commit hostnames, addresses, credentials, or private paths. Rendered
+`slurm.conf` output stays on the operator machine.
 
 ## Getting Started
 
