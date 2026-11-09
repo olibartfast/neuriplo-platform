@@ -4,7 +4,7 @@ role: serving-runtime-layer
 default_branches:
   integration: develop
   release: master
-status: wip
+status: released
 
 dependencies:
   # Pipeline (ensemble) preprocess/postprocess steps only, gated by

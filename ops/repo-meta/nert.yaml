@@ -30,7 +30,7 @@ api_surface:
     - float32 compute
     - int64 and bool shape data and I/O
   status: experimental
-  version_state: 0.1.0 unreleased
+  version_state: 0.2.0 released
 
 constraints:
   no_ecosystem_dependencies: true
@@ -41,7 +41,7 @@ constraints:
 
 owned_paths:
   - src/
-  - include/engine/
+  - include/nert/
   - test/
   - tools/
   - scripts/

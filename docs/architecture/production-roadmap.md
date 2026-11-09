@@ -16,11 +16,11 @@ The ecosystem already has several structural patterns in place:
 - `neuriplo-tasks` uses built-in task descriptors with matchers and creators,
   which satisfies the registry goal for compiled-in tasks.
 - `neuriplo-kserve-client` is a standalone backend-agnostic KServe V2 protocol
-  client (HTTP/gRPC, retry/TLS/auth, model repository extension, v0.2.0)
+  client (HTTP/gRPC, retry/TLS/auth, model repository extension, v0.4.0)
   consumed by `neuriplo-infer` via FetchContent.
 - `neuriplo-kserve-runtime` has a request pipeline with validation, admission,
   scheduling, and response encoding stages; the feature branch merged into
-  develop (2026-06-09) and the WIP serving runtime is advancing.
+  develop (2026-06-09) and v0.4.0 is the current release.
 - `neuriplo` has backend metadata, lifecycle, state, performance, memory, and
   interface structure, but backend capabilities still need a formal public
   contract.

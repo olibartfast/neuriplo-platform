@@ -75,8 +75,9 @@ For each repository in `versions.yaml`:
 - Compatibility sets must use the declared release tag for released repos.
 - Compatibility sets must use the pinned commit SHA for WIP repos.
 
-The current baseline treats all six C++ implementation repositories as
-released repos. `neuriplo-ui` and `nert` are WIP and pinned by commit.
+The current baseline treats the six C++ implementation repositories as
+released repos. `nert` is also released (`v0.2.0`) but remains experimental.
+`neuriplo-ui` is WIP and pinned by commit.
 
 ## Branch Policy
 
@@ -86,8 +87,8 @@ Sibling implementation repositories follow Gitflow:
 - `master` is release-only
 - direct changes to `master` are not allowed
 
-`neuriplo-ui` and `nert` currently use `master` as their default branch and are
-listed separately from the C++ Gitflow siblings in `ops/policies.yaml`.
+`neuriplo-ui` uses `master` and `nert` uses `main`; both are listed separately
+from the C++ Gitflow siblings in `ops/policies.yaml`.
 
 `neuriplo-platform` currently uses `main` for platform documentation and metadata.
 

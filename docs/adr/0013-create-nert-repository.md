@@ -73,3 +73,11 @@ compatibility set.
   platform-attested compatibility evidence.
 - Follow-up: promote `nert` to a released version and a compatibility set only
   after a tagged release and attested evidence.
+
+## Amendment (2026-11-09)
+
+`nert` v0.2.0 was tagged on 2026-10-25 at
+`a5d426082a9f50b21e716ed09212a74a646d66a2`. `neuriplo` v0.11.3 pins
+`NERT_VERSION=v0.2.0`, and `neuriplo-infer` v0.11.7 selects `NERT` as its
+default local backend. The WIP registration above is historical. `nert` remains
+outside platform compatibility sets until platform-attested evidence exists.

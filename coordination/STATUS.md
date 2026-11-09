@@ -1,6 +1,6 @@
 # Ensemble status board
 
-Last updated: 2026-10-26
+Last updated: 2026-11-09
 
 ## Lanes
 
@@ -11,15 +11,16 @@ Last updated: 2026-10-26
 | client-agent | neuriplo-kserve-client | Ensemble conformance merged to develop | Done |
 | human | merges, releases, platform | ADR 0011 + ensemble contract written; review the infer alignment branch | WIP |
 
-## NERT registration (2026-10-10)
+## NERT release (2026-11-09)
 
 `nert` (Neuriplo Engine Runtime) was extracted from `neuriplo` `engine/` into
-its own repository and is registered here as a WIP repository pinned at
-`81b6b1f` (ADR 0013, packet `specs/2026-10-10-register-nert`). `neuriplo`
-consumes it as the experimental `NERT` backend through a pinned `NERT_VERSION`
-(neuriplo branch `feature/nert`, merging into `develop`; default backend stays
-OPENCV_DNN). nert is a non-Gitflow, single-branch repository; its default branch
-is `main` and work lands on `main`.
+its own repository and is now a released repository: `v0.2.0` at `a5d4260`
+(ADR 0013, packet `specs/2026-10-10-register-nert`). `neuriplo` v0.11.3
+consumes it as the experimental `NERT` backend through `NERT_VERSION=v0.2.0`;
+`neuriplo-infer` v0.11.7 selects `NERT` as its default local backend. `nert`
+remains experimental and is not part of a platform compatibility set. It is a
+non-Gitflow, single-branch repository; its default branch is `main` and work
+lands on `main`.
 
 ## Ensemble serving lane (2026-08-04)
 
@@ -129,12 +130,21 @@ No open PRs in neuriplo-infer, neuriplo-kserve-client, neuriplo-kserve-runtime,
 videocapture, neuriplo-ui, or neuriplo-platform. Nothing merged anywhere since
 the 2026-10-05 release wave beyond its back-merges.
 
-neuriplo-ui: `master` has moved 42 commits past the `versions.yaml` ref
-(`16c5093`, 2026-08-24), through Phase 7 packaging and CI (#7, 2026-08-29); head
-is `5f0bd8f` (2026-08-31). It is still pinned `version: wip`, untagged; bumping
-the ref is a human-owned pin change.
+neuriplo-ui: `master` head is `db77010` (2026-11-01); the platform pins
+`cdfebed` (2026-10-30) as `version: wip`. It remains untagged; bumping the ref
+is a human-owned pin change.
 
 ## Recently landed
+
+- **Release refresh 2026-11-09**:
+  [neuriplo-tasks](https://github.com/olibartfast/neuriplo-tasks) v0.8.5,
+  [nert](https://github.com/olibartfast/nert) v0.2.0, and
+  [neuriplo-infer](https://github.com/olibartfast/neuriplo-infer) v0.11.7 are
+  pinned by release commit in `versions.yaml`. The compatibility sets now point
+  at tasks v0.8.5 / infer v0.11.7; their evidence remains historical and was
+  not re-run. New draft set `infer-v0117-nert-default`. Infer v0.11.7 selects
+  NERT as the default local backend, and neuriplo v0.11.3 pins
+  `NERT_VERSION=v0.2.0`.
 
 - **Release refresh 2026-10-26**:
   [neuriplo-infer](https://github.com/olibartfast/neuriplo-infer) v0.11.2,
