@@ -32,6 +32,7 @@ advance what evidence closes it.
 | [2026-10-10-register-nert](2026-10-10-register-nert/requirements.md) | Complete. Registers the experimental first-party ONNX inference runtime and its neuriplo -> nert dependency rule. |
 | [2026-08-24-register-neuriplo-ui](2026-08-24-register-neuriplo-ui/requirements.md) | Complete. Registers the browser operator interface and its capability-discovery boundary. |
 | [2026-08-17-control-plane-validation-hardening](2026-08-17-control-plane-validation-hardening/requirements.md) | Specified, not implemented. `scripts/check_all.py` does not exist yet. |
+| [2026-11-09-gpu-and-remote-tpu](2026-11-09-gpu-and-remote-tpu/requirements.md) | Implemented; compatibility evidence pending. Contract, architecture note, and runbook delivered for the local TensorFlow GPU and remote TPU serving boundary; GPU/TPU hardware evidence and the compatibility set are deferred. |
 
 The thesis of the current packet is that this repository declares more checks
 than it enforces: a benchmark validator that discovers zero files and exits 0,

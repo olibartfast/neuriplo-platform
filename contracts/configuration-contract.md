@@ -83,8 +83,10 @@ embedded local tasks:     repository-owned implementation path
 
 The KServe V2 track is the default for predictive workloads whose inputs and
 outputs are bounded tensors, including current CV tasks and planned embedding or
-tabular pilots. Generative `image_understanding` remains available in embedded
-local mode, but remote generative serving is OpenAI-compatible per ADR 0006.
+tabular pilots. Remote TPU serving is an implementation choice inside this
+track, not a separate protocol. Generative `image_understanding` remains
+available in embedded local mode, but remote generative serving is
+OpenAI-compatible per ADR 0006.
 
 ## Model Artifact Reference
 
@@ -117,19 +119,51 @@ Backend-specific options (precision, device index, stream count) are
 namespaced under the backend name and owned by `neuriplo`. Consumers treat
 them as opaque passthrough.
 
-## Device and Precision
+## Local Device and Precision
+
+`device`, `precision`, and `use_gpu` select execution resources for embedded
+local mode only. They describe hardware owned by the local process; they never
+name a remote accelerator.
 
 ```text
 device:          auto | cpu | cuda:<index>
 precision:       fp32 | fp16 | int8 | auto
+use_gpu:         bool (embedded local only; default false)
 
 auto:            backend selects best available device and precision from
                  its capability query (see gpu-capability-contract.md)
 cuda:<index>:    explicit GPU device index (0-based)
+use_gpu:         request local GPU execution from a backend that supports it
 ```
+
+`use_gpu` is the existing embedded-local TensorFlow selection flag. It is a
+backend request, not a device enumeration: the backend chooses the visible GPU
+and must fail explicitly when a requested GPU is unavailable. It does not add
+a field to the remote client contract, and it is not sent over the wire.
 
 If a requested precision is unsupported by the selected device, the backend
 must fail at load time with a clear error, not silently fall back.
+
+## Remote Accelerator Selection
+
+Remote accelerators are selected by service address and model identity, not by
+`device`, `precision`, or `use_gpu`. A remote TPU service is reached through the
+existing KServe V2 client path:
+
+```text
+--kserve_endpoint=<url>
+--kserve_model_name=<name>
+--kserve_model_version=<version>
+--kserve_transport=<http|grpc>
+```
+
+The TPU-side service owns the device, compiler, runtime, batching, and model
+placement. `device` remains local-only: there is no `tpu` device value and no
+remote device index. See [tpu-serving-contract.md](tpu-serving-contract.md) for
+the tensor contract, readiness rules, and service responsibilities.
+
+This is not an in-process TPU backend. No PJRT, XLA, StableHLO, or `libtpu`
+surface is part of the client configuration contract.
 
 ## Runtime Behavior
 
@@ -197,6 +231,11 @@ serialize:      bool (emit machine-readable result payload; see result-contract.
 - Backend-specific configuration must be namespaced or capability-gated.
 - Serving-only configuration must not leak into local CLI contracts unless the
   local application consumes it.
+- Remote accelerators must not be expressed as a new local `device` value or as a
+  local `precision`/`use_gpu` variant. Selecting a remote service through the
+  existing KServe endpoint, model name, version, and transport fields is
+  backward compatible; adding a remote accelerator to the local device
+  enumeration is breaking.
 - Adding a new `task_type` string owned by `neuriplo-tasks` is backward
   compatible.
 - Adding a new `task_domain` value is backward compatible when existing values

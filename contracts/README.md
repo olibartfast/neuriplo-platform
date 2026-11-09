@@ -14,6 +14,9 @@ interface used across repositories.
   tasks and rendered by applications.
 - [Runtime contract](runtime-contract.md): KServe V2 request/response behavior
   for `neuriplo-kserve-runtime`.
+- [TPU serving contract](tpu-serving-contract.md): remote TPU classifier service
+  boundary over KServe V2, including tensor, readiness, naming, and error
+  expectations.
 - [Ensemble contract](ensemble-contract.md): encoded-image input and decoded
   result envelope for server-side ensembles, shared by
   `neuriplo-kserve-runtime` and Triton deployments.
