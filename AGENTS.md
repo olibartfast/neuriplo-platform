@@ -120,6 +120,10 @@ with `main` as its default branch; it is a single-branch repository where work
 lands on `main`, and it is not governed by the C++ release-only rule. Validate it with its own CMake and
 ctest commands before commit, push, or PR.
 
+**Application repositories** (`neuriplo-track`, `neuriplo-ros`) are not part of
+the pinned cluster. They use `master` as their default and integration branch;
+normal work targets `master`, `feat/*`, or `feature/*` through a pull request.
+
 **neuriplo-platform** is the document/architecture orchestrator. Gitflow is not
 mandatory here; work normally lands on `main`. Do not apply sibling
 `develop`/`master` branch rules to this repo.

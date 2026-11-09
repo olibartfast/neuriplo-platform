@@ -33,6 +33,10 @@ uses `master` as its integration branch and may use short-lived `feat/*` or
 **Not mandatory** for `nert`. It is a non-Gitflow, single-branch repository:
 its default branch is `main`, and work lands on `main`.
 
+**Not mandatory** for the application repositories `neuriplo-track` and
+`neuriplo-ros`. Both use `master` as their default and integration branch, and
+normal work targets `master`, `feat/*`, or `feature/*` through a pull request.
+
 ## Branch Roles (C++ Gitflow repos only)
 
 | Gitflow role | Branch |
