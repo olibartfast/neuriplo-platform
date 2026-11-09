@@ -65,7 +65,13 @@ Format: `Co-Authored-By: <Agent> <Model> <<vendor-email>>`
 |-------|-------------|-----------------|
 | Cursor | `cursoragent@cursor.com` | `Co-authored-by: Cursor <cursoragent@cursor.com>` |
 | Claude Code | `noreply@anthropic.com` | `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>` |
-| Opencode | `agent@opencode.ai` | `Co-Authored-By: Opencode via DeepSeek V4 Pro <agent@opencode.ai>` |
+| Codex | `noreply@openai.com` | `Co-Authored-By: Codex GPT-6 <noreply@openai.com>` |
+| Opencode | `agent@opencode.ai` | `Co-Authored-By: Opencode via DeepSeek V4.1 Flash 1017 <agent@opencode.ai>` |
+| Google Antigravity | `antigravity-agent-private@google.com` | `Co-authored-by: Antigravity Gemini 3.5 Flash <antigravity-agent-private@google.com>` |
+
+The table covers every harness that currently commits across the
+`neuriplo-*` repositories. Add a row when a new harness first commits, using a
+private or noreply vendor address.
 
 The model name MUST match the LLM the agent is powered by (check the system
 prompt). If the model changes across sessions, the trailer must reflect the
@@ -75,6 +81,24 @@ The vendor email MUST NOT be associated with any real GitHub user profile to pre
 
 Place the trailer in the commit body (after the subject line and blank line),
 not the subject.
+
+## Harness Entry Points
+
+Claude Code, Gemini, GitHub Copilot, Windsurf, and Cursor read thin pointer
+files that defer to [`.agents/rules/always-apply.md`](.agents/rules/always-apply.md)
+and this file:
+
+| Harness | Entry point |
+|---------|-------------|
+| Claude Code | [`CLAUDE.md`](CLAUDE.md) |
+| Gemini / Google Antigravity | [`GEMINI.md`](GEMINI.md) |
+| GitHub Copilot | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) |
+| Windsurf | [`.windsurfrules`](.windsurfrules) |
+| Cursor | [`.cursor/rules/gitflow-workflow.mdc`](.cursor/rules/gitflow-workflow.mdc) |
+| OpenCode, Codex, and other `AGENTS.md` readers | this file |
+
+Do not duplicate rules in an entry point. Change the canonical rule in
+`.agents/rules/always-apply.md` or this file and leave the pointer in place.
 
 ## Commit & Pull Request Guidelines
 

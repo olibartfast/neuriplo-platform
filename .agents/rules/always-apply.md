@@ -5,6 +5,11 @@ implementation repositories** only. Map branch names using `ops/policies.yaml`.
 
 Reference: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 
+Harness entry points in this repository are thin pointers to this file and
+`AGENTS.md`. Update the canonical rule here, not in `CLAUDE.md`, `GEMINI.md`,
+`.github/copilot-instructions.md`, `.windsurfrules`, or
+`.cursor/rules/gitflow-workflow.mdc`.
+
 ## Scope
 
 **Mandatory Gitflow** applies to coding components:
