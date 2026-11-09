@@ -53,8 +53,8 @@
   "repositories": [
     {
       "name": "neuriplo-tasks",
-      "version": "v0.8.4",
-      "ref": "cb6797262d68555cba46b45ec91055ff935e7d21",
+      "version": "v0.8.5",
+      "ref": "aac606858c28ddab94ab04af39b190e4fd7370e0",
       "url": "https://github.com/olibartfast/neuriplo-tasks",
       "tag_resolves_to_ref": "yes"
     },
@@ -67,8 +67,8 @@
     },
     {
       "name": "neuriplo-infer",
-      "version": "v0.11.6",
-      "ref": "4ae3b11b1dc3031cb0b5a68dd9f94ba18bd309f6",
+      "version": "v0.11.7",
+      "ref": "4810ad6be3663ee75128e56676bdc4c81b1d27ff",
       "url": "https://github.com/olibartfast/neuriplo-infer",
       "tag_resolves_to_ref": "yes"
     },

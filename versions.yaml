@@ -14,8 +14,8 @@ repositories:
   neuriplo-tasks:
     owner: domain-task-layer
     visibility: public
-    version: v0.8.4
-    ref: cb6797262d68555cba46b45ec91055ff935e7d21
+    version: v0.8.5
+    ref: aac606858c28ddab94ab04af39b190e4fd7370e0
   neuriplo:
     owner: backend-abstraction-layer
     visibility: public
@@ -24,13 +24,13 @@ repositories:
   nert:
     owner: inference-runtime-layer
     visibility: public
-    version: wip
-    ref: 81b6b1f824655403742e727853afe05261dae5d0
+    version: v0.2.0
+    ref: a5d426082a9f50b21e716ed09212a74a646d66a2
   neuriplo-infer:
     owner: local-application-layer
     visibility: public
-    version: v0.11.6
-    ref: 4ae3b11b1dc3031cb0b5a68dd9f94ba18bd309f6
+    version: v0.11.7
+    ref: 4810ad6be3663ee75128e56676bdc4c81b1d27ff
   neuriplo-ui:
     owner: operator-ui-layer
     visibility: public
@@ -73,10 +73,11 @@ compatibility_sets:
       - "The matrix now pins neuriplo v0.10.0, neuriplo-infer v0.10.2, and videocapture v0.6.0 (2026-10-03). This superseded set's evidence was attested at the older pins (neuriplo-tasks v0.6.1 / neuriplo v0.8.0) and is retained as history; it is not re-attested against the newer pins."
       - "The matrix now pins neuriplo-kserve-runtime v0.4.0 and neuriplo-infer v0.10.3 (2026-10-05). This set's evidence predates those pins and is not re-attested against them; runtime v0.4.0 is attested only by kserve-encoded-image-v040."
       - "Pin refresh 2026-10-30: declarations now point at tasks v0.8.4 / neuriplo v0.11.3 / infer v0.11.6; evidence in this set was not re-run at those pins and remains historical. See infer-v0116-torchscript-contract for the current release stack."
+      - "Pin refresh 2026-11-09: declarations now point at tasks v0.8.5 / neuriplo v0.11.3 / infer v0.11.7; evidence in this set was not re-run at those pins and remains historical. See infer-v0117-nert-default for the current release stack."
     repositories:
-      neuriplo-tasks: v0.8.4
+      neuriplo-tasks: v0.8.5
       neuriplo: v0.11.3
-      neuriplo-infer: v0.11.6
+      neuriplo-infer: v0.11.7
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
       videocapture: v0.6.1
@@ -96,10 +97,11 @@ compatibility_sets:
       - The matrix now pins neuriplo v0.10.0, neuriplo-infer v0.10.2, and videocapture v0.6.0 (2026-10-03); this draft's evidence predates those pins and re-validation at this snapshot is still pending.
       - "The matrix now pins neuriplo-kserve-runtime v0.4.0 and neuriplo-infer v0.10.3 (2026-10-05). This set's evidence predates those pins and is not re-attested against them; runtime v0.4.0 is attested only by kserve-encoded-image-v040."
       - "Pin refresh 2026-10-30: declarations now point at tasks v0.8.4 / neuriplo v0.11.3 / infer v0.11.6; evidence in this set was not re-run at those pins and remains historical. See infer-v0116-torchscript-contract for the current release stack."
+      - "Pin refresh 2026-11-09: declarations now point at tasks v0.8.5 / neuriplo v0.11.3 / infer v0.11.7; evidence in this set was not re-run at those pins and remains historical. See infer-v0117-nert-default for the current release stack."
     repositories:
-      neuriplo-tasks: v0.8.4
+      neuriplo-tasks: v0.8.5
       neuriplo: v0.11.3
-      neuriplo-infer: v0.11.6
+      neuriplo-infer: v0.11.7
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
       videocapture: v0.6.1
@@ -118,10 +120,11 @@ compatibility_sets:
       - The matrix now pins neuriplo-tasks v0.8.2, neuriplo v0.10.0, neuriplo-infer v0.10.2, and videocapture v0.6.0 (2026-10-03). The OpenCV-boundary contract is unchanged by those releases (neuriplo-tasks v0.8.2 adds image-input preprocessing behavior; neuriplo v0.10.0 hardens the plugin loader and adds a consumer C ABI; videocapture v0.6.0 moves encoding onto the writer thread; none touch the task-contract boundary), so the v0.6.0/v0.9.0 boundary evidence carries forward; the newer behavior is not covered by this set.
       - "The matrix now pins neuriplo-kserve-runtime v0.4.0 and neuriplo-infer v0.10.3 (2026-10-05). This set's evidence predates those pins and is not re-attested against them; runtime v0.4.0 is attested only by kserve-encoded-image-v040."
       - "Pin refresh 2026-10-30: declarations now point at tasks v0.8.4 / neuriplo v0.11.3 / infer v0.11.6; evidence in this set was not re-run at those pins and remains historical. See infer-v0116-torchscript-contract for the current release stack."
+      - "Pin refresh 2026-11-09: declarations now point at tasks v0.8.5 / neuriplo v0.11.3 / infer v0.11.7; evidence in this set was not re-run at those pins and remains historical. See infer-v0117-nert-default for the current release stack."
     repositories:
-      neuriplo-tasks: v0.8.4
+      neuriplo-tasks: v0.8.5
       neuriplo: v0.11.3
-      neuriplo-infer: v0.11.6
+      neuriplo-infer: v0.11.7
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
       videocapture: v0.6.1
@@ -137,10 +140,11 @@ compatibility_sets:
       - neuriplo-infer v0.10.3 is a docs-only patch over v0.10.2; its encoded-image client path is unchanged and was exercised against the v0.4.0 tag.
       - The four transport x postprocess-mode runs render pixel-identical outputs.
       - "Pin refresh 2026-10-30: declarations now point at tasks v0.8.4 / neuriplo v0.11.3 / infer v0.11.6; evidence in this set was not re-run at those pins and remains historical. See infer-v0116-torchscript-contract for the current release stack."
+      - "Pin refresh 2026-11-09: declarations now point at tasks v0.8.5 / neuriplo v0.11.3 / infer v0.11.7; evidence in this set was not re-run at those pins and remains historical. See infer-v0117-nert-default for the current release stack."
     repositories:
-      neuriplo-tasks: v0.8.4
+      neuriplo-tasks: v0.8.5
       neuriplo: v0.11.3
-      neuriplo-infer: v0.11.6
+      neuriplo-infer: v0.11.7
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
       videocapture: v0.6.1
@@ -157,10 +161,11 @@ compatibility_sets:
       - "Draft: these are app build/test checks, not live inference, KServe runtime/model parity, performance, or native AMD GPU evidence."
       - "The serving-runtime and standalone experimental NERT pins are unchanged; this refresh does not re-attest them."
       - "Pin refresh 2026-10-30: declarations now point at tasks v0.8.4 / neuriplo v0.11.3 / infer v0.11.6; evidence in this set was not re-run at those pins and remains historical. See infer-v0116-torchscript-contract for the current release stack."
+      - "Pin refresh 2026-11-09: declarations now point at tasks v0.8.5 / neuriplo v0.11.3 / infer v0.11.7; evidence in this set was not re-run at those pins and remains historical. See infer-v0117-nert-default for the current release stack."
     repositories:
-      neuriplo-tasks: v0.8.4
+      neuriplo-tasks: v0.8.5
       neuriplo: v0.11.3
-      neuriplo-infer: v0.11.6
+      neuriplo-infer: v0.11.7
       neuriplo-kserve-client: v0.4.0
       videocapture: v0.6.1
     benchmark_baselines: []
@@ -175,10 +180,28 @@ compatibility_sets:
       - "The v0.11.6 Dockerfile still defaults to Ubuntu 22.04, whose CMake is below the project minimum; the Ubuntu 24.04 change is on develop for the next release."
       - "Draft: not a full task/model/backend matrix attestation."
       - "Pin refresh 2026-10-30: declarations now point at tasks v0.8.4 / neuriplo v0.11.3 / infer v0.11.6; evidence in this set was not re-run at those pins and remains historical. See infer-v0116-torchscript-contract for the current release stack."
+      - "Pin refresh 2026-11-09: declarations now point at tasks v0.8.5 / neuriplo v0.11.3 / infer v0.11.7; evidence in this set was not re-run at those pins and remains historical. See infer-v0117-nert-default for the current release stack."
     repositories:
-      neuriplo-tasks: v0.8.4
+      neuriplo-tasks: v0.8.5
       neuriplo: v0.11.3
-      neuriplo-infer: v0.11.6
+      neuriplo-infer: v0.11.7
+      neuriplo-kserve-client: v0.4.0
+      neuriplo-kserve-runtime: v0.4.0
+      videocapture: v0.6.1
+    benchmark_baselines: []
+
+  - name: infer-v0117-nert-default
+    status: draft
+    notes:
+      - "Release metadata verified 2026-11-09: tasks v0.8.5 -> aac6068, neuriplo v0.11.3 -> 6b00bf3, nert v0.2.0 -> a5d4260, neuriplo-infer v0.11.7 -> 4810ad6."
+      - "neuriplo-infer v0.11.7 selects NERT as the default local backend in fresh builds and dependency setup, keeps explicit backend overrides, and removes the deprecated capabilities version 1 schema."
+      - "neuriplo-tasks v0.8.5 adds keypoint matching (SuperGlue verified; LightGlue and MatchAnything postprocessors still throw until their layouts are probed), the YOLO-World fixed-vocabulary export recipe, and the RF-DETR shape-routing fix."
+      - "nert v0.2.0 is the first tagged release; neuriplo v0.11.3 pins NERT_VERSION=v0.2.0, resolving to a5d4260. nert remains outside this compatibility set pending platform-attested evidence."
+      - "Draft: release metadata and release CI only. Live inference, KServe runtime/model parity, performance, and native AMD GPU evidence have not been re-attested at these pins."
+    repositories:
+      neuriplo-tasks: v0.8.5
+      neuriplo: v0.11.3
+      neuriplo-infer: v0.11.7
       neuriplo-kserve-client: v0.4.0
       neuriplo-kserve-runtime: v0.4.0
       videocapture: v0.6.1

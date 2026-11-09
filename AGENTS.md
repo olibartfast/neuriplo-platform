@@ -107,9 +107,11 @@ PRs should describe changed docs/contracts, affected repos, validation output, a
 When any `neuriplo-*` component publishes a release, update this repository in
 the same release cycle. Bump the component's `version` and `ref` in
 `versions.yaml` to the tag and its commit, and add or update the compatibility
-set that records what was validated. Run `scripts/check_platform.py` before
-calling the release complete. A component release whose platform pins still
-point at the previous tag is not finished.
+set that records what was validated. Update current release references in
+`docs/architecture/`, `ops/repo-meta/`, and `coordination/STATUS.md`; keep
+historical notes, spec packets, and ADRs unchanged. Run
+`scripts/check_platform.py` before calling the release complete. A component
+release whose platform pins still point at the previous tag is not finished.
 
 ## Architecture Rules
 

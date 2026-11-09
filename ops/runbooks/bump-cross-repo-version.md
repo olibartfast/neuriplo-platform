@@ -31,9 +31,16 @@ reflected in `versions.yaml` and a compatibility set.
    - Set `version` to the release tag or `wip`.
    - Set `ref` to the immutable commit SHA.
    - Update each compatibility set entry to match the declared version policy.
+   - When a WIP repository becomes released, update its `version_state` in
+     `ops/repo-meta/`, the architecture overview, and the coordination status
+     board in the same change.
+   - Update current release references in `docs/architecture/`; keep historical
+     notes, spec packets, and ADRs as history.
 
 4. Check platform metadata.
    - Run `scripts/check_platform.py`.
+   - Run `scripts/generate_compat_report.py` when a set's pins change, then
+     `scripts/generate_compat_report.py --check`.
    - Confirm no unrelated repo was added to the version matrix.
 
 5. Run impacted integration checks when local checkouts exist.

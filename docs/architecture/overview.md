@@ -116,10 +116,11 @@ Owns:
   single-arena planning, and CPU kernels used as a correctness oracle
 - Its own operator coverage and correctness validation
 
-Status: experimental, WIP (0.1.0 unreleased). It depends on no other ecosystem
-repository and no vendor SDK. `neuriplo` consumes it as the experimental
-`NERT` backend through a pinned version and FetchContent; the dependency
-direction is `neuriplo -> nert`, never the reverse. See ADR 0013.
+Status: experimental, released v0.2.0 (2026-10-25). It depends on no other
+ecosystem repository and no vendor SDK. `neuriplo` v0.11.3 consumes it as the
+experimental `NERT` backend through `NERT_VERSION=v0.2.0` and FetchContent;
+`neuriplo-infer` v0.11.7 selects `NERT` as its default local backend. The
+dependency direction is `neuriplo -> nert`, never the reverse. See ADR 0013.
 
 Likely patterns:
 
