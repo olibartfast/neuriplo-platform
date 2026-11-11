@@ -6,8 +6,8 @@ Status: Continued 2026-11-11; review-ready, not a merge approval. Automated
 checks and weighted M-H1 success pass for the named local triple below. Host
 discovery passes; host-side tool invocation remains unattested. Initial
 implementation commit `2b751473b116a8e93a75af0b4dd5379641411bb3` exists on
-`neuriplo-infer` `feature/mcp-agent-tools`; review fixes remain uncommitted.
-No push, tag, merge, or release occurred during this continuation.
+`neuriplo-infer` `feature/mcp-agent-tools`; review fixes in 2288c31 pushed
+2026-11-11. No tag, merge, or release occurred during this continuation.
 
 ## Automated Checks
 
@@ -324,3 +324,14 @@ An isolated Hermes registry-dispatch attempt on 2026-11-11 triggered first-run
 bootstrap and dependency setup; it was stopped before install or download.
 Discovery remains attested, host-side tool invocation remains unattested, and
 no global host config or external provider credentials were changed or used.
+
+### Post-push correction (2026-11-11)
+
+Prior "No push" and "uncommitted" statements above described the state at
+write time. The verified push is the INFER push: neuriplo-infer commits
+2b75147 and 2288c31 on origin/feature/mcp-agent-tools, verified locally as
+in sync with origin (rev-list count 0 0). Network re-verification via
+ls-remote timed out and is not claimed here. This platform docs fix itself
+is still uncommitted and unpushed on platform main. Host-side tool
+invocation remains unattested. No global host config or external credentials
+were changed.

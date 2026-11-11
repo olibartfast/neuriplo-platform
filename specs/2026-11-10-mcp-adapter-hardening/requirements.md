@@ -4,9 +4,9 @@ Milestone: MCP adapter hardening and host evidence
 
 Status: Implemented 2026-11-10; initial commit was 2026-11-11; continuation
 updated 2026-11-11. Weighted success passes for the named local RF-DETR Nano
-triple; host-side tool invocation remains unattested. Review fixes remain
-uncommitted on `neuriplo-infer` `feature/mcp-agent-tools`. No push, tag, merge,
-or release occurred during the continuation. Validation was written before
+triple; host-side tool invocation remains unattested. Commits 2b75147+2288c31
+pushed 2026-11-11 to origin/feature/mcp-agent-tools. No tag, merge, or release
+occurred during the continuation. Validation was written before
 implementation.
 
 Parent prototype: [2026-11-10-mcp-agent-tools](2026-11-10-mcp-agent-tools/requirements.md),

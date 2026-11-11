@@ -230,13 +230,14 @@ is a human-owned pin change.
 ## MCP agent tools (2026-11-11)
 
 The [neuriplo-infer](https://github.com/olibartfast/neuriplo-infer) repository
-has implementation commit `2b751473b116a8e93a75af0b4dd5379641411bb3` on
-`feature/mcp-agent-tools`, followed by uncommitted review fixes. The local stdio
+has implementation commit `2b751473b116a8e93a75af0b4dd5379641411bb3` plus
+review-fix commit `2288c315e80dc964d537d014f8e14640286f0113` on
+`origin/feature/mcp-agent-tools` (both pushed 2026-11-11). The local stdio
 suite passes 40/40 warning-clean. A real RF-DETR Nano run through `neuriplo_run`
 succeeds on the existing ORT CPU executable; exact binary, image, model, and
 artifact evidence is in
 [`specs/2026-11-10-mcp-adapter-hardening/validation.md`](../specs/2026-11-10-mcp-adapter-hardening/validation.md).
 OpenCode and Hermes discovery are attested. Host-side invocation remains
 unattested: OpenCode's local model emitted pseudo-calls, and isolated Hermes
-setup was stopped before install or download. No push, tag, merge, PR, or release
-was performed during this continuation.
+setup was stopped before install or download. No tag, merge, PR, or release
+was performed; see [post-push correction](../specs/2026-11-10-mcp-adapter-hardening/validation.md#post-push-correction-2026-11-11).
