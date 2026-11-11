@@ -2,11 +2,12 @@
 
 Milestone: MCP adapter hardening and host evidence
 
-Status: Ready for further review; MVP acceptance INCOMPLETE (2026-11-10).
-Automated checks pass with dated evidence below; M-H1 remains PARTIAL
-(failure path attested, weighted SUCCESS blocked) and per-host tool
-invocation remains unattested (discovery only: connectivity, not successful
-tool execution). This packet is not a merge approval. Nothing committed, pushed, tagged, or merged.
+Status: Continued 2026-11-11; review-ready, not a merge approval. Automated
+checks and weighted M-H1 success pass for the named local triple below. Host
+discovery passes; host-side tool invocation remains unattested. Initial
+implementation commit `2b751473b116a8e93a75af0b4dd5379641411bb3` exists on
+`neuriplo-infer` `feature/mcp-agent-tools`; review fixes remain uncommitted.
+No push, tag, merge, or release occurred during this continuation.
 
 ## Automated Checks
 
@@ -264,3 +265,62 @@ M-H2 note: per-host tool invocation was additionally attempted via a local
 Ollama model; the host presented the tools but the model emitted text
 pseudo-calls without invoking. Recorded in `docs/McpAdapter.md` and above;
 invocation remains unattested, discovery stands.
+
+
+## Continuation results (2026-11-11)
+
+The initial implementation is commit `2b751473b116a8e93a75af0b4dd5379641411bb3`
+on `neuriplo-infer` `feature/mcp-agent-tools`; the fixes below remain
+uncommitted. No push, tag, release, merge, or PR was performed during this
+continuation.
+
+### Review fixes and automated validation
+
+- The MVP source gate now accepts only the app's still-image suffixes
+  (`.jpg`, `.jpeg`, `.png`, `.bmp`, `.tif`, `.tiff`, `.webp`) and rejects
+  `.mpeg`, `.mpg`, `.ts`, and unknown suffixes before spawning.
+- Optional `labels`, `workdir`, `min_confidence`, and `nms_threshold` reject
+  explicit JSON nulls. `neuriplo_capabilities` rejects `arguments: null`
+  before spawning.
+- Oversized integer ids that exceed Python's JSON parser limit now produce a
+  parse error without terminating the stdio server. Request-id validation
+  wording matches the accepted string/integer types.
+- Regression suite: `python3 -W error::ResourceWarning
+  scripts/test_mcp_neuriplo_adapter.py` passes, 40 tests. Independent review
+  reran the suite and inspected the output image; detections were visually
+  coherent. No numerical parity claim is made.
+
+### Weighted inference (M-H1: PASS)
+
+On 2026-11-11 the maintainer authorized read-only discovery of already-downloaded
+weights; no downloads were made. A local RF-DETR Nano triple was exercised:
+
+- Task `rfdetr`; ONNX Runtime CPU executable
+  `neuriplo-infer/build-lightglue-ort/app/neuriplo-infer`, SHA-256
+  `e2126316c6fc3d382de739f7a0075808598947e170540b624f4f12c4fb44fd24`.
+- Build cache version values: neuriplo-tasks `v0.8.5`, neuriplo `v0.11.3`.
+  Exact sibling source revisions used by the executable cannot be reconstructed
+  because temporary override checkouts were removed. Runtime log reports ORT
+  `1.19.2`.
+- Source `neuriplo-infer/data/dog.jpg`, SHA-256
+  `5a9522051c3cec2bbd2f6323fccba32e8fbf3ddcc2b3e2fd46b04c720bc6f866`.
+- Weights `/home/oli/repos/meta-quest3-lab/tools/triton/model_repository/rfdetr_nano/1/model.onnx`,
+  SHA-256 `1ac37bb3429380c7aee6b2c2778d20026db0ad18579cac119255d31f736dc760`,
+  matching the adjacent RF-DETR export manifest. It records RF-DETR 1.9.0,
+  checkpoint SHA-256 `d8d6b9ee57d4d0ed2b1f305163624712a0532cb7bce0c747317984fc5457440d`,
+  opset 17, FP32 input `[1,3,384,384]`, and outputs `dets` `[1,300,4]`,
+  `labels` `[1,300,91]`.
+- Stdio `initialize` then `tools/call` exited 0 in under one second. Fresh
+  report: `success`, stage `render`, one sample, no report error. Artifact:
+  `/tmp/neuriplo-mcp-lkv42egk/data/output/processed_rfdetr_local.png`.
+
+This closes weighted-success evidence for this named triple only; it is not a
+backend/model-family compatibility claim.
+
+### Host invocation remains unattested (M-H2 partial)
+
+OpenCode's local model emitted textual pseudo-calls in the recorded sessions.
+An isolated Hermes registry-dispatch attempt on 2026-11-11 triggered first-run
+bootstrap and dependency setup; it was stopped before install or download.
+Discovery remains attested, host-side tool invocation remains unattested, and
+no global host config or external provider credentials were changed or used.

@@ -1,13 +1,13 @@
 # Ensemble status board
 
-Last updated: 2026-11-09
+Last updated: 2026-11-11
 
 ## Lanes
 
 | Agent role | Repo(s) | Current work | State |
 |---|---|---|---|
 | neuriplo-agent | neuriplo | Post-release: TensorRT metadata crash (top item), EngineOptions device-selection | Idle |
-| runtime-infer-agent | neuriplo-kserve-runtime, neuriplo-infer | Ensemble/pipeline + DALI/TensorRT lane merged to develop in both repos | Done |
+| runtime-infer-agent | neuriplo-kserve-runtime, [neuriplo-infer](https://github.com/olibartfast/neuriplo-infer) | MCP stdio adapter follow-up on `feature/mcp-agent-tools`: weighted RF-DETR Nano run passes; host tool invocation remains unattested | WIP |
 | client-agent | neuriplo-kserve-client | Ensemble conformance merged to develop | Done |
 | human | merges, releases, platform | ADR 0011 + ensemble contract written; review the infer alignment branch | WIP |
 
@@ -225,3 +225,18 @@ is a human-owned pin change.
   commit or drop.
 - Runtime CI checks out neuriplo@develop; consider pinning the v0.6.0 tag
   on release branches.
+
+
+## MCP agent tools (2026-11-11)
+
+The [neuriplo-infer](https://github.com/olibartfast/neuriplo-infer) repository
+has implementation commit `2b751473b116a8e93a75af0b4dd5379641411bb3` on
+`feature/mcp-agent-tools`, followed by uncommitted review fixes. The local stdio
+suite passes 40/40 warning-clean. A real RF-DETR Nano run through `neuriplo_run`
+succeeds on the existing ORT CPU executable; exact binary, image, model, and
+artifact evidence is in
+[`specs/2026-11-10-mcp-adapter-hardening/validation.md`](../specs/2026-11-10-mcp-adapter-hardening/validation.md).
+OpenCode and Hermes discovery are attested. Host-side invocation remains
+unattested: OpenCode's local model emitted pseudo-calls, and isolated Hermes
+setup was stopped before install or download. No push, tag, merge, PR, or release
+was performed during this continuation.

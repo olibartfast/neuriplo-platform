@@ -2,8 +2,11 @@
 
 Milestone: MCP adapter hardening and host evidence
 
-Status: Implemented (2026-11-10). Evidence in `validation.md`; nothing
-committed, pushed, tagged, or merged. Validation was written before
+Status: Implemented 2026-11-10; initial commit was 2026-11-11; continuation
+updated 2026-11-11. Weighted success passes for the named local RF-DETR Nano
+triple; host-side tool invocation remains unattested. Review fixes remain
+uncommitted on `neuriplo-infer` `feature/mcp-agent-tools`. No push, tag, merge,
+or release occurred during the continuation. Validation was written before
 implementation.
 
 Parent prototype: [2026-11-10-mcp-agent-tools](2026-11-10-mcp-agent-tools/requirements.md),
@@ -148,3 +151,14 @@ Follow-up scope (orchestrated 2026-11-10, implements review remainders):
   path, or records the blocker verbatim.
 - Q-H2: run-directory retention limits (age/size caps, host-visible cleanup
   tool). Deferred; D-H4 documents the current no-delete rule.
+
+
+## Authorization update (2026-11-11)
+
+The maintainer authorized a read-only search of already-downloaded local model
+weights, with no downloads. That search found an existing RF-DETR Nano ONNX
+export matching its checked-in export manifest and task preprocessing and
+postprocessing contract. The resulting real weighted adapter run and its
+provenance are recorded in `validation.md`; Q-H1 is resolved for this local
+evidence triple. No general model discovery or implicit download behavior was
+added to the adapter.

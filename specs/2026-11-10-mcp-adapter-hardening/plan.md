@@ -2,12 +2,15 @@
 
 Milestone: MCP adapter hardening and host evidence
 
-Status: Implemented (2026-11-10). Groups 2-5 executed, uncommitted; evidence
-in `validation.md`.
+Status: Groups 2-6 implemented across 2026-11-10..11; evidence is in
+`validation.md`. Initial implementation commit `2b751473b116a8e93a75af0b4dd5379641411bb3`
+is on `neuriplo-infer` `feature/mcp-agent-tools`; 2026-11-11 review fixes remain
+uncommitted. Weighted success passes for the named local triple; host-side
+tool invocation remains unattested. No push, tag, merge, or release occurred
+during the continuation.
 
-Phases are thin and in order; each ends in an observable result. Prototype
-code and this packet are uncommitted; implementation starts only after the
-user approves this packet.
+Phases are thin and in order; each ends in an observable result. The prototype
+code and packet were uncommitted at initial implementation start.
 
 ## Group 1 - Setup (intake, done uncommitted)
 
